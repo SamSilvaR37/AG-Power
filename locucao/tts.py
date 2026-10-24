@@ -6,8 +6,9 @@ Uso:
   python3 tts.py espeak  [--saida voz/]          # robótica, só para testar o encaixe
 
 Motores:
-  google  Google Cloud Text-to-Speech (vozes neurais pt-BR). Usa `gcloud auth
-          print-access-token`; a API "Cloud Text-to-Speech" precisa estar ativa no projeto.
+  google  Google Cloud Text-to-Speech (vozes neurais pt-BR). Usa a chave de API da
+          variável GOOGLE_TTS_API_KEY, ou, sem ela, `gcloud auth print-access-token`.
+          A API "Cloud Text-to-Speech" precisa estar ativa no projeto.
   piper   Piper, offline. O modelo pt-BR (.onnx + .onnx.json) vem de
           huggingface.co/rhasspy/piper-voices (ex.: pt/pt_BR/faber/medium).
   espeak  espeak-ng com voz MBROLA brasileira, se instalada.
@@ -17,6 +18,7 @@ Depois rode narracao.py para mixar com a trilha e remontar os vídeos.
 import argparse
 import base64
 import json
+import os
 import re
 import subprocess
 import urllib.request
@@ -43,20 +45,22 @@ def para_fala(texto):
 
 
 def google(texto, destino, voz, projeto, velocidade):
-    token = subprocess.check_output(["gcloud", "auth", "print-access-token"], text=True).strip()
-    if not projeto:
-        projeto = subprocess.check_output(["gcloud", "config", "get-value", "project"], text=True).strip()
+    url = "https://texttospeech.googleapis.com/v1/text:synthesize"
+    chave = os.environ.get("GOOGLE_TTS_API_KEY")
+    if chave:
+        cabecalhos = {"x-goog-api-key": chave}
+    else:
+        token = subprocess.check_output(["gcloud", "auth", "print-access-token"], text=True).strip()
+        if not projeto:
+            projeto = subprocess.check_output(["gcloud", "config", "get-value", "project"], text=True).strip()
+        cabecalhos = {"Authorization": f"Bearer {token}", "x-goog-user-project": projeto}
     corpo = {
         "input": {"text": texto},
         "voice": {"languageCode": "pt-BR", "name": voz},
         "audioConfig": {"audioEncoding": "LINEAR16", "sampleRateHertz": 48000, "speakingRate": velocidade},
     }
-    req = urllib.request.Request(
-        "https://texttospeech.googleapis.com/v1/text:synthesize",
-        data=json.dumps(corpo).encode(),
-        headers={"Authorization": f"Bearer {token}", "x-goog-user-project": projeto,
-                 "Content-Type": "application/json; charset=utf-8"},
-    )
+    req = urllib.request.Request(url, data=json.dumps(corpo).encode(),
+                                 headers={**cabecalhos, "Content-Type": "application/json; charset=utf-8"})
     with urllib.request.urlopen(req, timeout=60) as r:
         destino.write_bytes(base64.b64decode(json.load(r)["audioContent"]))
 
