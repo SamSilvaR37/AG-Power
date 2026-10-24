@@ -15,6 +15,7 @@ arquivo serve para assistir no navegador e para renderizar o MP4.
 | `assets/logo-ag-power.png` | Logo usado no vídeo (o ícone oficial do app, `public/icons/icon-512.png` do repositório agpower) |
 | `locucao/ROTEIRO-LOCUCAO.md` | Roteiro para o locutor, **com o alerta de tempo (leia antes de gravar)** |
 | `locucao/locucao-90s.srt`, `locucao-60s.srt` | Legendas da locução (versão B) |
+| `locucao/tts.py`, `locucao/narracao.py` | Geram a voz por cena e mixam a narração nos vídeos (ver "Narração") |
 | `briefing.json` | Briefing original. Os campos `video_referencia` continuam vazios, para preencher |
 | `dist/` | Saída local do `render.mjs` (fica fora do git; o que vale publicar é copiado para `videos/`) |
 
@@ -40,6 +41,21 @@ node render.mjs all --cut     # versão curta, sem as cenas 3, 4 e 6
 Saída em `dist/`: `ag-power-comercial-90s-16x9.mp4` etc. (H.264, 30 fps, AAC 192 kbps), mais
 `audio-90s.wav` (mix), `audio-90s-trilha.wav` e `audio-90s-efeitos.wav` (separados, para a mixagem
 com a locução). Leva uns 2,5 min por formato.
+
+## Narração
+
+Os vídeos em `videos/` têm trilha e efeitos, mas ainda não têm voz. Para gerar as versões narradas
+(`videos/narrado/…-narrado.mp4`):
+
+```sh
+cd locucao
+python3 tts.py google --voz pt-BR-Neural2-B   # ou: piper --modelo pt_BR-….onnx, ou falas gravadas
+python3 narracao.py                           # mixa e remonta os 6 vídeos (~30 s, sem renderizar a imagem)
+```
+
+Com um locutor de verdade, basta salvar uma fala por cena em `locucao/voz/cena-01.wav` …
+`cena-12.wav` e rodar só o `narracao.py`. Cada fala é encaixada no início da cena, acelerada até 20%
+se passar do tempo, as vozes nunca se sobrepõem, e a trilha baixa embaixo da voz.
 
 ## Cenas (16:9, 90 s)
 
