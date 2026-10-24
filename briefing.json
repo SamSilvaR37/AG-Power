@@ -1,0 +1,201 @@
+{
+  "projeto": {
+    "titulo": "Comercial - Plataforma AG Power",
+    "formato": "comercial institucional de produto",
+    "duracao_total_segundos": 90,
+    "idioma": "pt-BR",
+    "proporcao_principal": "16:9",
+    "versoes_alternativas": ["9:16 (Reels/Stories)", "1:1 (feed)"],
+    "observacao": "Duracao pensada para poder ser cortada: as cenas 3, 4 e 6 podem sair para uma versao de 60s."
+  },
+  "regras_de_conteudo": {
+    "usar_somente_fatos_do_briefing": true,
+    "nome_do_produto": "plataforma AG Power",
+    "proibido": [
+      "citar nomes de clientes",
+      "falar de valores em reais ou faturamento",
+      "inventar funcoes, numeros ou resultados",
+      "usar outro nome de produto",
+      "apresentar como pronto o que esta em 'em breve'"
+    ],
+    "tom": "confiante e proximo, sem exagero tecnico"
+  },
+  "identidade_visual": {
+    "fundo": "azul-marinho bem escuro",
+    "destaques": "amarelo/laranja (cor do sol)",
+    "estilo": "moderno e limpo",
+    "elementos": ["mockups de celular", "interface do computador", "icones simples", "transicoes suaves"],
+    "tipografia": "sem serifa, pesos bold para titulos e regular para apoio",
+    "logo": "usar o logo oficial da AG Power fornecido pela empresa"
+  },
+  "audio": {
+    "locucao": {
+      "estilo": "voz masculina ou feminina, calorosa e segura, ritmo calmo",
+      "idioma": "pt-BR"
+    },
+    "trilha": "instrumental moderna e positiva, crescendo leve ate a cena final",
+    "efeitos": ["toque de tela", "notificacao suave", "som de 'check' ao concluir etapas"]
+  },
+  "slots_de_referencia": {
+    "instrucao": "Anexar videos de referencia em cada cena no campo 'video_referencia'. Descrever abaixo o que aproveitar (ritmo, enquadramento, transicao).",
+    "formato_sugerido": {
+      "arquivo": "nome_do_arquivo.mp4",
+      "aproveitar": "ritmo | enquadramento | transicao | cor | movimento de camera",
+      "observacao": ""
+    }
+  },
+  "cenas": [
+    {
+      "id": 1,
+      "nome": "Abertura - e depois da venda?",
+      "inicio_s": 0,
+      "fim_s": 6,
+      "publico_em_foco": "todos",
+      "visual": "Telhado em Campinas/SP com placas solares ao nascer do sol. Luz dourada. Titulo surge sobre fundo azul-marinho.",
+      "locucao": "Instalar a usina e so o comeco. E depois?",
+      "texto_na_tela": ["E depois da instalacao?"],
+      "transicao": "o sol vira o destaque amarelo/laranja do logo",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 2,
+      "nome": "Apresentacao da plataforma",
+      "inicio_s": 6,
+      "fim_s": 13,
+      "publico_em_foco": "todos",
+      "visual": "Logo da AG Power. Celular e computador lado a lado mostrando a plataforma. Cinco icones entram em sequencia: agenda, ordens de servico, tecnicos, monitoramento, portal do cliente.",
+      "locucao": "Conheca a plataforma AG Power: agenda, ordens de servico, tecnicos em campo, monitoramento das usinas e portal do cliente. Tudo num lugar so, no celular e no computador.",
+      "texto_na_tela": ["Plataforma AG Power", "Tudo num lugar so"],
+      "transicao": "zoom no celular",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 3,
+      "nome": "Agenda sincronizada com a planilha",
+      "inicio_s": 13,
+      "fim_s": 21,
+      "publico_em_foco": "escritorio (pos-venda)",
+      "visual": "Planilha a esquerda, agenda da plataforma a direita. Uma linha muda na planilha e o compromisso se ajusta sozinho na agenda: criar, remarcar, mudar horario, concluir, cancelar. Em seguida, um cliente novo ganha cadastro automatico.",
+      "locucao": "A planilha continua sendo a base. A cada 15 minutos, das 6h as 22h, e sempre que alguem abre a agenda, o sistema se ajusta sozinho. Cliente novo agendado? O cadastro nasce automaticamente.",
+      "texto_na_tela": ["A planilha continua sendo a base", "Atualiza a cada 15 min (6h-22h)", "Cadastro automatico"],
+      "transicao": "linha da agenda se expande em ordem de servico",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 4,
+      "nome": "Um clique, a OS inteira",
+      "inicio_s": 21,
+      "fim_s": 27,
+      "publico_em_foco": "gestao e escritorio",
+      "visual": "Cursor clica no nome do cliente na agenda (usar nome ficticio generico, sem cliente real). A ordem de servico abre. Dentro dela, a gestao remarca e define 'quem vai'.",
+      "locucao": "Um clique no cliente e a ordem de servico abre inteira. Da propria OS, a gestao remarca e define quem vai.",
+      "texto_na_tela": ["Um clique, a OS inteira", "Remarcar e definir 'quem vai'"],
+      "transicao": "corte para o celular na mao do tecnico",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 5,
+      "nome": "Tecnico no telhado",
+      "inicio_s": 27,
+      "fim_s": 42,
+      "publico_em_foco": "tecnicos",
+      "visual": "Tecnico no telhado com o celular. Sequencia de telas do app: botao 'Iniciar servico'; campo unico de fotos com varias imagens de uma vez (camera ou galeria); materiais usados; ficha tecnica da instalacao (checagens Sim/Nao, disjuntor, tensoes, modulos, inversor, strings, numeros de serie); assinaturas do cliente e do responsavel na mesma tela. Icone de 'sem sinal' que continua funcionando e depois sincroniza.",
+      "locucao": "Para o tecnico, a OS na mao, no telhado. Iniciou o servico, a OS fica aberta ate finalizar e o app leva ele de volta. Fotos num campo so, varias de uma vez. Materiais usados. A mesma ficha tecnica que antes era no papel. Assinaturas do cliente e do responsavel na mesma tela. E funciona ate sem sinal: sincroniza depois.",
+      "texto_na_tela": ["Iniciar servico", "Fotos num campo so", "Materiais usados", "Ficha tecnica da instalacao", "Assinaturas na mesma tela", "Funciona sem sinal"],
+      "transicao": "assinatura concluida vira o PDF",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 6,
+      "nome": "Relatorio em PDF para o cliente",
+      "inicio_s": 42,
+      "fim_s": 49,
+      "publico_em_foco": "clientes e tecnicos",
+      "visual": "Ao concluir, o PDF e gerado mostrando fotos, ficha tecnica e assinaturas. Tela de compartilhamento do celular com opcao de WhatsApp. Cliente recebe no proprio celular.",
+      "locucao": "Concluiu? O relatorio em PDF sai pronto, com fotos, ficha tecnica e assinaturas, e vai para o cliente pelo WhatsApp ou pelo compartilhamento do celular.",
+      "texto_na_tela": ["Relatorio em PDF", "Enviado pelo WhatsApp"],
+      "transicao": "corte para o computador da gestao",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 7,
+      "nome": "Centro de Operacoes",
+      "inicio_s": 49,
+      "fim_s": 58,
+      "publico_em_foco": "donos e gerencia",
+      "visual": "Painel no computador com blocos: servicos de hoje, atrasados, sem tecnico, implantacoes por etapa, cadastros incompletos. Em seguida, o resumo da semana (segunda a domingo) pronto para WhatsApp e uma notificacao as 7h40 de segunda.",
+      "locucao": "Donos e gerencia enxergam a operacao inteira: servicos de hoje, atrasados, sem tecnico, implantacoes por etapa e cadastros incompletos. E todo domingo fecha o resumo da semana, pronto para mandar no WhatsApp, com aviso toda segunda as 7h40.",
+      "texto_na_tela": ["Centro de Operacoes", "Hoje | Atrasados | Sem tecnico", "Resumo da semana - aviso segunda 7h40"],
+      "transicao": "painel se transforma em linha do tempo",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 8,
+      "nome": "Jornada da usina em 9 etapas",
+      "inicio_s": 58,
+      "fim_s": 66,
+      "publico_em_foco": "gestao e escritorio",
+      "visual": "Linha do tempo horizontal com 9 marcos acendendo em amarelo/laranja, um a um. Um marco ultrapassa o prazo e pisca um alerta.",
+      "locucao": "A jornada da usina em nove etapas: contrato, vistoria tecnica, engenharia, homologacao, agendamento, instalacao, troca do medidor, primeira geracao e operacao. Com prazo por etapa e alerta quando passa do prazo.",
+      "texto_na_tela": ["Contrato", "Vistoria tecnica", "Engenharia", "Homologacao", "Agendamento", "Instalacao", "Troca do medidor", "Primeira geracao", "Operacao", "Prazo por etapa + alerta"],
+      "transicao": "ultimo marco (Operacao) abre o monitoramento",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 9,
+      "nome": "Monitoramento das usinas",
+      "inicio_s": 66,
+      "fim_s": 73,
+      "publico_em_foco": "gestao e escritorio",
+      "visual": "Lista de usinas com status. Logos/nomes SolarMan, Solis e HYXi conectando na plataforma. Uma usina fica destacada como 'parou de mandar dados' e outra como 'gerando abaixo do esperado'.",
+      "locucao": "Integrado ao SolarMan, Solis e HYXi, com coleta tres vezes ao dia. A plataforma mostra quais usinas pararam de mandar dado ou estao gerando abaixo do esperado, antes do cliente reclamar.",
+      "texto_na_tela": ["SolarMan | Solis | HYXi", "Coleta 3x ao dia", "Antes do cliente reclamar"],
+      "transicao": "alerta se transforma na tela do cliente",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 10,
+      "nome": "Portal do cliente e Plano Power",
+      "inicio_s": 73,
+      "fim_s": 80,
+      "publico_em_foco": "clientes",
+      "visual": "Cliente abre o portal pelo celular (entrada sem digitar e-mail). Telas: jornada da usina, geracao de energia, historico de servicos, chamados. Em seguida, selo 'Plano Power' marcado na plataforma.",
+      "locucao": "O cliente entra pelo celular, sem decorar e-mail, e acompanha a jornada da usina, a geracao de energia, o historico de servicos e os chamados. E o Plano Power cuida da usina de forma recorrente, tudo marcado na plataforma.",
+      "texto_na_tela": ["Portal do cliente", "Jornada | Geracao | Historico | Chamados", "Plano Power"],
+      "transicao": "fade para fundo azul-marinho",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    },
+    {
+      "id": 11,
+      "nome": "Em breve",
+      "inicio_s": 80,
+      "fim_s": 86,
+      "publico_em_foco": "todos",
+      "visual": "Cartoes com selo 'EM BREVE' em amarelo/laranja, entrando um a um. Estilo visual diferenciado (semitransparente) para deixar claro que ainda nao esta pronto.",
+      "locucao": "E vem mais por ai, em breve: planilha de instalacoes 100% sincronizada, 'quem vai?' direto na agenda do dia, integracao com a Auxsol e outras marcas de inversor, avisos automaticos para o cliente a cada etapa e acesso ao portal para toda a carteira de clientes.",
+      "texto_na_tela": ["EM BREVE", "Planilha de instalacoes 100% sincronizada", "'Quem vai?' direto na agenda do dia", "Auxsol e outras marcas de inversor", "Avisos automaticos ao cliente a cada etapa", "Portal para toda a carteira de clientes"],
+      "transicao": "cartoes se recolhem no logo",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" },
+      "alerta_de_producao": "Tudo nesta cena e futuro. Nao usar verbos no presente como 'faz' ou 'ja tem'."
+    },
+    {
+      "id": 12,
+      "nome": "Encerramento",
+      "inicio_s": 86,
+      "fim_s": 90,
+      "publico_em_foco": "todos",
+      "visual": "Logo da AG Power em amarelo/laranja sobre azul-marinho escuro, com mockup de celular ao lado. Campinas/SP no rodape.",
+      "locucao": "Plataforma AG Power. O pos-venda inteiro, num lugar so.",
+      "texto_na_tela": ["Plataforma AG Power", "O pos-venda inteiro, num lugar so", "Campinas/SP"],
+      "transicao": "fim",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" }
+    }
+  ],
+  "checklist_final": [
+    "Nenhum nome de cliente real aparece nas telas",
+    "Nenhum valor em reais aparece em lugar algum",
+    "Cena 'Em breve' esta marcada claramente como futuro",
+    "Nome 'plataforma AG Power' usado em toda a peca",
+    "Financeiro nao e mencionado"
+  ]
+}

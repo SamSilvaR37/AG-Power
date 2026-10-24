@@ -1,0 +1,107 @@
+1
+00:00:00,300 --> 00:00:04,500
+Instalar a usina é só o começo.
+
+2
+00:00:04,500 --> 00:00:05,700
+E depois?
+
+3
+00:00:06,300 --> 00:00:07,984
+Conheça a plataforma AG Power:
+
+4
+00:00:07,984 --> 00:00:11,353
+agenda, ordens de serviço, técnicos, monitoramento e portal do cliente.
+
+5
+00:00:11,353 --> 00:00:12,700
+Tudo num lugar só.
+
+6
+00:00:13,300 --> 00:00:15,230
+A planilha continua sendo a base:
+
+7
+00:00:15,230 --> 00:00:19,413
+a cada 15 minutos, das 6h às 22h, a agenda se ajusta sozinha.
+
+8
+00:00:19,413 --> 00:00:20,057
+Cliente novo?
+
+9
+00:00:20,057 --> 00:00:20,700
+Cadastro automático.
+
+10
+00:00:21,300 --> 00:00:24,159
+Um clique no cliente e a OS abre inteira.
+
+11
+00:00:24,159 --> 00:00:26,700
+Dali, a gestão remarca e define quem vai.
+
+12
+00:00:27,300 --> 00:00:30,461
+Para o técnico, a OS na mão, no telhado.
+
+13
+00:00:30,461 --> 00:00:32,568
+Iniciou, ela fica aberta até finalizar.
+
+14
+00:00:32,568 --> 00:00:39,241
+Fotos num campo só, materiais usados, a ficha técnica que era no papel e as assinaturas na mesma tela.
+
+15
+00:00:39,241 --> 00:00:41,700
+Funciona até sem sinal e sincroniza depois.
+
+16
+00:00:42,300 --> 00:00:42,637
+Concluiu?
+
+17
+00:00:42,637 --> 00:00:48,700
+O relatório em PDF sai pronto, com fotos, ficha e assinaturas, e vai para o cliente pelo WhatsApp.
+
+18
+00:00:49,300 --> 00:00:51,750
+Donos e gerência enxergam a operação inteira.
+
+19
+00:00:51,750 --> 00:00:57,700
+E todo domingo fecha o resumo da semana, pronto para o WhatsApp, com aviso segunda às 7h40.
+
+20
+00:00:58,300 --> 00:01:05,700
+A jornada da usina em nove etapas, do contrato à operação, com prazo por etapa e alerta quando passa do prazo.
+
+21
+00:01:06,300 --> 00:01:12,700
+Integrada ao SolarMan, Solis e HYXi, a plataforma mostra quais usinas pararam ou geram abaixo do esperado, antes do cliente reclamar.
+
+22
+00:01:13,300 --> 00:01:16,332
+O cliente acompanha tudo pelo celular, sem decorar e-mail.
+
+23
+00:01:16,332 --> 00:01:19,700
+E o Plano Power cuida da usina de forma recorrente.
+
+24
+00:01:20,300 --> 00:01:20,935
+Em breve:
+
+25
+00:01:20,935 --> 00:01:25,700
+novas marcas de inversor, avisos automáticos a cada etapa e portal para toda a carteira.
+
+26
+00:01:26,300 --> 00:01:27,433
+Plataforma AG Power.
+
+27
+00:01:27,433 --> 00:01:29,700
+O pós-venda inteiro, num lugar só.

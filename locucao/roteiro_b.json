@@ -1,0 +1,14 @@
+[
+  {"id": 1,  "dur": 6,  "locucao": "Instalar a usina é só o começo. E depois?"},
+  {"id": 2,  "dur": 7,  "locucao": "Conheça a plataforma AG Power: agenda, ordens de serviço, técnicos, monitoramento e portal do cliente. Tudo num lugar só."},
+  {"id": 3,  "dur": 8,  "locucao": "A planilha continua sendo a base: a cada 15 minutos, das 6h às 22h, a agenda se ajusta sozinha. Cliente novo? Cadastro automático."},
+  {"id": 4,  "dur": 6,  "locucao": "Um clique no cliente e a OS abre inteira. Dali, a gestão remarca e define quem vai."},
+  {"id": 5,  "dur": 15, "locucao": "Para o técnico, a OS na mão, no telhado. Iniciou, ela fica aberta até finalizar. Fotos num campo só, materiais usados, a ficha técnica que era no papel e as assinaturas na mesma tela. Funciona até sem sinal e sincroniza depois."},
+  {"id": 6,  "dur": 7,  "locucao": "Concluiu? O relatório em PDF sai pronto, com fotos, ficha e assinaturas, e vai para o cliente pelo WhatsApp."},
+  {"id": 7,  "dur": 9,  "locucao": "Donos e gerência enxergam a operação inteira. E todo domingo fecha o resumo da semana, pronto para o WhatsApp, com aviso segunda às 7h40."},
+  {"id": 8,  "dur": 8,  "locucao": "A jornada da usina em nove etapas, do contrato à operação, com prazo por etapa e alerta quando passa do prazo."},
+  {"id": 9,  "dur": 7,  "locucao": "Integrada ao SolarMan, Solis e HYXi, a plataforma mostra quais usinas pararam ou geram abaixo do esperado, antes do cliente reclamar."},
+  {"id": 10, "dur": 7,  "locucao": "O cliente acompanha tudo pelo celular, sem decorar e-mail. E o Plano Power cuida da usina de forma recorrente."},
+  {"id": 11, "dur": 6,  "locucao": "Em breve: novas marcas de inversor, avisos automáticos a cada etapa e portal para toda a carteira."},
+  {"id": 12, "dur": 4,  "locucao": "Plataforma AG Power. O pós-venda inteiro, num lugar só."}
+]
