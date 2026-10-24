@@ -1,5 +1,8 @@
 # Comercial — Plataforma AG Power
 
+> Este repositório também tem o vídeo interno **Dinheiro na Mesa — Plano Power** (60 s):
+> veja [`dinheiro-na-mesa/README.md`](dinheiro-na-mesa/README.md).
+
 Comercial institucional de 90 s (pt-BR) feito a partir do briefing em `briefing.json`.
 O vídeo é **animado em HTML**: cada quadro é calculado a partir do tempo, então o mesmo
 arquivo serve para assistir no navegador e para renderizar o MP4.

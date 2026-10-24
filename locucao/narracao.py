@@ -1,6 +1,8 @@
 """Mixa a narração com a trilha e os efeitos e remonta os MP4 narrados.
 
 Uso: python3 narracao.py [--voz voz/] [--versao 90s|60s|todas]
+     python3 narracao.py --roteiro ../dinheiro-na-mesa/roteiro.json --nome dinheiro-na-mesa \
+                         --versao 60s --voz ../dinheiro-na-mesa/voz
 
 Entrada:
   voz/cena-01.wav ... cena-12.wav       uma fala por cena (de tts.py ou de um locutor)
@@ -28,7 +30,8 @@ import numpy as np
 HERE = Path(__file__).parent
 VIDEOS = HERE.parent / "videos"
 SR = 48000
-CORTE_60 = {3, 4, 6}  # mesma regra do comercial.html
+PADRAO = "ag-power-comercial"
+CORTE_60 = {3, 4, 6}  # versão curta do comercial: mesma regra do comercial.html
 MAX_ACELERA = 1.2  # acima disso a voz fica corrida demais
 
 
@@ -62,13 +65,18 @@ def suavizar(x, ataque, soltura):
     return np.repeat(env, bloco)[: len(x)]
 
 
-def mixar(versao, voz_dir):
-    cenas = json.loads((HERE / "roteiro_b.json").read_text(encoding="utf-8"))
-    if versao == "60s":
-        cenas = [c for c in cenas if c["id"] not in CORTE_60]
+def stem(nome, tipo, versao):
+    """Trilha/efeitos/narração: o comercial usa nomes curtos (trilha-90s.flac), os outros vídeos têm prefixo."""
+    return VIDEOS / "audio" / (f"{tipo}-{versao}.flac" if nome == PADRAO else f"{nome}-{tipo}-{versao}.flac")
+
+
+def mixar(versao, voz_dir, roteiro, nome, corte):
+    cenas = json.loads(Path(roteiro).read_text(encoding="utf-8"))
+    if corte:
+        cenas = [c for c in cenas if c["id"] not in corte]
     total = sum(c["dur"] for c in cenas)
-    trilha = ler(VIDEOS / "audio" / f"trilha-{versao}.flac")
-    efeitos = ler(VIDEOS / "audio" / f"efeitos-{versao}.flac")
+    trilha = ler(stem(nome, "trilha", versao))
+    efeitos = ler(stem(nome, "efeitos", versao))
     n = int(total * SR)
     trilha, efeitos = np.pad(trilha, (0, max(0, n - len(trilha))))[:n], np.pad(efeitos, (0, max(0, n - len(efeitos))))[:n]
 
@@ -109,17 +117,16 @@ def mixar(versao, voz_dir):
     pico = np.abs(mix).max()
     if pico > 0.95:
         mix *= 0.95 / pico
-    destino = VIDEOS / "audio"
-    gravar(destino / f"narracao-{versao}.flac", voz)
+    gravar(stem(nome, "narracao", versao), voz)
     mix_wav = HERE / f".mix-{versao}.wav"
     gravar(mix_wav, mix)
     return mix_wav
 
 
-def remontar(versao, mix_wav):
+def remontar(versao, mix_wav, nome):
     saida = VIDEOS / "narrado"
     saida.mkdir(exist_ok=True)
-    for mp4 in sorted(VIDEOS.glob(f"ag-power-comercial-{versao}-*.mp4")):
+    for mp4 in sorted(VIDEOS.glob(f"{nome}-{versao}-*.mp4")):
         out = saida / mp4.name.replace(".mp4", "-narrado.mp4")
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp4), "-i", str(mix_wav),
                         "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
@@ -131,11 +138,16 @@ def remontar(versao, mix_wav):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--voz", default=str(HERE / "voz"))
-    ap.add_argument("--versao", default="todas", choices=["90s", "60s", "todas"])
+    ap.add_argument("--roteiro", default=str(HERE / "roteiro_b.json"))
+    ap.add_argument("--nome", default=PADRAO, help="prefixo dos vídeos em ../videos (ex.: dinheiro-na-mesa)")
+    ap.add_argument("--versao", default="todas", help="90s, 60s ou todas (comercial); 60s para o Dinheiro na Mesa")
     a = ap.parse_args()
-    for v in (["90s", "60s"] if a.versao == "todas" else [a.versao]):
-        print(f"versão {v}:")
-        remontar(v, mixar(v, a.voz))
+    versoes = ["90s", "60s"] if a.versao == "todas" else [a.versao]
+    for v in versoes:
+        # só a versão curta do comercial corta cenas
+        corte = CORTE_60 if (a.nome == PADRAO and v == "60s") else set()
+        print(f"{a.nome} {v}:")
+        remontar(v, mixar(v, a.voz, a.roteiro, a.nome, corte), a.nome)
 
 
 if __name__ == "__main__":

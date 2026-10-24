@@ -62,14 +62,17 @@ def add(buf, sig, at, gain=1.0):
 
 
 # ---------------- trilha ----------------
-def music(total):
+def music(total, cues=None):
+    """cues (opcional, de window.COMMERCIAL.MUSIC): bpm, arp, kick, hat, clap (segundos em que
+    cada camada entra) e prog ("I-V-vi-IV" ou "vi-IV-I-V")."""
+    cue = {"bpm": 100, "arp": 6, "kick": 13, "hat": 27, "clap": 49, "prog": "I-V-vi-IV", **(cues or {})}
     n = int(total * SR) + SR
     pad = np.zeros(n)
     arp = np.zeros(n)
     bass = np.zeros(n)
     drums = np.zeros(n)
 
-    bpm = 100
+    bpm = cue["bpm"]
     beat = 60 / bpm
     bar = 4 * beat
     # Ré maior: D  A  Bm  G  (I V vi IV), positivo e aberto
@@ -79,6 +82,8 @@ def music(total):
         [47, 54, 59, 62, 66],
         [43, 55, 59, 62, 67],
     ]
+    if cue["prog"] == "vi-IV-I-V":
+        prog = prog[2:] + prog[:2]
     end_at = total - 4.0  # encerramento: acorde final
     nbars = int(np.ceil(end_at / bar))
 
@@ -114,21 +119,21 @@ def music(total):
             add(pad, pad_note(midi(m), bar + 0.9), t0, 0.10)
         add(bass, pad_note(midi(ch[0] - 12), bar + 0.2), t0, 0.22)
         # arpejo a partir da apresentação da plataforma
-        if t0 >= 6 - bar:
+        if t0 >= cue["arp"] - bar:
             seq = [ch[1], ch[2], ch[3], ch[4], ch[3], ch[2], ch[3], ch[4]]
             for i, m in enumerate(seq):
                 tt = t0 + i * beat / 2
-                if 6 <= tt < end_at:
+                if cue["arp"] <= tt < end_at:
                     add(arp, pluck(midi(m + 12)), tt, 0.09)
         for i in range(4):
             tt = t0 + i * beat
             if tt >= end_at:
                 break
-            if tt >= 13:
+            if tt >= cue["kick"]:
                 add(drums, k, tt, 0.55)
-            if tt >= 27:
+            if tt >= cue["hat"]:
                 add(drums, h, tt + beat / 2, 0.12)
-            if tt >= 49 and i in (1, 3):
+            if tt >= cue["clap"] and i in (1, 3):
                 add(drums, c, tt, 0.16)
 
     # acorde final (D maior aberto) com sino
@@ -177,6 +182,10 @@ def sfx_bank():
         "stamp": cat((tone(120, 0.25, 18, 60), 0), (noise(0.08, 200, 2500, 50) * 0.4, 0)) * 0.6,
         "soft": tone(784, 0.35, 10) * 0.16,
         "shine": sum(tone(f, 1.0, 4) * 0.06 for f in (2093, 2637, 3136, 3951)),
+        "coin": cat((tone(3400, 0.18, 30), 0), (0.6 * tone(4700, 0.12, 40), 0), (0.4 * tone(2600, 0.22, 25), 0)) * 0.09,
+        "chaching": cat((noise(0.05, 3000, 12000, 60) * 0.5, 0),
+                        (sum(tone(f, 0.6, 7) for f in (2637, 3520, 4186)) * 0.12, 0.0),
+                        (sum(tone(f, 0.9, 5) for f in (3136, 3951, 5274)) * 0.14, 0.11)) * 0.55,
         "chime": sum(tone(f, 2.5, 1.8) * a for f, a in ((587, 0.14), (880, 0.1), (1175, 0.08), (1760, 0.05))),
     }
     return bank
@@ -198,7 +207,7 @@ def main():
     tl = json.load(open(sys.argv[1]))
     out = sys.argv[2]
     total = float(tl["TOTAL"])
-    m = music(total)
+    m = music(total, tl.get("MUSIC"))
     m = m / (np.abs(m).max() + 1e-9) * 0.55
     fx = np.zeros_like(m)
     bank = sfx_bank()

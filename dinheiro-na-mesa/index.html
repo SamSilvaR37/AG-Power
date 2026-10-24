@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dinheiro na Mesa</title>
+<!--
+  Vídeo interno "Dinheiro na Mesa — Plano Power" (60 s), animado em HTML.
+  Mesmo motor do comercial: cada quadro é função do tempo (window.renderAt(t)).
+  Parâmetros: ?f=16x9|9x16|1x1  ?t=12.5  ?render=1
+  Render: node ../render.mjs all --pagina dinheiro-na-mesa/index.html --nome dinheiro-na-mesa
+-->
+<style>
+:root{
+  --navy:#0a1120; --navy2:#101a2e; --navy3:#16223a; --navy4:#1d2b47; --line:#26355a;
+  --sun:#f7a531; --sun2:#f2913d; --sun-soft:rgba(247,165,49,.16);
+  --ink:#f3f6fb; --mute:#8e9bb5; --dim:#5d6a85; --gray:#6b7894;
+  --ok:#34c38f; --bad:#ef5b5b; --warn:#f5b83d;
+  --u:10.8px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#05080f;overflow:hidden}
+body{font-family:Inter,"Inter Display",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+#wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;overflow:hidden;background:var(--navy);flex:none;transform-origin:center center}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+.bg-glow{position:absolute;inset:0;background:
+  radial-gradient(calc(var(--u)*90) calc(var(--u)*60) at 85% 10%,rgba(247,165,49,.10),transparent 70%),
+  radial-gradient(calc(var(--u)*80) calc(var(--u)*60) at 10% 100%,rgba(60,110,220,.12),transparent 70%)}
+.h1{font-weight:900;font-size:calc(var(--u)*7.4);line-height:1;letter-spacing:-.025em}
+.h2{font-weight:800;font-size:calc(var(--u)*4.4);line-height:1.08;letter-spacing:-.015em}
+.big{font-weight:900;font-size:calc(var(--u)*15);line-height:.9;letter-spacing:-.04em}
+.num{font-weight:900;letter-spacing:-.03em;line-height:1}
+.p{font-size:calc(var(--u)*2.3);line-height:1.35;color:var(--mute)}
+.sun{color:var(--sun)} .gray{color:var(--gray)}
+.kicker{font-weight:800;font-size:calc(var(--u)*1.6);letter-spacing:.18em;text-transform:uppercase;color:var(--sun)}
+.tag{display:inline-flex;align-items:center;gap:calc(var(--u)*.8);padding:calc(var(--u)*.9) calc(var(--u)*1.6);border-radius:999px;background:var(--sun-soft);color:var(--sun);font-weight:700;font-size:calc(var(--u)*1.9);white-space:nowrap}
+.tag.gray{background:rgba(107,120,148,.18);color:#aab5cc}
+.ico{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.logo-img{display:block;object-fit:contain}
+.sim{position:absolute;right:calc(var(--u)*3);top:calc(var(--u)*3);display:flex;align-items:center;gap:calc(var(--u)*.8);border:2px solid var(--sun);color:var(--sun);font-weight:900;font-size:calc(var(--u)*1.7);letter-spacing:.16em;padding:calc(var(--u)*.7) calc(var(--u)*1.4);border-radius:calc(var(--u)*.8);background:rgba(10,17,32,.7);z-index:20}
+.foot{position:absolute;left:0;right:0;bottom:calc(var(--u)*2.4);text-align:center;font-size:calc(var(--u)*1.45);color:var(--mute);padding:0 calc(var(--u)*4)}
+.interno{position:absolute;left:calc(var(--u)*3);top:calc(var(--u)*3);font-weight:800;font-size:calc(var(--u)*1.3);letter-spacing:.2em;color:var(--dim);text-transform:uppercase;z-index:20}
+canvas.grid{display:block}
+
+/* dispositivos (iguais ao comercial) */
+.phone{position:relative;width:calc(var(--u)*24);height:calc(var(--u)*49);border-radius:calc(var(--u)*3.8);background:#05070d;padding:calc(var(--u)*1);box-shadow:0 calc(var(--u)*3) calc(var(--u)*7) rgba(0,0,0,.55),inset 0 0 0 calc(var(--u)*.25) #2a3550;flex:none}
+.ph-screen{position:relative;width:100%;height:100%;border-radius:calc(var(--u)*2.9);background:var(--navy2);overflow:hidden;padding:calc(var(--u)*4.4) calc(var(--u)*1.4) calc(var(--u)*1.4)}
+.ph-notch{position:absolute;top:calc(var(--u)*1);left:50%;width:calc(var(--u)*7);height:calc(var(--u)*2);transform:translateX(-50%);background:#05070d;border-radius:999px}
+.laptop{position:relative;width:calc(var(--u)*84);flex:none}
+.lp-screen{position:relative;width:100%;aspect-ratio:16/10;border-radius:calc(var(--u)*1.6) calc(var(--u)*1.6) 0 0;background:#05070d;padding:calc(var(--u)*1.2);box-shadow:0 calc(var(--u)*3) calc(var(--u)*7) rgba(0,0,0,.5),inset 0 0 0 calc(var(--u)*.25) #2a3550}
+.lp-inner{position:relative;width:100%;height:100%;background:var(--navy2);border-radius:calc(var(--u)*.6);overflow:hidden;padding:calc(var(--u)*2)}
+.lp-base{height:calc(var(--u)*2);margin:0 calc(var(--u)*-5);border-radius:0 0 calc(var(--u)*2) calc(var(--u)*2);background:linear-gradient(#2b3654,#151d30)}
+.card{background:var(--navy3);border:1px solid var(--line);border-radius:calc(var(--u)*1.2);padding:calc(var(--u)*1.2)}
+.row{display:flex;align-items:center;gap:calc(var(--u)*1)}
+.dot{width:calc(var(--u)*1);height:calc(var(--u)*1);border-radius:50%;background:var(--ok);flex:none}
+
+/* ---------- 1 ---------- */
+#s1 svg{position:absolute;inset:0;width:100%;height:100%}
+#s1 .title{position:absolute;left:0;right:0;top:14%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.6)}
+
+/* ---------- 2/3/4: grade de usinas ---------- */
+.gl{position:absolute;inset:calc(var(--u)*5) calc(var(--u)*5) calc(var(--u)*6);display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*5);align-items:center}
+.gl .info{display:flex;flex-direction:column;gap:calc(var(--u)*1.4);min-width:calc(var(--u)*44)}
+.gl .gridbox{position:relative;height:100%;display:flex;align-items:center;justify-content:center}
+.legend{display:flex;gap:calc(var(--u)*2);flex-wrap:wrap;font-size:calc(var(--u)*1.6);font-weight:600;color:var(--mute)}
+.legend i{display:inline-block;width:calc(var(--u)*1.4);height:calc(var(--u)*1.4);border-radius:calc(var(--u)*.4);margin-right:calc(var(--u)*.6);vertical-align:-.15em}
+.pctbar{position:relative;height:calc(var(--u)*1.6);border-radius:999px;background:rgba(107,120,148,.3);overflow:hidden;width:calc(var(--u)*40)}
+.pctbar i{position:absolute;left:0;top:0;bottom:0;background:var(--sun);border-radius:999px}
+.nota{font-size:calc(var(--u)*1.35);color:var(--dim);max-width:calc(var(--u)*44);line-height:1.35}
+.semacomp{display:flex;align-items:center;gap:calc(var(--u)*1.4);background:var(--navy3);border:1px solid var(--line);border-radius:calc(var(--u)*1.4);padding:calc(var(--u)*1.4) calc(var(--u)*1.8);font-weight:700;font-size:calc(var(--u)*1.9)}
+.semacomp .ib{position:relative;font-size:calc(var(--u)*3.4);color:var(--gray)}
+.semacomp .x{position:absolute;right:calc(var(--u)*-.6);bottom:calc(var(--u)*-.4);font-size:calc(var(--u)*1.8);color:var(--bad);background:var(--navy3);border-radius:50%}
+
+/* ---------- 5 ---------- */
+#s5 .lay{position:absolute;inset:calc(var(--u)*7) calc(var(--u)*7) calc(var(--u)*7);display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*16);align-items:center}
+.track{position:relative;width:calc(var(--u)*16);height:calc(var(--u)*62);border-radius:calc(var(--u)*1.6);background:rgba(107,120,148,.14);border:2px dashed rgba(107,120,148,.4)}
+.track .fill{position:absolute;left:0;right:0;bottom:0;border-radius:calc(var(--u)*1.4);background:linear-gradient(#f7a531,#f2913d)}
+.track .today{position:absolute;left:0;right:0;bottom:0;border-radius:calc(var(--u)*1.4);background:var(--gray)}
+.track .lbl{position:absolute;left:calc(100% + var(--u)*1.4);white-space:nowrap;font-weight:700;font-size:calc(var(--u)*1.6);transform:translateY(50%)}
+.track .top{position:absolute;left:0;right:0;top:calc(var(--u)*-3.4);text-align:center;font-size:calc(var(--u)*1.5);color:var(--mute);font-weight:600}
+#s5 .vals{display:flex;flex-direction:column;gap:calc(var(--u)*2.2)}
+#s5 .money{display:flex;align-items:baseline;gap:calc(var(--u)*1.2)}
+#s5 .money .num{font-size:calc(var(--u)*9)}
+#s5 .money.y .num{font-size:calc(var(--u)*11.5);color:var(--sun)}
+#s5 .money span{font-size:calc(var(--u)*2.6);font-weight:700;color:var(--mute)}
+
+/* ---------- 6 ---------- */
+#s6 .lay{position:absolute;inset:calc(var(--u)*8) calc(var(--u)*8) calc(var(--u)*7);display:flex;align-items:flex-end;justify-content:center;gap:calc(var(--u)*7)}
+.colb{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.2);width:calc(var(--u)*26)}
+.colb .bar{width:100%;border-radius:calc(var(--u)*1.4) calc(var(--u)*1.4) calc(var(--u)*.4) calc(var(--u)*.4);transform-origin:bottom}
+.colb .v{font-weight:900;font-size:calc(var(--u)*4.6);letter-spacing:-.02em;white-space:nowrap}
+.colb .k{font-weight:800;font-size:calc(var(--u)*2.2)}
+.colb .s{font-size:calc(var(--u)*1.6);color:var(--mute)}
+#s6 .gain{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.4);width:calc(var(--u)*40)}
+#s6 .gain svg{width:calc(var(--u)*28);height:calc(var(--u)*34);overflow:visible}
+#s6 .gain .num{font-size:calc(var(--u)*7.4);color:var(--sun);white-space:nowrap}
+
+/* ---------- 7 ---------- */
+#s7 .lay{position:absolute;inset:calc(var(--u)*6) calc(var(--u)*8) calc(var(--u)*7);display:flex;flex-direction:column;gap:calc(var(--u)*3)}
+#s7 .cols{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*5);align-items:end;min-height:0}
+#s7 .c3{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.2);height:100%;justify-content:flex-end}
+#s7 .c3 .bar{width:70%;border-radius:calc(var(--u)*1.4) calc(var(--u)*1.4) calc(var(--u)*.4) calc(var(--u)*.4);background:linear-gradient(#f7a531,#f2913d);transform-origin:bottom}
+#s7 .c3 .v{font-weight:900;font-size:calc(var(--u)*4.4);white-space:nowrap;color:var(--sun)}
+#s7 .c3 .v small{font-size:.5em;color:var(--mute);font-weight:700}
+#s7 .c3 .k{font-weight:800;font-size:calc(var(--u)*2.6);background:var(--navy3);border:1px solid var(--line);border-radius:calc(var(--u)*1);padding:calc(var(--u)*.7) calc(var(--u)*1.6);white-space:nowrap}
+
+/* ---------- 8 ---------- */
+#s8 .lay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*3)}
+#s8 .devs{display:flex;align-items:flex-end;gap:calc(var(--u)*-4)}
+#s8 .phone{margin-left:calc(var(--u)*0);margin-bottom:calc(var(--u)*-1)}
+#s8 .pl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:calc(var(--u)*1.2);background:var(--navy3);border:1px solid var(--line);border-radius:calc(var(--u)*1);padding:calc(var(--u)*1) calc(var(--u)*1.4);font-size:calc(var(--u)*1.55);font-weight:700;margin-bottom:calc(var(--u)*.8)}
+#s8 .pl svg{width:calc(var(--u)*16);height:calc(var(--u)*2.6)}
+#s8 .pl .st{font-size:calc(var(--u)*1.3);color:var(--ok);white-space:nowrap}
+#s8 .pl.off{border-color:var(--mute)} #s8 .pl.off .st{color:#c3cbe0} #s8 .pl.off .dot{background:var(--mute)}
+#s8 .texts{display:flex;gap:calc(var(--u)*1.6);flex-wrap:wrap;justify-content:center}
+#s8 .chart{display:flex;align-items:flex-end;gap:calc(var(--u)*.5);height:calc(var(--u)*14);margin-top:calc(var(--u)*1)}
+#s8 .chart i{flex:1;background:linear-gradient(#f7a531,#f2913d);border-radius:calc(var(--u)*.3) calc(var(--u)*.3) 0 0}
+
+/* ---------- 9 ---------- */
+#s9 .lay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*2.4);text-align:center}
+#s9 img{width:calc(var(--u)*14);height:calc(var(--u)*14)}
+
+/* ======== 9:16 ======== */
+[data-f="9x16"] .gl,[data-f="1x1"] .gl{grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:calc(var(--u)*3);align-items:stretch}
+[data-f="9x16"] .gl{inset:calc(var(--u)*12) calc(var(--u)*5) calc(var(--u)*10)}
+[data-f="1x1"] .gl{inset:calc(var(--u)*8) calc(var(--u)*5) calc(var(--u)*5);gap:calc(var(--u)*2)}
+[data-f="1x1"] .gl .info{flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:calc(var(--u)*1) calc(var(--u)*3);min-width:0}
+[data-f="1x1"] .big{font-size:calc(var(--u)*11)}
+[data-f="1x1"] .nota{display:none}
+[data-f="9x16"] #s5 .lay{grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;align-content:center;gap:calc(var(--u)*8);inset:calc(var(--u)*12) calc(var(--u)*6)}
+[data-f="9x16"] .track{width:calc(var(--u)*60);height:calc(var(--u)*14)}
+[data-f="9x16"] .track .fill,[data-f="9x16"] .track .today{top:0;right:auto;height:auto}
+[data-f="9x16"] .track .lbl{left:auto;top:calc(100% + var(--u)*1.6);transform:translateX(-50%)}
+[data-f="9x16"] .track .top{top:calc(var(--u)*-3.4);text-align:left}
+[data-f="9x16"] #s5 .vals{align-items:center;text-align:center}
+[data-f="1x1"] #s5 .lay{inset:calc(var(--u)*9) calc(var(--u)*6) calc(var(--u)*7);gap:calc(var(--u)*14)}
+[data-f="1x1"] .track{height:calc(var(--u)*66);width:calc(var(--u)*12)}
+[data-f="1x1"] #s5 .money .num{font-size:calc(var(--u)*7.4)}
+[data-f="1x1"] #s5 .money.y .num{font-size:calc(var(--u)*9)}
+[data-f="9x16"] #s6 .lay{flex-wrap:wrap;align-content:center;align-items:flex-end;gap:calc(var(--u)*4) calc(var(--u)*6);inset:calc(var(--u)*10) calc(var(--u)*5)}
+[data-f="9x16"] #s6 .gain{order:3;width:100%}
+[data-f="9x16"] .colb{width:calc(var(--u)*36)}
+[data-f="1x1"] #s6 .lay{gap:calc(var(--u)*3);inset:calc(var(--u)*9) calc(var(--u)*4) calc(var(--u)*7)}
+[data-f="1x1"] .colb{width:calc(var(--u)*22)}
+[data-f="1x1"] .colb .v{font-size:calc(var(--u)*3.8)}
+[data-f="1x1"] #s6 .gain{width:calc(var(--u)*34)}
+[data-f="1x1"] #s6 .gain .num{font-size:calc(var(--u)*5.6)}
+[data-f="1x1"] #s6 .gain svg{width:calc(var(--u)*20);height:calc(var(--u)*26)}
+[data-f="9x16"] #s7 .lay{inset:calc(var(--u)*12) calc(var(--u)*5) calc(var(--u)*10)}
+[data-f="9x16"] #s7 .cols,[data-f="1x1"] #s7 .cols{gap:calc(var(--u)*2.4)}
+[data-f="9x16"] #s7 .c3 .v,[data-f="1x1"] #s7 .c3 .v{font-size:calc(var(--u)*3.2)}
+[data-f="9x16"] #s7 .c3 .bar{width:85%}
+[data-f="9x16"] #s7 .c3 .v{text-align:center;font-size:calc(var(--u)*3.6)}
+[data-f="9x16"] #s7 .c3 .v small{display:block}
+[data-f="1x1"] #s7 .lay{inset:calc(var(--u)*9) calc(var(--u)*5) calc(var(--u)*7)}
+[data-f="9x16"] #s8 .devs{flex-direction:column;align-items:center;gap:calc(var(--u)*3)}
+[data-f="9x16"] #s8 .laptop{width:calc(var(--u)*92)}
+[data-f="9x16"] #s8 .phone{margin:0;width:calc(var(--u)*32);height:calc(var(--u)*65)}
+[data-f="1x1"] #s8 .laptop{width:calc(var(--u)*72)}
+[data-f="1x1"] #s8 .phone{width:calc(var(--u)*21);height:calc(var(--u)*43)}
+[data-f="1x1"] #s8 .lay{gap:calc(var(--u)*2.4)}
+[data-f="9x16"] .h1{font-size:calc(var(--u)*8.4)}
+
+#ctl[hidden]{display:none}
+#ctl{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;padding:10px 14px;background:rgba(5,8,15,.92);font:13px Inter,system-ui,sans-serif;color:#cfd6e4;z-index:100}
+#ctl button{background:#1d2b47;color:#fff;border:1px solid #2c3d63;border-radius:6px;padding:6px 10px;font:inherit;cursor:pointer}
+#ctl button.on{background:#f7a531;color:#1a1205;border-color:#f7a531}
+#ctl input[type=range]{flex:1}
+#ctl .tc{font-variant-numeric:tabular-nums;min-width:120px}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage"></div></div>
+<div id="ctl" hidden>
+  <button id="play">▶︎</button>
+  <span class="tc" id="tc">0.0 s</span>
+  <input id="scrub" type="range" min="0" max="60" step="0.01" value="0">
+  <span id="scn"></span>
+  <button data-f="16x9">16:9</button><button data-f="9x16">9:16</button><button data-f="1x1">1:1</button>
+</div>
+<script>
+"use strict";
+/* ================= dados (briefing, plataforma AG Power em 24/10/2026) ================= */
+const D = {
+  cadastradas: 751, operacao: 636, power: 59,
+  pct: "7,9%", fora: 692, implantacoes30d: 108,
+  hoje: { mensal: 590 },
+  c30: { clientes: 225, r10: { mensal: 2250, anual: 27000 }, r29: { anual: 78300 }, r49: { anual: 132300 } },
+  diferencaAnual: 19920,
+};
+
+/* ================= utilidades (mesmo motor do comercial) ================= */
+const Q = new URLSearchParams(location.search);
+const FMT = ["16x9","9x16","1x1"].includes(Q.get("f")) ? Q.get("f") : "16x9";
+const SIZES = {"16x9":[1920,1080],"9x16":[1080,1920],"1x1":[1080,1080]};
+const [W,H] = SIZES[FMT];
+const U = Math.min(W,H)/100;
+const PORTRAIT = FMT === "9x16", SQUARE = FMT === "1x1";
+const LOGO = "../assets/logo-ag-power.png";
+const clamp = (x,a=0,b=1) => Math.min(b,Math.max(a,x));
+const eo = x => 1-Math.pow(1-x,3);
+const eio = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const back = x => { const c=1.7; return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2); };
+const lerp = (a,b,k) => a+(b-a)*k;
+const p = (t,a,d=.5,fn=eo) => fn(clamp((t-a)/d));
+const $ = (root,s) => root.querySelector(s);
+const $$ = (root,s) => [...root.querySelectorAll(s)];
+function css(el,o){ if(!el) return; for(const k in o) el.style[k]=o[k]; }
+function rise(el,t,a,d=.55,dy=3){ if(!el) return; const k=p(t,a,d); el.style.opacity=k; el.style.transform=`translateY(${(1-k)*dy*U}px)`; }
+function pop(el,t,a,d=.45){ if(!el) return; const k=clamp((t-a)/d); el.style.opacity=clamp(k*2.5); el.style.transform=`scale(${k<=0?.6:lerp(.6,1,back(k))})`; }
+function setText(el,txt){ if(el && el.textContent!==txt) el.textContent=txt; }
+const fmt = n => Math.round(n).toLocaleString("pt-BR");
+const brl = n => "R$ " + fmt(n);
+/** contador: valor de `from` a `to` entre a e a+d (ease-out) */
+const count = (t,a,d,from,to) => lerp(from,to,p(t,a,d,eo));
+/** tiques de contador para a trilha: um a cada `step` s durante a contagem */
+const ticks = (a,d,step=.075) => Array.from({length:Math.floor(d/step)},(_,i)=>[+(a+i*step).toFixed(3),"tick"]);
+
+const I = {
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  panel:'<path d="M4 4h16l-2 10H6z"/><path d="M5 9h14M10 4l-.8 10M14 4l.8 10M12 14v5M8 19h8"/>',
+  eyeoff:'<path d="M9.9 4.2A10 10 0 0 1 12 4c7 0 10 8 10 8a13 13 0 0 1-1.7 2.7M6.6 6.6A13 13 0 0 0 2 12s3 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2M2 2l20 20"/>',
+  x:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',
+  coins:'<circle cx="8" cy="8" r="6"/><path d="M18.1 10.4A6 6 0 1 1 10.3 18"/><path d="M7 6h1v4M16.7 13.9l.7.7-2.8 2.8"/>',
+  activity:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  trend:'<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  alert:'<path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/>',
+  flask:'<path d="M9 3h6M10 3v6L4.5 18.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7 15h10"/>',
+};
+const ic = n => `<svg class="ico" viewBox="0 0 24 24">${I[n]}</svg>`;
+const SIM = `<div class="sim">${ic("flask")} SIMULAÇÃO</div>`;
+const FOOT = `<div class="foot">Simulação com preços de exemplo, base de 751 usinas. Não é faturamento real.</div>`;
+const INTERNO = `<div class="interno">Uso interno</div>`;
+
+/* ================= grade das 751 usinas (canvas) ================= */
+function rng(seed){ return () => (seed = (seed*1664525 + 1013904223) >>> 0) / 4294967296; }
+const ORDER = (() => { const r = rng(42), a = [...Array(D.cadastradas).keys()]; for (let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; })();
+const RANK = new Array(D.cadastradas); ORDER.forEach((c,i)=>RANK[c]=i);
+// as 636 em operação e, entre elas, as 59 do Plano Power (sorteio fixo, só ilustrativo)
+const OPER = new Set(ORDER.slice(0, D.operacao));
+const POWER_LIST = (() => { const r = rng(7), ops = ORDER.slice(0, D.operacao).slice(); for (let i=ops.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [ops[i],ops[j]]=[ops[j],ops[i]]; } return ops.slice(0, D.power); })();
+const POWER_RANK = new Map(POWER_LIST.map((c,i)=>[c,i]));
+const COLS = PORTRAIT ? 19 : SQUARE ? 34 : 41;
+const ROWS = Math.ceil(D.cadastradas / COLS);
+
+function setupCanvas(cv){
+  const box = cv.parentElement.getBoundingClientRect();
+  const bw = box.width / VIEW_SCALE, bh = box.height / VIEW_SCALE;
+  const cell = Math.min(bw / COLS, bh / ROWS);
+  cv.width = Math.round(cell*COLS); cv.height = Math.round(cell*ROWS);
+  cv.style.width = cv.width+"px"; cv.style.height = cv.height+"px";
+  cv._cell = cell;
+}
+/** desenha a grade; colorOf(i) -> [r,g,b,a] ou null; shape 0 = ponto, 1 = barra */
+function drawGrid(cv, colorOf, shape){
+  if (!cv._cell) setupCanvas(cv);
+  const ctx = cv.getContext("2d"), c = cv._cell;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const w = lerp(c*.56, c*.42, shape), h = lerp(c*.56, c*.86, shape), r = lerp(w/2, c*.12, shape);
+  for (let i=0;i<D.cadastradas;i++){
+    const col = colorOf(i); if (!col) continue;
+    const x = (i % COLS) * c + (c-w)/2, y = Math.floor(i / COLS) * c + (c-h)/2;
+    ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${col[3]})`;
+    ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill();
+  }
+}
+const C_OFF=[38,52,82], C_REG=[120,136,170], C_OP=[226,233,245], C_GRAY=[107,120,148], C_SUN=[247,165,49];
+const mix = (a,b,k) => [lerp(a[0],b[0],k),lerp(a[1],b[1],k),lerp(a[2],b[2],k)];
+
+/* ================= cenas ================= */
+const SCENES = []; const S = o => SCENES.push(o);
+
+/* ---------- 1. Abertura ---------- */
+const COINS = 11;
+S({ id:1, name:"Abertura", dur:5,
+  html: () => {
+    const cx = W/2, base = H*(PORTRAIT ? .66 : .74), cw = U*(PORTRAIT ? 30 : 24), ch = U*2.6;
+    let coins = "";
+    for (let i=0;i<COINS;i++){
+      coins += `<g class="coin"><rect x="${cx-cw/2}" y="${base-ch*(i+1)}" width="${cw}" height="${ch}" fill="url(#cside)"/>`+
+        `<ellipse cx="${cx}" cy="${base-ch*(i+1)}" rx="${cw/2}" ry="${cw*.16}" fill="url(#ctop)" stroke="#ffd98a" stroke-width="2"/>`+
+        `<ellipse cx="${cx}" cy="${base-ch*(i+1)}" rx="${cw*.34}" ry="${cw*.105}" fill="none" stroke="#c97c18" stroke-width="2" opacity=".7"/>`+
+        `<ellipse cx="${cx}" cy="${base-ch*i}" rx="${cw/2}" ry="${cw*.16}" fill="url(#cside)"/></g>`;
+    }
+    const loose = [[-1.6,.0],[1.5,.05],[-2.4,.12],[2.3,.1]].map(([dx,dy])=>`<ellipse class="loose" cx="${cx+dx*cw}" cy="${base+dy*cw}" rx="${cw*.42}" ry="${cw*.13}" fill="url(#ctop)" stroke="#c97c18" stroke-width="2"/>`).join("");
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <defs>
+        <radialGradient id="table" cx=".5" cy="${base/H}" r=".7"><stop offset="0" stop-color="#2a2f44"/><stop offset=".45" stop-color="#151b2c"/><stop offset="1" stop-color="#0a1120"/></radialGradient>
+        <radialGradient id="spot" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f7a531" stop-opacity=".22"/><stop offset="1" stop-color="#f7a531" stop-opacity="0"/></radialGradient>
+        <linearGradient id="ctop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#f7b84a"/><stop offset="1" stop-color="#d98a22"/></linearGradient>
+        <linearGradient id="cside" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a8640f"/><stop offset=".35" stop-color="#e9a03a"/><stop offset=".6" stop-color="#ffcf6e"/><stop offset="1" stop-color="#9c5c0d"/></linearGradient>
+      </defs>
+      <rect width="${W}" height="${H}" fill="url(#table)"/>
+      <ellipse class="spot" cx="${cx}" cy="${base}" rx="${cw*2.6}" ry="${cw*.9}" fill="url(#spot)"/>
+      <ellipse cx="${cx}" cy="${base+cw*.05}" rx="${cw*.62}" ry="${cw*.19}" fill="#000" opacity=".45"/>
+      ${loose}${coins}
+    </svg>
+    ${INTERNO}
+    <div class="title"><div class="kicker">Plano Power</div><div class="h1">Dinheiro <span class="sun">na Mesa</span></div></div>`;
+  },
+  update(root,t,dur){
+    const ch = U*2.6;
+    $$(root,".coin").forEach((g,i)=>{
+      const a = .25 + i*.2, k = clamp((t-a)/.32);
+      const y = k<1 ? -(1-eo(k))*H*.5 : 0;
+      const b = t>a+.32 && t<a+.5 ? Math.sin((t-a-.32)/.18*Math.PI)*-ch*.35 : 0;
+      g.setAttribute("transform",`translate(0 ${y+b})`); g.style.opacity = k>0 ? 1 : 0;
+    });
+    $$(root,".loose").forEach((e,i)=>e.style.opacity = p(t,.4+i*.25,.3));
+    $(root,".spot").style.opacity = p(t,0,1.5);
+    rise($(root,".title"),t,2.6,.7,4);
+    // transição: zoom para os números
+    const z = p(t,dur-.6,.6,eio);
+    css($(root,"svg"),{transformOrigin:"50% 70%", transform:`scale(${lerp(1,2.4,z)})`});
+    css($(root,".title"),{opacity:p(t,2.6,.7)*(1-z)});
+  },
+  sfx: [...Array.from({length:COINS},(_,i)=>[+(.25+i*.2+.32).toFixed(2),"coin"]), [2.7,"whoosh"]],
+});
+
+/* ---------- 2. A base que já temos ---------- */
+S({ id:2, name:"A base que já temos", dur:7,
+  html: () => `<div class="bg-glow"></div>${INTERNO}
+    <div class="gl">
+      <div class="info">
+        <div class="kicker">A base que já temos</div>
+        <div><span class="big n1">0</span></div>
+        <div class="h2">usinas cadastradas</div>
+        <div class="tag n2wrap" style="align-self:flex-start;background:rgba(226,233,245,.12);color:var(--ink)"><span class="n2">0</span>&nbsp;em operação</div>
+        <div class="legend"><span><i style="background:rgb(120,136,170)"></i>cadastrada</span><span><i style="background:rgb(226,233,245)"></i>em operação</span></div>
+      </div>
+      <div class="gridbox"><canvas class="grid"></canvas></div>
+    </div>`,
+  update(root,t,dur){
+    rise($(root,".kicker"),t,0,.5);
+    const n1 = count(t,.3,2.2,0,D.cadastradas);
+    setText($(root,".n1"), fmt(n1));
+    rise($(root,".h2"),t,.5,.5);
+    const n2 = count(t,3.0,1.6,0,D.operacao);
+    setText($(root,".n2"), fmt(n2)); rise($(root,".n2wrap"),t,2.8,.4,2);
+    rise($(root,".legend"),t,3.2,.4,2);
+    const shape = p(t,dur-.8,.8,eio);
+    drawGrid($(root,"canvas"), i => {
+      const r = RANK[i];
+      if (r >= n1) return [...C_OFF, .5];
+      const opK = OPER.has(i) && r < n2 ? 1 : 0;
+      const lit = clamp((n1 - r)/25);
+      return [...mix(mix(C_OFF,C_REG,lit),C_OP,opK), 1];
+    }, shape);
+  },
+  sfx: [...ticks(.3,2.0), ...ticks(3.0,1.4), [2.5,"pop"], [4.5,"pop"]],
+});
+
+/* ---------- 3. Quantas estão no Plano Power ---------- */
+S({ id:3, name:"Quantas estão no Plano Power", dur:7,
+  html: () => `<div class="bg-glow"></div>${INTERNO}
+    <div class="gl">
+      <div class="info">
+        <div class="kicker">Plano Power hoje</div>
+        <div><span class="big sun n">0</span></div>
+        <div class="h2">no Plano Power</div>
+        <div class="pw"><div class="row" style="gap:${U*1.4}px"><span class="tag">${D.pct} da base</span><span class="p">59 de 751</span></div>
+          <div class="pctbar" style="margin-top:${U*1.4}px"><i></i></div></div>
+        <div class="nota">Usinas marcadas como Plano Power na plataforma AG Power em 24/10/2026.</div>
+      </div>
+      <div class="gridbox"><canvas class="grid"></canvas></div>
+    </div>`,
+  update(root,t,dur){
+    rise($(root,".kicker"),t,0,.5);
+    const n = count(t,.6,2.2,0,D.power);
+    setText($(root,".n"), fmt(n)); rise($(root,".h2"),t,.5,.5);
+    rise($(root,".pw"),t,3.0,.5,2);
+    $(root,".pctbar i").style.width = (p(t,3.3,.8)*7.9)+"%";
+    rise($(root,".nota"),t,3.8,.5,1.5);
+    const pulse = t > dur-1.2 ? .55 + .45*Math.abs(Math.sin((t-(dur-1.2))*Math.PI*1.6)) : 1;
+    const gk = p(t,0,.5);
+    drawGrid($(root,"canvas"), i => {
+      const pr = POWER_RANK.get(i);
+      if (pr !== undefined && pr < n) return [...C_SUN, 1];
+      return [...C_GRAY, lerp(1,.55,gk)*pulse];
+    }, 1);
+  },
+  sfx: [...ticks(.6,2.0,.09), [2.8,"pop"], [3.4,"soft"]],
+});
+
+/* ---------- 4. O que fica de fora ---------- */
+S({ id:4, name:"O que fica de fora", dur:6, cut:true,
+  html: () => `<div class="bg-glow"></div>${INTERNO}
+    <div class="gl">
+      <div class="info">
+        <div class="kicker">O que fica de fora</div>
+        <div><span class="big n">0</span></div>
+        <div class="h2">usinas fora do plano</div>
+        <div class="semacomp"><span class="ib">${ic("panel")}<span class="x">${ic("x")}</span></span>sem acompanhamento recorrente</div>
+      </div>
+      <div class="gridbox"><canvas class="grid"></canvas></div>
+    </div>`,
+  update(root,t){
+    rise($(root,".kicker"),t,0,.4);
+    const n = count(t,.3,1.6,0,D.fora);
+    setText($(root,".n"), fmt(n)); rise($(root,".h2"),t,.3,.5);
+    rise($(root,".semacomp"),t,2.2,.5,2);
+    const pulse = .7 + .3*Math.sin(t*Math.PI*1.4);
+    const k = p(t,0,.6);
+    drawGrid($(root,"canvas"), i => POWER_RANK.has(i) ? [...C_SUN, lerp(1,.25,k)] : [...mix(C_GRAY,[170,182,206],k*pulse), 1], 1);
+  },
+  sfx: [...ticks(.3,1.4), [2.3,"alert"]],
+});
+
+/* ---------- 5. A simulação: 30% a R$ 10 ---------- */
+S({ id:5, name:"A simulação: 30% a R$ 10", dur:10,
+  html: () => `<div class="bg-glow"></div>${SIM}${INTERNO}
+    <div class="lay">
+      <div class="track"><div class="top">751 usinas</div><div class="fill"></div><div class="today"></div>
+        <div class="lbl l30 sun"></div><div class="lbl lh gray">Hoje: 59</div></div>
+      <div class="vals">
+        <div class="kicker">Se 30% da base pagasse R$ 10/mês</div>
+        <div class="h2"><span class="sun">30%</span> da base = <span class="cl sun">59</span> clientes</div>
+        <div><span class="tag pill">${ic("coins")} R$ 10/mês por usina</span></div>
+        <div class="money m1"><span class="num">R$ 0</span><span>/mês</span></div>
+        <div class="money y m2"><span class="num">R$ 0</span><span>/ano</span></div>
+      </div>
+    </div>${FOOT}`,
+  update(root,t,dur){
+    const tr = $(root,".track"); rise(tr,t,0,.6,4);
+    const cl = count(t,.9,2.2,D.power,D.c30.clientes);
+    const frac = v => (v / D.cadastradas * 100) + "%";
+    const prop = PORTRAIT ? "width" : "height";
+    $(root,".today").style[prop] = frac(D.power);
+    $(root,".fill").style[prop] = frac(cl);
+    const l30 = $(root,".l30"), lh = $(root,".lh");
+    setText(l30, `30%: ${fmt(cl)}`);
+    if (PORTRAIT){ l30.style.left = frac(cl); lh.style.left = frac(D.power); lh.style.top = `calc(100% + ${U*5}px)`; }
+    else { l30.style.bottom = frac(cl); lh.style.bottom = frac(D.power); }
+    l30.style.opacity = p(t,.9,.3);
+    rise($(root,".kicker"),t,.2,.5); rise($(root,".h2"),t,.4,.5);
+    setText($(root,".cl"), fmt(cl));
+    rise($(root,".pill"),t,1.6,.5,2);
+    const m1 = $(root,".m1"), m2 = $(root,".m2");
+    rise(m1,t,3.4,.4,2); setText($(m1,".num"), brl(count(t,3.5,1.8,0,D.c30.r10.mensal)));
+    rise(m2,t,5.8,.4,2); setText($(m2,".num"), brl(count(t,5.9,1.9,0,D.c30.r10.anual)));
+    pop($(root,".sim"),t,.3,.4);
+    rise($(root,".foot"),t,1,.5,1);
+    // transição: os valores deslizam para o lado
+    const z = p(t,dur-.6,.6,eio);
+    css($(root,".vals"),{transform:`translateX(${-z*U*40}px)`, opacity: 1-z});
+    css(tr,{opacity:1-z});
+  },
+  sfx: [...ticks(.9,2.0,.1), ...ticks(3.5,1.6), ...ticks(5.9,1.7), [7.8,"chaching"], [9.4,"whoosh"]],
+});
+
+/* ---------- 6. Dinheiro na mesa ---------- */
+const coinStack = n => Array.from({length:n},(_,i)=>`<g class="cs"><rect x="40" y="${300-(i+1)*16}" width="200" height="16" fill="url(#s6side)"/><ellipse cx="140" cy="${300-(i+1)*16}" rx="100" ry="26" fill="url(#s6top)" stroke="#ffd98a" stroke-width="2"/><ellipse cx="140" cy="${300-i*16}" rx="100" ry="26" fill="url(#s6side)" opacity="0"/></g>`).join("");
+S({ id:6, name:"Dinheiro na mesa", dur:7,
+  html: () => `<div class="bg-glow"></div>${SIM}${INTERNO}
+    <div class="lay">
+      <div class="colb hoje"><div class="v gray">R$ 590<span style="font-size:.45em">/mês</span></div><div class="bar" style="background:var(--gray)"></div><div class="k gray">Hoje</div><div class="s">59 clientes</div></div>
+      <div class="colb c30"><div class="v sun">R$ 2.250<span style="font-size:.45em">/mês</span></div><div class="bar" style="background:linear-gradient(#f7a531,#f2913d)"></div><div class="k sun">30% da base</div><div class="s">225 clientes</div></div>
+      <div class="gain">
+        <svg viewBox="0 0 280 330"><defs>
+          <linearGradient id="s6top" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#f7b84a"/><stop offset="1" stop-color="#d98a22"/></linearGradient>
+          <linearGradient id="s6side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a8640f"/><stop offset=".35" stop-color="#e9a03a"/><stop offset=".6" stop-color="#ffcf6e"/><stop offset="1" stop-color="#9c5c0d"/></linearGradient></defs>
+          <ellipse cx="140" cy="304" rx="120" ry="24" fill="#000" opacity=".4"/>${coinStack(14)}</svg>
+        <div class="num g">+ R$ 0</div>
+        <div class="tag">por ano a mais, nesse cenário</div>
+      </div>
+    </div>${FOOT}`,
+  update(root,t,dur){
+    pop($(root,".sim"),t,0,.3);
+    const maxH = U*(PORTRAIT ? 36 : SQUARE ? 40 : 44);
+    const bh = $(root,".hoje .bar"), b3 = $(root,".c30 .bar");
+    bh.style.height = (maxH * D.hoje.mensal / D.c30.r10.mensal) + "px";
+    b3.style.height = maxH + "px";
+    bh.style.transform = `scaleY(${p(t,.3,.7)})`; b3.style.transform = `scaleY(${p(t,.8,.9)})`;
+    rise($(root,".hoje .v"),t,.6,.4,2); rise($(root,".c30 .v"),t,1.3,.4,2);
+    $$(root,".hoje .k,.hoje .s").forEach(e=>rise(e,t,.3,.4,1)); $$(root,".c30 .k,.c30 .s").forEach(e=>rise(e,t,.8,.4,1));
+    const g = $(root,".gain"); rise(g,t,2.0,.5,2);
+    $$(root,".cs").forEach((c,i)=>{ const k = clamp((t-2.2-i*.09)/.25); c.setAttribute("transform",`translate(0 ${-(1-eo(k))*120})`); c.style.opacity = k>0?1:0; });
+    setText($(root,".g"), "+ " + brl(count(t,2.3,1.5,0,D.diferencaAnual)));
+    rise($(root,".foot"),t,.5,.5,1);
+    // transição: a pilha cresce
+    const z = p(t,dur-.6,.6,eio);
+    css($(root,".gain svg"),{transformOrigin:"50% 90%", transform:`scale(${lerp(1,1.6,z)})`});
+    css($(root,".lay"),{opacity:1-p(t,dur-.35,.35)});
+  },
+  sfx: [[.4,"swish"],[.9,"swish"], ...Array.from({length:14},(_,i)=>[+(2.2+i*.09+.25).toFixed(2),"coin"]), ...ticks(2.3,1.4), [3.85,"chaching"]],
+});
+
+/* ---------- 7. E se o plano valer mais ---------- */
+const PLANOS = [[10, D.c30.r10.anual],[29, D.c30.r29.anual],[49, D.c30.r49.anual]];
+S({ id:7, name:"E se o plano valer mais", dur:8,
+  html: () => `<div class="bg-glow"></div>${SIM}${INTERNO}
+    <div class="lay">
+      <div><div class="kicker">E se o plano valer mais?</div><div class="h2" style="margin-top:${U}px">30% da base <span class="gray">· 225 clientes · simulação</span></div></div>
+      <div class="cols">${PLANOS.map(([m])=>`<div class="c3"><div class="v"><span class="vn">R$ 0</span><small>/ano</small></div><div class="bar"></div><div class="k">R$ ${m}/mês</div></div>`).join("")}</div>
+    </div>${FOOT}`,
+  update(root,t,dur){
+    pop($(root,".sim"),t,0,.3);
+    rise($(root,".lay > div:first-child"),t,0,.5);
+    const box = $(root,".cols").getBoundingClientRect();
+    const maxH = box.height/VIEW_SCALE - U*13;
+    $$(root,".c3").forEach((c,i)=>{
+      const a = .6 + i*1.6, [, anual] = PLANOS[i];
+      const k = p(t,a,1.2,eo);
+      const b = $(c,".bar"); b.style.height = (maxH * anual / PLANOS[2][1]) + "px"; b.style.transform = `scaleY(${k})`;
+      rise($(c,".k"),t,a-.3,.4,1.5); rise($(c,".v"),t,a,.3,1.5);
+      setText($(c,".vn"), brl(count(t,a,1.2,0,anual)));
+    });
+    rise($(root,".foot"),t,.5,.5,1);
+    // transição: as colunas viram a tela da plataforma
+    const z = p(t,dur-.6,.6,eio);
+    css($(root,".lay"),{transform:`scale(${lerp(1,.6,z)})`, opacity:1-z});
+  },
+  sfx: [...ticks(.6,1.1), [1.8,"chaching"], ...ticks(2.2,1.1), [3.4,"chaching"], ...ticks(3.8,1.1), [5.0,"chaching"], [7.5,"whoosh"]],
+});
+
+/* ---------- 8. A ferramenta já existe ---------- */
+const spark = s => { let d="M0 20"; for(let i=1;i<=10;i++){ const y=6+((Math.sin(i*1.7+s)*.5+.5)*12); d+=` L${i*14} ${y.toFixed(1)}`; } return d; };
+S({ id:8, name:"A ferramenta já existe", dur:6,
+  html: () => `<div class="bg-glow"></div>${INTERNO}
+    <div class="lay">
+      <div class="devs">
+        <div class="laptop"><div class="lp-screen"><div class="lp-inner">
+          <div class="row" style="justify-content:space-between;margin-bottom:${U*1.4}px"><div class="row" style="font-weight:800;font-size:${U*2}px"><span class="sun">${ic("activity")}</span> Monitoramento das usinas</div><img class="logo-img" src="${LOGO}" style="width:${U*3}px;height:${U*3}px"/></div>
+          ${["Usina 01","Usina 02","Usina 03","Usina 04","Usina 05"].map((n,i)=>`<div class="pl"><span class="row"><span class="dot"></span>${n}</span><svg viewBox="0 0 140 26"><path d="${spark(i)}" fill="none" stroke="#34c38f" stroke-width="2.2"/></svg><span class="st">Gerando normal</span></div>`).join("")}
+        </div></div><div class="lp-base"></div></div>
+        <div class="phone"><div class="ph-screen"><div class="ph-notch"></div>
+          <div class="row" style="font-weight:800;font-size:${U*1.6}px"><img class="logo-img" src="${LOGO}" style="width:${U*2.2}px;height:${U*2.2}px"/> Portal do cliente</div>
+          <div style="font-size:${U*1.2}px;color:var(--mute);margin-top:${U*1.4}px;font-weight:700">Geração de energia</div>
+          <div class="chart">${[45,60,52,70,82,76,90,68,85,94].map(h=>`<i style="height:${h}%"></i>`).join("")}</div>
+          <div class="card row" style="margin-top:${U*1.4}px;font-size:${U*1.25}px;font-weight:700"><span class="sun">${ic("sun")}</span> Plano Power</div>
+        </div></div>
+      </div>
+      <div class="texts"><span class="tag t1">${ic("check")} Monitoramento já funcionando</span><span class="tag t2">${ic("trend")} +<span class="n">0</span> implantações nos últimos 30 dias</span></div>
+    </div>`,
+  update(root,t,dur){
+    rise($(root,".laptop"),t,0,.6,5); rise($(root,".phone"),t,.3,.6,7);
+    const pls = $$(root,".pl"); pls.forEach((e,i)=>rise(e,t,.4+i*.08,.35,1.5));
+    const off = t >= 1.6, pl = pls[2];
+    pl.classList.toggle("off", off); setText($(pl,".st"), off ? "Parou de mandar dados" : "Gerando normal");
+    $(pl,"svg path").setAttribute("stroke", off ? "#8e9bb5" : "#34c38f");
+    const k = off ? Math.max(0,1-(t-1.6)/.6) : 0; pl.style.transform = `scale(${1+k*.05})`; pl.style.boxShadow = off ? `0 0 0 ${2+k*4}px rgba(142,155,181,.5)` : "none";
+    $$(root,".chart i").forEach((e,i)=>{ e.style.transformOrigin="bottom"; e.style.transform=`scaleY(${p(t,.6+i*.04,.4)})`; });
+    rise($(root,".t1"),t,1.9,.5,2); rise($(root,".t2"),t,3.0,.5,2);
+    setText($(root,".t2 .n"), fmt(count(t,3.1,1.3,0,D.implantacoes30d)));
+    css($(root,".lay"),{opacity:1-p(t,dur-.5,.5)});
+  },
+  sfx: [[1.6,"alert"],[2.0,"check"], ...ticks(3.1,1.2)],
+});
+
+/* ---------- 9. Encerramento ---------- */
+S({ id:9, name:"Encerramento", dur:4,
+  html: () => `<div class="bg-glow"></div>
+    <div class="lay"><img class="logo-img" src="${LOGO}"/><div class="kicker">Plataforma AG Power</div><div class="h1">Plano <span class="sun">Power</span></div><div class="h2 gray" style="font-weight:600">O dinheiro está na mesa.</div></div>`,
+  update(root,t){
+    pop($(root,"img"),t,0,.6); rise($(root,".kicker"),t,.3,.5); rise($(root,".h1"),t,.45,.6); rise($(root,".h2"),t,.9,.6);
+  },
+  sfx: [[.05,"chime"]],
+});
+
+/* ================= linha do tempo ================= */
+const ACTIVE = SCENES;
+let acc = 0; for (const s of ACTIVE){ s.start = acc; acc += s.dur; }
+const TOTAL = acc, XF = .5;
+const stage = document.getElementById("stage");
+stage.dataset.f = FMT; stage.style.width = W+"px"; stage.style.height = H+"px";
+document.documentElement.style.setProperty("--u", U+"px");
+let VIEW_SCALE = 1;
+for (const s of ACTIVE){ const el = document.createElement("section"); el.className="scene"; el.id="s"+s.id; el.innerHTML=s.html(); stage.appendChild(el); s.el=el; }
+
+function renderAt(T){
+  T = clamp(T,0,TOTAL);
+  ACTIVE.forEach((s,i)=>{
+    const local = T - s.start, next = ACTIVE[i+1], prev = ACTIVE[i-1];
+    const xfOut = s.cut ? 0 : XF, xfIn = prev && prev.cut ? 0 : XF;
+    const visible = local >= 0 && (local < s.dur || (next && local < s.dur + (next ? (s.cut?0:XF) : 0)) || (!next && local <= s.dur));
+    if (!visible){ s.el.style.visibility="hidden"; s.el.style.opacity=0; return; }
+    s.el.style.visibility = "visible";
+    s.el.style.opacity = i===0 || xfIn===0 ? 1 : clamp(local/xfIn);
+    s.update(s.el, Math.min(local, s.dur + xfOut), s.dur);
+  });
+  stage.style.filter = T > TOTAL-.6 ? `brightness(${clamp((TOTAL-T)/.6)*.6+.4})` : "none";
+  return T;
+}
+const SFX = ACTIVE.flatMap(s => (s.sfx||[]).map(([t,k]) => ({ t: +(s.start+t).toFixed(3), k })));
+// trilha: pulso entra cedo, sobe no cenário de 30% (cena 5) e fecha forte
+const MUSIC = { bpm: 104, arp: 5, kick: 12, hat: 25, clap: 35, prog: "vi-IV-I-V" };
+window.COMMERCIAL = { W, H, FMT, CUT:false, TOTAL, SFX, MUSIC, scenes: ACTIVE.map(s=>({id:s.id,name:s.name,start:s.start,dur:s.dur})) };
+window.renderAt = renderAt;
+
+function fit(){
+  const ctlH = Q.get("render") ? 0 : 56;
+  VIEW_SCALE = Math.min(innerWidth/W, (innerHeight-ctlH)/H);
+  stage.style.transform = `scale(${VIEW_SCALE})`;
+  document.getElementById("wrap").style.bottom = ctlH+"px";
+  $$(stage,"canvas.grid").forEach(c=>{ c._cell = 0; });
+}
+if (Q.get("render")){
+  document.getElementById("wrap").style.cssText = "position:absolute;left:0;top:0;display:block";
+  VIEW_SCALE = 1; renderAt(+Q.get("t")||0);
+} else {
+  addEventListener("resize",fit); fit();
+  const ctl = document.getElementById("ctl"); ctl.hidden = false;
+  const scrub = document.getElementById("scrub"), tc = document.getElementById("tc"), scn = document.getElementById("scn"), play = document.getElementById("play");
+  scrub.max = TOTAL;
+  let t = +Q.get("t")||0, playing = !Q.get("t"), last = performance.now();
+  const audio = new Audio("../videos/dinheiro-na-mesa-60s-16x9.mp4"); audio.preload = "auto";
+  const syncAudio = () => { if (!audio.error){ audio.currentTime = t; playing ? audio.play().catch(()=>{}) : audio.pause(); } };
+  const show = () => { renderAt(t); scrub.value = t; tc.textContent = t.toFixed(1)+" s / "+TOTAL+" s"; const s = ACTIVE.find(s=>t>=s.start && t<s.start+s.dur) || ACTIVE[ACTIVE.length-1]; scn.textContent = `Cena ${s.id} — ${s.name}`; play.textContent = playing ? "❚❚" : "▶︎"; };
+  play.onclick = () => { playing = !playing; if (t>=TOTAL) t=0; syncAudio(); show(); };
+  scrub.oninput = () => { t = +scrub.value; syncAudio(); show(); };
+  document.querySelectorAll("#ctl [data-f]").forEach(b => { b.classList.toggle("on", b.dataset.f===FMT); b.onclick = () => { Q.set("f", b.dataset.f); Q.delete("t"); location.search = Q; }; });
+  addEventListener("keydown", e => { if (e.code==="Space"){ e.preventDefault(); play.click(); } });
+  const loop = now => { const dt = (now-last)/1000; last = now; if (playing){ t += dt; if (t>=TOTAL){ t=TOTAL; playing=false; audio.pause(); } } show(); requestAnimationFrame(loop); };
+  if (playing) syncAudio();
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

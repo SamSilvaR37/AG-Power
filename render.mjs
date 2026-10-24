@@ -1,6 +1,6 @@
 // Renderiza o comercial em MP4 (H.264 + AAC) quadro a quadro.
 //
-// Uso: node render.mjs [16x9|9x16|1x1|all] [--cut] [--fps 30]
+// Uso: node render.mjs [16x9|9x16|1x1|all] [--cut] [--fps 30] [--pagina arquivo.html --nome prefixo]
 // Requer: Playwright (Chromium), ffmpeg e python3 com numpy.
 // Saída em comercial/dist/.
 import { createRequire } from "node:module";
@@ -15,38 +15,42 @@ try { ({ chromium } = require("playwright")); }
 catch { ({ chromium } = require(require.resolve("playwright", { paths: [process.env.NODE_PATH || "", "/opt/node22/lib/node_modules"] }))); }
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const DIST = join(HERE, "dist");
-mkdirSync(DIST, { recursive: true });
 
 const args = process.argv.slice(2);
-const which = args.find((a) => !a.startsWith("--")) || "16x9";
+const which = ["16x9", "9x16", "1x1", "all"].find((a) => args.includes(a)) || "16x9";
 const cut = args.includes("--cut");
 const fps = Number(args[args.indexOf("--fps") + 1]) || 30;
+const opt = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d);
+const pagina = opt("--pagina", "comercial.html"); // ex.: dinheiro-na-mesa/index.html
+const nome = opt("--nome", "ag-power-comercial");
+const DIST = join(HERE, "dist", nome === "ag-power-comercial" ? "" : nome);
+mkdirSync(DIST, { recursive: true });
 const formats = which === "all" ? ["16x9", "9x16", "1x1"] : [which];
 const SIZES = { "16x9": [1920, 1080], "9x16": [1080, 1920], "1x1": [1080, 1080] };
 
 const browser = await chromium.launch();
 let audioDone = false;
-const tag = cut ? "60s" : "90s";
-const audioBase = join(DIST, `audio-${tag}`);
+let tag, audioBase;
 
 for (const f of formats) {
   const [w, h] = SIZES[f];
   const page = await browser.newPage({ viewport: { width: w, height: h } });
-  const url = pathToFileURL(join(HERE, "comercial.html")).href + `?render=1&f=${f}${cut ? "&cut=60" : ""}`;
+  const url = pathToFileURL(join(HERE, pagina)).href + `?render=1&f=${f}${cut ? "&cut=60" : ""}`;
   await page.goto(url);
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(300);
   const info = await page.evaluate(() => window.COMMERCIAL);
 
   if (!audioDone) {
+    tag = info.CUT ? "60s" : `${Math.round(info.TOTAL)}s`;
+    audioBase = join(DIST, `audio-${tag}`);
     const tl = join(DIST, `timeline-${tag}.json`);
     writeFileSync(tl, JSON.stringify(info, null, 2));
     execFileSync("python3", [join(HERE, "audio.py"), tl, audioBase], { stdio: "inherit" });
     audioDone = true;
   }
 
-  const out = join(DIST, `ag-power-comercial-${tag}-${f}.mp4`);
+  const out = join(DIST, `${nome}-${tag}-${f}.mp4`);
   const ff = spawn("ffmpeg", [
     "-y", "-loglevel", "error",
     "-f", "image2pipe", "-framerate", String(fps), "-c:v", "mjpeg", "-i", "-",

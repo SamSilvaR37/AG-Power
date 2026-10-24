@@ -1,0 +1,135 @@
+{
+  "projeto": {
+    "titulo": "Dinheiro na Mesa - Plano Power",
+    "formato": "video interno de oportunidade (para donos e gerencia)",
+    "duracao_total_segundos": 60,
+    "idioma": "pt-BR",
+    "proporcao_principal": "16:9",
+    "versoes_alternativas": ["9:16 (Reels/Stories)", "1:1 (feed)"],
+    "observacao": "Video INTERNO. Os valores sao uma simulacao com precos de exemplo, nao faturamento real. Os numeros da base vieram da plataforma AG Power em 24/10/2026."
+  },
+  "dados_base": {
+    "fonte": "plataforma AG Power, 24/10/2026",
+    "usinas_cadastradas": 751,
+    "usinas_em_operacao": 636,
+    "usinas_no_plano_power": 59,
+    "percentual_plano_power_hoje": "7,9% da base (59 de 751)",
+    "nota_sobre_os_2_4_porcento": "O 2,4% visto antes saiu de uma contagem inflada por cadastros duplicados (59 de 2.443). Ja foi corrigido. Atencao: 59 e quem esta marcado como Plano Power na plataforma; quantos realmente pagam precisa ser conferido no Groner.",
+    "usinas_entrando_por_mes": "cerca de 108 novas implantacoes nos ultimos 30 dias (a base cresce todo mes)"
+  },
+  "simulacao": {
+    "premissa": "Mensalidade de exemplo por usina. Base = 751 usinas.",
+    "hoje": {
+      "clientes_power": 59,
+      "a_10_reais_mes": { "mensal": 590, "anual": 7080 }
+    },
+    "cenarios": [
+      {
+        "adesao": "30%",
+        "clientes": 225,
+        "novos_clientes_vs_hoje": 166,
+        "a_10_reais": { "mensal": 2250, "anual": 27000 },
+        "a_29_reais": { "mensal": 6525, "anual": 78300 },
+        "a_49_reais": { "mensal": 11025, "anual": 132300 }
+      },
+      {
+        "adesao": "50%",
+        "clientes": 375,
+        "a_10_reais": { "mensal": 3750, "anual": 45000 },
+        "a_29_reais": { "mensal": 10875, "anual": 130500 },
+        "a_49_reais": { "mensal": 18375, "anual": 220500 }
+      },
+      {
+        "adesao": "100%",
+        "clientes": 751,
+        "a_10_reais": { "mensal": 7510, "anual": 90120 }
+      }
+    ],
+    "dinheiro_na_mesa_cenario_principal": {
+      "descricao": "Diferenca entre hoje (59 clientes) e 30% da base (225 clientes) a R$ 10/mes",
+      "mensal": 1660,
+      "anual": 19920
+    }
+  },
+  "regras_de_conteudo": {
+    "usar_somente_os_numeros_acima": true,
+    "sempre_marcar_valores_como_simulacao": true,
+    "nome_do_produto": "plataforma AG Power",
+    "proibido": [
+      "citar nomes de clientes",
+      "apresentar a simulacao como faturamento real",
+      "inventar numeros que nao estao em dados_base ou simulacao"
+    ],
+    "tom": "direto, de oportunidade, sem alarmismo - 'o dinheiro esta na mesa, falta pegar'"
+  },
+  "identidade_visual": {
+    "fundo": "azul-marinho bem escuro",
+    "destaques": "amarelo/laranja (cor do sol) para os numeros que crescem; cinza para o 'hoje'",
+    "estilo": "moderno e limpo, numeros grandes animados (contador subindo)",
+    "elementos": ["contadores animados", "barras crescendo", "moedas/sol como icone", "mockup da tela de monitoramento"],
+    "tipografia": "sem serifa, numeros em bold bem grandes",
+    "logo": "logo oficial da AG Power"
+  },
+  "audio": {
+    "locucao": { "estilo": "voz segura, ritmo firme, tom de reuniao de estrategia", "idioma": "pt-BR" },
+    "trilha": "instrumental com pulso crescente, sobe no cenario de 30% e fecha forte",
+    "efeitos": ["tique de contador", "som de 'cha-ching' discreto quando o valor anual aparece"]
+  },
+  "slots_de_referencia": {
+    "instrucao": "Preencher 'video_referencia' em cada cena com o video que inspira ritmo, enquadramento ou transicao.",
+    "formato_sugerido": { "arquivo": "nome_do_arquivo.mp4", "aproveitar": "ritmo | enquadramento | transicao | cor | movimento de camera", "observacao": "" }
+  },
+  "cenas": [
+    { "id": 1, "nome": "Abertura", "inicio_s": 0, "fim_s": 5,
+      "visual": "Mesa escura. Uma pilha de moedas douradas se forma no centro. Titulo surge.",
+      "locucao": "Tem dinheiro na mesa. E ele e nosso.",
+      "texto_na_tela": ["Dinheiro na Mesa"], "transicao": "zoom para os numeros",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 2, "nome": "A base que ja temos", "inicio_s": 5, "fim_s": 12,
+      "visual": "Contador sobe ate 751. Mapa de pontos (usinas) acendendo. Abaixo, 636 em operacao.",
+      "locucao": "Hoje a AG Power cuida de 751 usinas. 636 ja estao gerando energia.",
+      "texto_na_tela": ["751 usinas", "636 em operacao"], "transicao": "os pontos viram barras",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 3, "nome": "Quantas estao no Plano Power", "inicio_s": 12, "fim_s": 19,
+      "visual": "Das 751 barras, so 59 acendem em amarelo. O resto fica cinza.",
+      "locucao": "Mas so 59 estao no Plano Power. Menos de 8%.",
+      "texto_na_tela": ["59 no Plano Power", "7,9% da base"], "transicao": "as barras cinzas pulsam",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 4, "nome": "O que fica de fora", "inicio_s": 19, "fim_s": 25,
+      "visual": "Foco nas 692 barras cinzas. Icone de usina sem acompanhamento.",
+      "locucao": "Sao quase 700 usinas sem acompanhamento recorrente. Cliente que a gente ja conquistou, e deixa ir.",
+      "texto_na_tela": ["692 usinas fora do plano"], "transicao": "corte seco",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 5, "nome": "A simulacao: 30% a R$ 10", "inicio_s": 25, "fim_s": 35,
+      "visual": "Barras amarelas sobem de 59 para 225. Contador de valor mensal sobe ate R$ 2.250 e o anual ate R$ 27.000. Selo 'simulacao'.",
+      "locucao": "Se so 30% da base pagasse dez reais por mes para monitorar a usina, seriam 225 clientes. Dois mil duzentos e cinquenta por mes. Vinte e sete mil por ano.",
+      "texto_na_tela": ["30% da base = 225 clientes", "R$ 10/mes", "R$ 2.250/mes", "R$ 27.000/ano", "Simulacao"], "transicao": "os valores deslizam para o lado",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 6, "nome": "Dinheiro na mesa", "inicio_s": 35, "fim_s": 42,
+      "visual": "Comparativo lado a lado: Hoje (R$ 590/mes, cinza) x 30% (R$ 2.250/mes, amarelo). A diferenca destacada como pilha de moedas.",
+      "locucao": "So nesse cenario, sao quase vinte mil reais por ano que a gente deixa na mesa.",
+      "texto_na_tela": ["Hoje: R$ 590/mes", "30%: R$ 2.250/mes", "+ R$ 19.920/ano", "Simulacao"], "transicao": "a pilha cresce",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 7, "nome": "E se o plano valer mais", "inicio_s": 42, "fim_s": 50,
+      "visual": "Tres colunas para 30% da base: R$ 10, R$ 29, R$ 49 por mes, com os valores anuais subindo em sequencia.",
+      "locucao": "Com um plano de vinte e nove reais, sao setenta e oito mil por ano. Com quarenta e nove, passa de cento e trinta mil.",
+      "texto_na_tela": ["R$ 10 -> R$ 27.000/ano", "R$ 29 -> R$ 78.300/ano", "R$ 49 -> R$ 132.300/ano", "30% da base - simulacao"], "transicao": "as colunas viram a tela da plataforma",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 8, "nome": "A ferramenta ja existe", "inicio_s": 50, "fim_s": 56,
+      "visual": "Mockup da plataforma AG Power: tela de monitoramento mostrando usinas que pararam de mandar dado; portal do cliente no celular.",
+      "locucao": "E a ferramenta ja existe: a plataforma AG Power monitora as usinas e mostra quem parou antes do cliente reclamar. E a base cresce todo mes.",
+      "texto_na_tela": ["Monitoramento ja funcionando", "+108 implantacoes no ultimo mes"], "transicao": "fade para o logo",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
+    { "id": 9, "nome": "Encerramento", "inicio_s": 56, "fim_s": 60,
+      "visual": "Logo AG Power em amarelo/laranja sobre azul-marinho. Frase final.",
+      "locucao": "O dinheiro esta na mesa. Bora pegar.",
+      "texto_na_tela": ["Plano Power", "O dinheiro esta na mesa"], "transicao": "fim",
+      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } }
+  ],
+  "checklist_final": [
+    "Todo valor em reais tem o selo 'Simulacao'",
+    "Nenhum nome de cliente aparece",
+    "Numeros da base batem com dados_base (751 / 636 / 59)",
+    "Conferir no Groner quantos dos 59 realmente pagam antes de mostrar a outras pessoas"
+  ]
+}

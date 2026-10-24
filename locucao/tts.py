@@ -1,4 +1,5 @@
-"""Gera a voz de cada cena (cena-01.wav ... cena-12.wav) a partir de roteiro_b.json.
+"""Gera a voz de cada cena (cena-01.wav, cena-02.wav ...) a partir de um roteiro .json
+(padrão: roteiro_b.json do comercial; o Dinheiro na Mesa usa ../dinheiro-na-mesa/roteiro.json).
 
 Uso:
   python3 tts.py google  [--voz pt-BR-Neural2-B] [--velocidade 1.08] [--projeto MEU_PROJETO] [--saida voz/]
@@ -87,11 +88,12 @@ def main():
     ap.add_argument("--velocidade", type=float, default=1.08, help="velocidade da voz do Google (1.0 = normal)")
     ap.add_argument("--modelo", help="modelo .onnx do Piper")
     ap.add_argument("--saida", default=str(HERE / "voz"))
+    ap.add_argument("--roteiro", default=str(HERE / "roteiro_b.json"))
     a = ap.parse_args()
 
     saida = Path(a.saida)
     saida.mkdir(parents=True, exist_ok=True)
-    for cena in json.loads((HERE / "roteiro_b.json").read_text(encoding="utf-8")):
+    for cena in json.loads(Path(a.roteiro).read_text(encoding="utf-8")):
         texto = para_fala(cena["locucao"])
         destino = saida / f"cena-{cena['id']:02d}.wav"
         if a.motor == "google":
