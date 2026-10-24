@@ -5,8 +5,11 @@
     "duracao_total_segundos": 60,
     "idioma": "pt-BR",
     "proporcao_principal": "16:9",
-    "versoes_alternativas": ["9:16 (Reels/Stories)", "1:1 (feed)"],
-    "observacao": "Video INTERNO. Os valores sao uma simulacao com precos de exemplo, nao faturamento real. Os numeros da base vieram da plataforma AG Power em 24/10/2026."
+    "versoes_alternativas": [
+      "9:16 (Reels/Stories)",
+      "1:1 (feed)"
+    ],
+    "observacao": "Video INTERNO. Precos do Plano Power tirados da tabela oficial (AGENDA 2026.xlsx, aba 'PRECIFICACAO AVULSO E PLANO POS'). A tabela nao diz o periodo: aqui foi tratado como mensal (comparado com a limpeza avulsa de R$ 580). Confirmar antes de divulgar. Numeros da base: plataforma AG Power em 24/10/2026."
   },
   "dados_base": {
     "fonte": "plataforma AG Power, 24/10/2026",
@@ -18,37 +21,67 @@
     "usinas_entrando_por_mes": "cerca de 108 novas implantacoes nos ultimos 30 dias (a base cresce todo mes)"
   },
   "simulacao": {
-    "premissa": "Mensalidade de exemplo por usina. Base = 751 usinas.",
+    "premissa": "Base = 751 usinas. Preco piso = R$ 89,77 (0-10 placas, Campinas). Preco tipico = R$ 98,64 (mediana das 97 usinas com numero de placas cadastrado). Valores mensais, conforme premissa acima.",
     "hoje": {
       "clientes_power": 59,
-      "a_10_reais_mes": { "mensal": 590, "anual": 7080 }
+      "piso": {
+        "mensal": 5296.43,
+        "anual": 63557.16
+      },
+      "tipico": {
+        "mensal": 5819.76,
+        "anual": 69837.12
+      }
     },
     "cenarios": [
       {
         "adesao": "30%",
         "clientes": 225,
-        "novos_clientes_vs_hoje": 166,
-        "a_10_reais": { "mensal": 2250, "anual": 27000 },
-        "a_29_reais": { "mensal": 6525, "anual": 78300 },
-        "a_49_reais": { "mensal": 11025, "anual": 132300 }
+        "piso": {
+          "mensal": 20198.25,
+          "anual": 242379.0
+        },
+        "tipico": {
+          "mensal": 22194.0,
+          "anual": 266328.0
+        }
       },
       {
         "adesao": "50%",
         "clientes": 375,
-        "a_10_reais": { "mensal": 3750, "anual": 45000 },
-        "a_29_reais": { "mensal": 10875, "anual": 130500 },
-        "a_49_reais": { "mensal": 18375, "anual": 220500 }
+        "piso": {
+          "mensal": 33663.75,
+          "anual": 403965.0
+        },
+        "tipico": {
+          "mensal": 36990.0,
+          "anual": 443880.0
+        }
       },
       {
         "adesao": "100%",
         "clientes": 751,
-        "a_10_reais": { "mensal": 7510, "anual": 90120 }
+        "piso": {
+          "mensal": 67417.27,
+          "anual": 809007.24
+        },
+        "tipico": {
+          "mensal": 74078.64,
+          "anual": 888943.68
+        }
       }
     ],
     "dinheiro_na_mesa_cenario_principal": {
-      "descricao": "Diferenca entre hoje (59 clientes) e 30% da base (225 clientes) a R$ 10/mes",
-      "mensal": 1660,
-      "anual": 19920
+      "descricao": "Diferenca entre hoje (59) e 30% da base (225): 166 clientes a mais, preco tipico R$ 98,64",
+      "mensal": 16374.24,
+      "anual": 196490.88
+    },
+    "plano_de_entrada_so_monitoramento": {
+      "descricao": "Ideia alternativa (nao existe na tabela): R$ 10/mes so para monitorar",
+      "30%_da_base": {
+        "mensal": 2250,
+        "anual": 27000
+      }
     }
   },
   "regras_de_conteudo": {
@@ -58,7 +91,8 @@
     "proibido": [
       "citar nomes de clientes",
       "apresentar a simulacao como faturamento real",
-      "inventar numeros que nao estao em dados_base ou simulacao"
+      "inventar numeros que nao estao em dados_base ou simulacao",
+      "dizer que o preco e mensal sem confirmar com a empresa"
     ],
     "tom": "direto, de oportunidade, sem alarmismo - 'o dinheiro esta na mesa, falta pegar'"
   },
@@ -66,70 +100,1386 @@
     "fundo": "azul-marinho bem escuro",
     "destaques": "amarelo/laranja (cor do sol) para os numeros que crescem; cinza para o 'hoje'",
     "estilo": "moderno e limpo, numeros grandes animados (contador subindo)",
-    "elementos": ["contadores animados", "barras crescendo", "moedas/sol como icone", "mockup da tela de monitoramento"],
+    "elementos": [
+      "contadores animados",
+      "barras crescendo",
+      "moedas/sol como icone",
+      "mockup da tela de monitoramento"
+    ],
     "tipografia": "sem serifa, numeros em bold bem grandes",
     "logo": "logo oficial da AG Power"
   },
   "audio": {
-    "locucao": { "estilo": "voz segura, ritmo firme, tom de reuniao de estrategia", "idioma": "pt-BR" },
+    "locucao": {
+      "estilo": "voz segura, ritmo firme, tom de reuniao de estrategia",
+      "idioma": "pt-BR"
+    },
     "trilha": "instrumental com pulso crescente, sobe no cenario de 30% e fecha forte",
-    "efeitos": ["tique de contador", "som de 'cha-ching' discreto quando o valor anual aparece"]
+    "efeitos": [
+      "tique de contador",
+      "som de 'cha-ching' discreto quando o valor anual aparece"
+    ]
   },
   "slots_de_referencia": {
     "instrucao": "Preencher 'video_referencia' em cada cena com o video que inspira ritmo, enquadramento ou transicao.",
-    "formato_sugerido": { "arquivo": "nome_do_arquivo.mp4", "aproveitar": "ritmo | enquadramento | transicao | cor | movimento de camera", "observacao": "" }
+    "formato_sugerido": {
+      "arquivo": "nome_do_arquivo.mp4",
+      "aproveitar": "ritmo | enquadramento | transicao | cor | movimento de camera",
+      "observacao": ""
+    }
   },
   "cenas": [
-    { "id": 1, "nome": "Abertura", "inicio_s": 0, "fim_s": 5,
+    {
+      "id": 1,
+      "nome": "Abertura",
+      "inicio_s": 0,
+      "fim_s": 5,
       "visual": "Mesa escura. Uma pilha de moedas douradas se forma no centro. Titulo surge.",
       "locucao": "Tem dinheiro na mesa. E ele e nosso.",
-      "texto_na_tela": ["Dinheiro na Mesa"], "transicao": "zoom para os numeros",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 2, "nome": "A base que ja temos", "inicio_s": 5, "fim_s": 12,
+      "texto_na_tela": [
+        "Dinheiro na Mesa"
+      ],
+      "transicao": "zoom para os numeros",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 2,
+      "nome": "A base que ja temos",
+      "inicio_s": 5,
+      "fim_s": 12,
       "visual": "Contador sobe ate 751. Mapa de pontos (usinas) acendendo. Abaixo, 636 em operacao.",
       "locucao": "Hoje a AG Power cuida de 751 usinas. 636 ja estao gerando energia.",
-      "texto_na_tela": ["751 usinas", "636 em operacao"], "transicao": "os pontos viram barras",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 3, "nome": "Quantas estao no Plano Power", "inicio_s": 12, "fim_s": 19,
+      "texto_na_tela": [
+        "751 usinas",
+        "636 em operacao"
+      ],
+      "transicao": "os pontos viram barras",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 3,
+      "nome": "Quantas estao no Plano Power",
+      "inicio_s": 12,
+      "fim_s": 19,
       "visual": "Das 751 barras, so 59 acendem em amarelo. O resto fica cinza.",
       "locucao": "Mas so 59 estao no Plano Power. Menos de 8%.",
-      "texto_na_tela": ["59 no Plano Power", "7,9% da base"], "transicao": "as barras cinzas pulsam",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 4, "nome": "O que fica de fora", "inicio_s": 19, "fim_s": 25,
+      "texto_na_tela": [
+        "59 no Plano Power",
+        "7,9% da base"
+      ],
+      "transicao": "as barras cinzas pulsam",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 4,
+      "nome": "O que fica de fora",
+      "inicio_s": 19,
+      "fim_s": 25,
       "visual": "Foco nas 692 barras cinzas. Icone de usina sem acompanhamento.",
       "locucao": "Sao quase 700 usinas sem acompanhamento recorrente. Cliente que a gente ja conquistou, e deixa ir.",
-      "texto_na_tela": ["692 usinas fora do plano"], "transicao": "corte seco",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 5, "nome": "A simulacao: 30% a R$ 10", "inicio_s": 25, "fim_s": 35,
-      "visual": "Barras amarelas sobem de 59 para 225. Contador de valor mensal sobe ate R$ 2.250 e o anual ate R$ 27.000. Selo 'simulacao'.",
-      "locucao": "Se so 30% da base pagasse dez reais por mes para monitorar a usina, seriam 225 clientes. Dois mil duzentos e cinquenta por mes. Vinte e sete mil por ano.",
-      "texto_na_tela": ["30% da base = 225 clientes", "R$ 10/mes", "R$ 2.250/mes", "R$ 27.000/ano", "Simulacao"], "transicao": "os valores deslizam para o lado",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 6, "nome": "Dinheiro na mesa", "inicio_s": 35, "fim_s": 42,
-      "visual": "Comparativo lado a lado: Hoje (R$ 590/mes, cinza) x 30% (R$ 2.250/mes, amarelo). A diferenca destacada como pilha de moedas.",
-      "locucao": "So nesse cenario, sao quase vinte mil reais por ano que a gente deixa na mesa.",
-      "texto_na_tela": ["Hoje: R$ 590/mes", "30%: R$ 2.250/mes", "+ R$ 19.920/ano", "Simulacao"], "transicao": "a pilha cresce",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 7, "nome": "E se o plano valer mais", "inicio_s": 42, "fim_s": 50,
-      "visual": "Tres colunas para 30% da base: R$ 10, R$ 29, R$ 49 por mes, com os valores anuais subindo em sequencia.",
-      "locucao": "Com um plano de vinte e nove reais, sao setenta e oito mil por ano. Com quarenta e nove, passa de cento e trinta mil.",
-      "texto_na_tela": ["R$ 10 -> R$ 27.000/ano", "R$ 29 -> R$ 78.300/ano", "R$ 49 -> R$ 132.300/ano", "30% da base - simulacao"], "transicao": "as colunas viram a tela da plataforma",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 8, "nome": "A ferramenta ja existe", "inicio_s": 50, "fim_s": 56,
+      "texto_na_tela": [
+        "692 usinas fora do plano"
+      ],
+      "transicao": "corte seco",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 5,
+      "nome": "A simulacao: 30% da base no Plano Power",
+      "inicio_s": 25,
+      "fim_s": 35,
+      "visual": "Barras amarelas sobem de 59 para 225. Contador mensal sobe ate R$ 22.194 e o anual ate R$ 266.328. Selo 'simulacao'. Rodape: 'preco tipico R$ 98,64 - tabela oficial do Plano Power'.",
+      "locucao": "Se so 30% da base estivesse no Plano Power, pelo preco da nossa propria tabela, seriam 225 clientes. Mais de vinte e dois mil reais por mes. Mais de duzentos e sessenta mil por ano.",
+      "texto_na_tela": [
+        "30% da base = 225 clientes",
+        "R$ 98,64 por usina (tabela oficial)",
+        "R$ 22.194/mes",
+        "R$ 266.328/ano",
+        "Simulacao"
+      ],
+      "transicao": "os valores deslizam para o lado",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 6,
+      "nome": "Dinheiro na mesa",
+      "inicio_s": 35,
+      "fim_s": 42,
+      "visual": "Comparativo: Hoje (59 clientes, R$ 5.820/mes, cinza) x 30% (225 clientes, R$ 22.194/mes, amarelo). A diferenca vira uma pilha de moedas.",
+      "locucao": "Comparado com hoje, sao quase duzentos mil reais por ano que ficam na mesa.",
+      "texto_na_tela": [
+        "Hoje: R$ 5.820/mes",
+        "30%: R$ 22.194/mes",
+        "+ R$ 196.490/ano",
+        "Simulacao"
+      ],
+      "transicao": "a pilha cresce",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 7,
+      "nome": "E se metade da base entrar",
+      "inicio_s": 42,
+      "fim_s": 50,
+      "visual": "Tres colunas crescendo: 30%, 50% e 100% da base, com o valor anual de cada uma.",
+      "locucao": "Com metade da base, passa de quatrocentos e quarenta mil por ano. E o plano ja tem preco, ja tem tabela. Falta oferecer.",
+      "texto_na_tela": [
+        "30% -> R$ 266 mil/ano",
+        "50% -> R$ 444 mil/ano",
+        "100% -> R$ 889 mil/ano",
+        "Preco tipico R$ 98,64 - simulacao"
+      ],
+      "transicao": "as colunas viram a tela da plataforma",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 8,
+      "nome": "A ferramenta ja existe",
+      "inicio_s": 50,
+      "fim_s": 56,
       "visual": "Mockup da plataforma AG Power: tela de monitoramento mostrando usinas que pararam de mandar dado; portal do cliente no celular.",
       "locucao": "E a ferramenta ja existe: a plataforma AG Power monitora as usinas e mostra quem parou antes do cliente reclamar. E a base cresce todo mes.",
-      "texto_na_tela": ["Monitoramento ja funcionando", "+108 implantacoes no ultimo mes"], "transicao": "fade para o logo",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } },
-    { "id": 9, "nome": "Encerramento", "inicio_s": 56, "fim_s": 60,
+      "texto_na_tela": [
+        "Monitoramento ja funcionando",
+        "+108 implantacoes no ultimo mes"
+      ],
+      "transicao": "fade para o logo",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    },
+    {
+      "id": 9,
+      "nome": "Encerramento",
+      "inicio_s": 56,
+      "fim_s": 60,
       "visual": "Logo AG Power em amarelo/laranja sobre azul-marinho. Frase final.",
       "locucao": "O dinheiro esta na mesa. Bora pegar.",
-      "texto_na_tela": ["Plano Power", "O dinheiro esta na mesa"], "transicao": "fim",
-      "video_referencia": { "arquivo": "", "aproveitar": "", "observacao": "" } }
+      "texto_na_tela": [
+        "Plano Power",
+        "O dinheiro esta na mesa"
+      ],
+      "transicao": "fim",
+      "video_referencia": {
+        "arquivo": "",
+        "aproveitar": "",
+        "observacao": ""
+      }
+    }
   ],
   "checklist_final": [
     "Todo valor em reais tem o selo 'Simulacao'",
+    "Confirmar com a empresa se o preco da tabela e mensal",
     "Nenhum nome de cliente aparece",
     "Numeros da base batem com dados_base (751 / 636 / 59)",
-    "Conferir no Groner quantos dos 59 realmente pagam antes de mostrar a outras pessoas"
-  ]
+    "Conferir no Groner quantos dos 59 realmente pagam"
+  ],
+  "tabela_plano_power": {
+    "fonte": "AGENDA 2026.xlsx - aba 'PRECIFICACAO AVULSO E PLANO POS' (Drive da AG Power)",
+    "regra": "preco por faixa de quantidade de placas e por cidade; tabela de clientes AG Power e tabela mais cara (~34%) para nao clientes",
+    "periodo": "nao informado na planilha - tratado como mensal (confirmar)",
+    "atencao": "Vinhedo, faixa 21-30 placas, esta como 213,43 na planilha - provavel erro de digitacao (Campinas = 113,43)",
+    "resumo_clientes_campinas": {
+      "0-10": 89.77,
+      "11-20": 98.64,
+      "21-30": 113.43,
+      "31-40": 132.45,
+      "41-50": 150.01
+    },
+    "clientes": [
+      {
+        "faixa_placas": "0-10",
+        "valores": {
+          "Campinas": 89.77,
+          "Vinhedo": 96.43,
+          "Valinhos": 89.77,
+          "Paulinia": 95.2,
+          "Hortolândia": 95.2,
+          "Sumaré": 95.2,
+          "Indaiatuba": 114.25,
+          "Araraquara": 148.52,
+          "São Paulo": 148.52,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "11-20",
+        "valores": {
+          "Campinas": 98.64,
+          "Vinhedo": null,
+          "Valinhos": 98.64,
+          "Paulinia": 109.49,
+          "Hortolândia": 109.49,
+          "Sumaré": 109.49,
+          "Indaiatuba": 131.38,
+          "Araraquara": 170.8,
+          "São Paulo": 170.8,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "21-30",
+        "valores": {
+          "Campinas": 113.43,
+          "Vinhedo": 213.43,
+          "Valinhos": 113.43,
+          "Paulinia": 125.91,
+          "Hortolândia": 125.91,
+          "Sumaré": 125.91,
+          "Indaiatuba": 151.09,
+          "Araraquara": 196.42,
+          "São Paulo": 196.42,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "31-40",
+        "valores": {
+          "Campinas": 132.45,
+          "Vinhedo": null,
+          "Valinhos": 132.45,
+          "Paulinia": 144.79,
+          "Hortolândia": 144.79,
+          "Sumaré": 144.79,
+          "Indaiatuba": 173.75,
+          "Araraquara": 225.88,
+          "São Paulo": 225.88,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "41-50",
+        "valores": {
+          "Campinas": 150.01,
+          "Vinhedo": null,
+          "Valinhos": 150.01,
+          "Paulinia": 166.51,
+          "Hortolândia": 166.51,
+          "Sumaré": 166.51,
+          "Indaiatuba": 199.82,
+          "Araraquara": 259.76,
+          "São Paulo": 259.76,
+          "Monte Mor": 168.01
+        }
+      },
+      {
+        "faixa_placas": "51-60",
+        "valores": {
+          "Campinas": 172.51,
+          "Vinhedo": null,
+          "Valinhos": 172.51,
+          "Paulinia": 191.49,
+          "Hortolândia": 191.49,
+          "Sumaré": 191.49,
+          "Indaiatuba": 229.79,
+          "Araraquara": 298.73,
+          "São Paulo": 298.73,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "61-70",
+        "valores": {
+          "Campinas": 198.39,
+          "Vinhedo": null,
+          "Valinhos": 198.39,
+          "Paulinia": 220.21,
+          "Hortolândia": 220.21,
+          "Sumaré": 220.21,
+          "Indaiatuba": 264.26,
+          "Araraquara": 343.53,
+          "São Paulo": 343.53,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "71-80",
+        "valores": {
+          "Campinas": 228.15,
+          "Vinhedo": null,
+          "Valinhos": 228.15,
+          "Paulinia": 253.25,
+          "Hortolândia": 253.25,
+          "Sumaré": 253.25,
+          "Indaiatuba": 303.9,
+          "Araraquara": 395.06,
+          "São Paulo": 395.06,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "81-90",
+        "valores": {
+          "Campinas": 262.37,
+          "Vinhedo": null,
+          "Valinhos": 262.37,
+          "Paulinia": 291.23,
+          "Hortolândia": 291.23,
+          "Sumaré": 291.23,
+          "Indaiatuba": 349.48,
+          "Araraquara": 454.32,
+          "São Paulo": 454.32,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "91-100",
+        "valores": {
+          "Campinas": 301.73,
+          "Vinhedo": null,
+          "Valinhos": 301.73,
+          "Paulinia": 334.92,
+          "Hortolândia": 334.92,
+          "Sumaré": 334.92,
+          "Indaiatuba": 401.9,
+          "Araraquara": 522.47,
+          "São Paulo": 522.47,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "101-110",
+        "valores": {
+          "Campinas": 346.99,
+          "Vinhedo": null,
+          "Valinhos": 346.99,
+          "Paulinia": 385.16,
+          "Hortolândia": 385.16,
+          "Sumaré": 385.16,
+          "Indaiatuba": 462.19,
+          "Araraquara": 600.84,
+          "São Paulo": 600.84,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "111-120",
+        "valores": {
+          "Campinas": 399.04,
+          "Vinhedo": null,
+          "Valinhos": 399.04,
+          "Paulinia": 442.93,
+          "Hortolândia": 442.93,
+          "Sumaré": 442.93,
+          "Indaiatuba": 531.52,
+          "Araraquara": 690.97,
+          "São Paulo": 690.97,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "121-130",
+        "valores": {
+          "Campinas": 458.89,
+          "Vinhedo": null,
+          "Valinhos": 458.89,
+          "Paulinia": 509.37,
+          "Hortolândia": 509.37,
+          "Sumaré": 509.37,
+          "Indaiatuba": 611.24,
+          "Araraquara": 794.62,
+          "São Paulo": 794.62,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "131-140",
+        "valores": {
+          "Campinas": 527.72,
+          "Vinhedo": null,
+          "Valinhos": 527.72,
+          "Paulinia": 585.77,
+          "Hortolândia": 585.77,
+          "Sumaré": 585.77,
+          "Indaiatuba": 702.93,
+          "Araraquara": 913.81,
+          "São Paulo": 913.81,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "141-150",
+        "valores": {
+          "Campinas": 606.88,
+          "Vinhedo": null,
+          "Valinhos": 606.88,
+          "Paulinia": 673.64,
+          "Hortolândia": 673.64,
+          "Sumaré": 673.64,
+          "Indaiatuba": 808.37,
+          "Araraquara": 1050.88,
+          "São Paulo": 1050.88,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "151-160",
+        "valores": {
+          "Campinas": 697.92,
+          "Vinhedo": null,
+          "Valinhos": 697.92,
+          "Paulinia": 774.69,
+          "Hortolândia": 774.69,
+          "Sumaré": 774.69,
+          "Indaiatuba": 929.62,
+          "Araraquara": 1208.51,
+          "São Paulo": 1208.51,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "161-170",
+        "valores": {
+          "Campinas": 802.6,
+          "Vinhedo": null,
+          "Valinhos": 802.6,
+          "Paulinia": 890.89,
+          "Hortolândia": 890.89,
+          "Sumaré": 890.89,
+          "Indaiatuba": 1069.07,
+          "Araraquara": 1389.79,
+          "São Paulo": 1389.79,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "171-180",
+        "valores": {
+          "Campinas": 922.99,
+          "Vinhedo": null,
+          "Valinhos": 922.99,
+          "Paulinia": 1024.52,
+          "Hortolândia": 1024.52,
+          "Sumaré": 1024.52,
+          "Indaiatuba": 1229.43,
+          "Araraquara": 1598.26,
+          "São Paulo": 1598.26,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "181-190",
+        "valores": {
+          "Campinas": 1061.44,
+          "Vinhedo": null,
+          "Valinhos": 1061.44,
+          "Paulinia": 1178.2,
+          "Hortolândia": 1178.2,
+          "Sumaré": 1178.2,
+          "Indaiatuba": 1413.84,
+          "Araraquara": 1837.99,
+          "São Paulo": 1837.99,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "191-200",
+        "valores": {
+          "Campinas": 1220.66,
+          "Vinhedo": null,
+          "Valinhos": 1220.66,
+          "Paulinia": 1354.93,
+          "Hortolândia": 1354.93,
+          "Sumaré": 1354.93,
+          "Indaiatuba": 1625.92,
+          "Araraquara": 2113.69,
+          "São Paulo": 2113.69,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "201-210",
+        "valores": {
+          "Campinas": 1403.76,
+          "Vinhedo": null,
+          "Valinhos": 1403.76,
+          "Paulinia": 1558.17,
+          "Hortolândia": 1558.17,
+          "Sumaré": 1558.17,
+          "Indaiatuba": 1869.81,
+          "Araraquara": 2430.75,
+          "São Paulo": 2430.75,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "211-220",
+        "valores": {
+          "Campinas": 1333.57,
+          "Vinhedo": null,
+          "Valinhos": 1333.57,
+          "Paulinia": 1480.26,
+          "Hortolândia": 1480.26,
+          "Sumaré": 1480.26,
+          "Indaiatuba": 1776.32,
+          "Araraquara": 2309.21,
+          "São Paulo": 2309.21,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "221-230",
+        "valores": {
+          "Campinas": 1266.89,
+          "Vinhedo": null,
+          "Valinhos": 1266.89,
+          "Paulinia": 1406.25,
+          "Hortolândia": 1406.25,
+          "Sumaré": 1406.25,
+          "Indaiatuba": 1687.5,
+          "Araraquara": 2193.75,
+          "São Paulo": 2193.75,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "231-240",
+        "valores": {
+          "Campinas": 1203.55,
+          "Vinhedo": null,
+          "Valinhos": 1203.55,
+          "Paulinia": 1335.94,
+          "Hortolândia": 1335.94,
+          "Sumaré": 1335.94,
+          "Indaiatuba": 1603.12,
+          "Araraquara": 2084.06,
+          "São Paulo": 2084.06,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "241-250",
+        "valores": {
+          "Campinas": 1143.37,
+          "Vinhedo": null,
+          "Valinhos": 1143.37,
+          "Paulinia": 1269.14,
+          "Hortolândia": 1269.14,
+          "Sumaré": 1269.14,
+          "Indaiatuba": 1522.97,
+          "Araraquara": 1979.86,
+          "São Paulo": 1979.86,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "251-260",
+        "valores": {
+          "Campinas": 1086.2,
+          "Vinhedo": null,
+          "Valinhos": 1086.2,
+          "Paulinia": 1205.68,
+          "Hortolândia": 1205.68,
+          "Sumaré": 1205.68,
+          "Indaiatuba": 1446.82,
+          "Araraquara": 1880.87,
+          "São Paulo": 1880.87,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "261-270",
+        "valores": {
+          "Campinas": 1249.13,
+          "Vinhedo": null,
+          "Valinhos": 1249.13,
+          "Paulinia": 1386.54,
+          "Hortolândia": 1386.54,
+          "Sumaré": 1386.54,
+          "Indaiatuba": 1663.84,
+          "Araraquara": 2163.0,
+          "São Paulo": 2163.0,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "271-280",
+        "valores": {
+          "Campinas": 1436.5,
+          "Vinhedo": null,
+          "Valinhos": 1436.5,
+          "Paulinia": 1594.52,
+          "Hortolândia": 1594.52,
+          "Sumaré": 1594.52,
+          "Indaiatuba": 1913.42,
+          "Araraquara": 2487.45,
+          "São Paulo": 2487.45,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "281-290",
+        "valores": {
+          "Campinas": 1651.98,
+          "Vinhedo": null,
+          "Valinhos": 1651.98,
+          "Paulinia": 1833.69,
+          "Hortolândia": 1833.69,
+          "Sumaré": 1833.69,
+          "Indaiatuba": 2200.43,
+          "Araraquara": 2860.56,
+          "São Paulo": 2860.56,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "291-300",
+        "valores": {
+          "Campinas": 1899.77,
+          "Vinhedo": null,
+          "Valinhos": 1899.77,
+          "Paulinia": 2108.75,
+          "Hortolândia": 2108.75,
+          "Sumaré": 2108.75,
+          "Indaiatuba": 2530.5,
+          "Araraquara": 3289.65,
+          "São Paulo": 3289.65,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "301-310",
+        "valores": {
+          "Campinas": 1994.76,
+          "Vinhedo": null,
+          "Valinhos": 1994.76,
+          "Paulinia": 2214.18,
+          "Hortolândia": 2214.18,
+          "Sumaré": 2214.18,
+          "Indaiatuba": 2657.02,
+          "Araraquara": 3454.13,
+          "São Paulo": 3454.13,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "311-320",
+        "valores": {
+          "Campinas": 2054.6,
+          "Vinhedo": null,
+          "Valinhos": 2054.6,
+          "Paulinia": 2280.61,
+          "Hortolândia": 2280.61,
+          "Sumaré": 2280.61,
+          "Indaiatuba": 2736.73,
+          "Araraquara": 3557.75,
+          "São Paulo": 3557.75,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "321-330",
+        "valores": {
+          "Campinas": 2075.15,
+          "Vinhedo": null,
+          "Valinhos": 2075.15,
+          "Paulinia": 2303.42,
+          "Hortolândia": 2303.42,
+          "Sumaré": 2303.42,
+          "Indaiatuba": 2764.1,
+          "Araraquara": 3593.33,
+          "São Paulo": 3593.33,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "331-340",
+        "valores": {
+          "Campinas": 2095.9,
+          "Vinhedo": null,
+          "Valinhos": 2095.9,
+          "Paulinia": 2326.45,
+          "Hortolândia": 2326.45,
+          "Sumaré": 2326.45,
+          "Indaiatuba": 2791.74,
+          "Araraquara": 3629.26,
+          "São Paulo": 3629.26,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "341-350",
+        "valores": {
+          "Campinas": 2116.86,
+          "Vinhedo": null,
+          "Valinhos": 2116.86,
+          "Paulinia": 2349.72,
+          "Hortolândia": 2349.72,
+          "Sumaré": 2349.72,
+          "Indaiatuba": 2819.66,
+          "Araraquara": 3665.56,
+          "São Paulo": 3665.56,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "351-360",
+        "valores": {
+          "Campinas": 2138.03,
+          "Vinhedo": null,
+          "Valinhos": 2138.03,
+          "Paulinia": 2373.21,
+          "Hortolândia": 2373.21,
+          "Sumaré": 2373.21,
+          "Indaiatuba": 2847.85,
+          "Araraquara": 3702.21,
+          "São Paulo": 3702.21,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "361-370",
+        "valores": {
+          "Campinas": 2159.41,
+          "Vinhedo": null,
+          "Valinhos": 2159.41,
+          "Paulinia": 2396.94,
+          "Hortolândia": 2396.94,
+          "Sumaré": 2396.94,
+          "Indaiatuba": 2876.33,
+          "Araraquara": 3739.23,
+          "São Paulo": 3739.23,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "371-380",
+        "valores": {
+          "Campinas": 2181.0,
+          "Vinhedo": null,
+          "Valinhos": 2181.0,
+          "Paulinia": 2420.91,
+          "Hortolândia": 2420.91,
+          "Sumaré": 2420.91,
+          "Indaiatuba": 2905.1,
+          "Araraquara": 3776.63,
+          "São Paulo": 3776.63,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "381-390",
+        "valores": {
+          "Campinas": 2202.81,
+          "Vinhedo": null,
+          "Valinhos": 2202.81,
+          "Paulinia": 2445.12,
+          "Hortolândia": 2445.12,
+          "Sumaré": 2445.12,
+          "Indaiatuba": 2934.15,
+          "Araraquara": 3814.39,
+          "São Paulo": 3814.39,
+          "Monte Mor": null
+        }
+      },
+      {
+        "faixa_placas": "391-400",
+        "valores": {
+          "Campinas": 2224.84,
+          "Vinhedo": null,
+          "Valinhos": 2224.84,
+          "Paulinia": 2469.57,
+          "Hortolândia": 2469.57,
+          "Sumaré": 2469.57,
+          "Indaiatuba": 2963.49,
+          "Araraquara": 3852.54,
+          "São Paulo": 3852.54,
+          "Monte Mor": null,
+          "Valor": null
+        }
+      }
+    ],
+    "nao_clientes": [
+      {
+        "faixa_placas": "0-10",
+        "valores": {
+          "Campinas": 120.08,
+          "Vinhedo": 129.74,
+          "Valinhos": 120.08,
+          "Paulinia": 133.29,
+          "Hortolândia": 133.29,
+          "Sumaré": 133.29,
+          "Indaiatuba": 159.94,
+          "Ararquara": 207.93,
+          "São Paulo": 207.93
+        }
+      },
+      {
+        "faixa_placas": "11-20",
+        "valores": {
+          "Campinas": 138.09,
+          "Vinhedo": null,
+          "Valinhos": 138.09,
+          "Paulinia": 153.28,
+          "Hortolândia": 153.28,
+          "Sumaré": 153.28,
+          "Indaiatuba": 183.94,
+          "Ararquara": 239.12,
+          "São Paulo": 239.12
+        }
+      },
+      {
+        "faixa_placas": "21-30",
+        "valores": {
+          "Campinas": 158.8,
+          "Vinhedo": null,
+          "Valinhos": 158.8,
+          "Paulinia": 176.27,
+          "Hortolândia": 176.27,
+          "Sumaré": 176.27,
+          "Indaiatuba": 211.53,
+          "Ararquara": 274.98,
+          "São Paulo": 274.98
+        }
+      },
+      {
+        "faixa_placas": "31-40",
+        "valores": {
+          "Campinas": 182.62,
+          "Vinhedo": null,
+          "Valinhos": 182.62,
+          "Paulinia": 202.71,
+          "Hortolândia": 202.71,
+          "Sumaré": 202.71,
+          "Indaiatuba": 243.25,
+          "Ararquara": 316.23,
+          "São Paulo": 316.23
+        }
+      },
+      {
+        "faixa_placas": "41-50",
+        "valores": {
+          "Campinas": 210.02,
+          "Vinhedo": null,
+          "Valinhos": 210.02,
+          "Paulinia": 233.12,
+          "Hortolândia": 233.12,
+          "Sumaré": 233.12,
+          "Indaiatuba": 279.74,
+          "Ararquara": 363.67,
+          "São Paulo": 363.67
+        }
+      },
+      {
+        "faixa_placas": "51-60",
+        "valores": {
+          "Campinas": 241.52,
+          "Vinhedo": null,
+          "Valinhos": 241.52,
+          "Paulinia": 268.09,
+          "Hortolândia": 268.09,
+          "Sumaré": 268.09,
+          "Indaiatuba": 321.7,
+          "Ararquara": 418.22,
+          "São Paulo": 418.22
+        }
+      },
+      {
+        "faixa_placas": "61-70",
+        "valores": {
+          "Campinas": 277.75,
+          "Vinhedo": null,
+          "Valinhos": 277.75,
+          "Paulinia": 308.3,
+          "Hortolândia": 308.3,
+          "Sumaré": 308.3,
+          "Indaiatuba": 369.96,
+          "Ararquara": 480.95,
+          "São Paulo": 480.95
+        }
+      },
+      {
+        "faixa_placas": "71-80",
+        "valores": {
+          "Campinas": 319.41,
+          "Vinhedo": null,
+          "Valinhos": 319.41,
+          "Paulinia": 354.54,
+          "Hortolândia": 354.54,
+          "Sumaré": 354.54,
+          "Indaiatuba": 425.45,
+          "Ararquara": 553.09,
+          "São Paulo": 553.09
+        }
+      },
+      {
+        "faixa_placas": "81-90",
+        "valores": {
+          "Campinas": 367.32,
+          "Vinhedo": null,
+          "Valinhos": 367.32,
+          "Paulinia": 407.73,
+          "Hortolândia": 407.73,
+          "Sumaré": 407.73,
+          "Indaiatuba": 489.27,
+          "Ararquara": 636.05,
+          "São Paulo": 636.05
+        }
+      },
+      {
+        "faixa_placas": "91-100",
+        "valores": {
+          "Campinas": 422.42,
+          "Vinhedo": null,
+          "Valinhos": 422.42,
+          "Paulinia": 468.89,
+          "Hortolândia": 468.89,
+          "Sumaré": 468.89,
+          "Indaiatuba": 562.66,
+          "Ararquara": 731.46,
+          "São Paulo": 731.46
+        }
+      },
+      {
+        "faixa_placas": "101-110",
+        "valores": {
+          "Campinas": 485.78,
+          "Vinhedo": null,
+          "Valinhos": 485.78,
+          "Paulinia": 539.22,
+          "Hortolândia": 539.22,
+          "Sumaré": 539.22,
+          "Indaiatuba": 647.06,
+          "Ararquara": 841.18,
+          "São Paulo": 841.18
+        }
+      },
+      {
+        "faixa_placas": "111-120",
+        "valores": {
+          "Campinas": 558.65,
+          "Vinhedo": null,
+          "Valinhos": 558.65,
+          "Paulinia": 620.1,
+          "Hortolândia": 620.1,
+          "Sumaré": 620.1,
+          "Indaiatuba": 744.12,
+          "Ararquara": 967.36,
+          "São Paulo": 967.36
+        }
+      },
+      {
+        "faixa_placas": "121-130",
+        "valores": {
+          "Campinas": 642.45,
+          "Vinhedo": null,
+          "Valinhos": 642.45,
+          "Paulinia": 713.12,
+          "Hortolândia": 713.12,
+          "Sumaré": 713.12,
+          "Indaiatuba": 855.74,
+          "Ararquara": 1112.46,
+          "São Paulo": 1112.46
+        }
+      },
+      {
+        "faixa_placas": "131-140",
+        "valores": {
+          "Campinas": 738.81,
+          "Vinhedo": null,
+          "Valinhos": 738.81,
+          "Paulinia": 820.08,
+          "Hortolândia": 820.08,
+          "Sumaré": 820.08,
+          "Indaiatuba": 984.1,
+          "Ararquara": 1279.33,
+          "São Paulo": 1279.33
+        }
+      },
+      {
+        "faixa_placas": "141-150",
+        "valores": {
+          "Campinas": 849.64,
+          "Vinhedo": null,
+          "Valinhos": 849.64,
+          "Paulinia": 943.1,
+          "Hortolândia": 943.1,
+          "Sumaré": 943.1,
+          "Indaiatuba": 1131.72,
+          "Ararquara": 1471.23,
+          "São Paulo": 1471.23
+        }
+      },
+      {
+        "faixa_placas": "151-160",
+        "valores": {
+          "Campinas": 977.08,
+          "Vinhedo": null,
+          "Valinhos": 977.08,
+          "Paulinia": 1084.56,
+          "Hortolândia": 1084.56,
+          "Sumaré": 1084.56,
+          "Indaiatuba": 1301.47,
+          "Ararquara": 1691.92,
+          "São Paulo": 1691.92
+        }
+      },
+      {
+        "faixa_placas": "161-170",
+        "valores": {
+          "Campinas": 1123.64,
+          "Vinhedo": null,
+          "Valinhos": 1123.64,
+          "Paulinia": 1247.25,
+          "Hortolândia": 1247.25,
+          "Sumaré": 1247.25,
+          "Indaiatuba": 1496.69,
+          "Ararquara": 1945.7,
+          "São Paulo": 1945.7
+        }
+      },
+      {
+        "faixa_placas": "171-180",
+        "valores": {
+          "Campinas": 1292.19,
+          "Vinhedo": null,
+          "Valinhos": 1292.19,
+          "Paulinia": 1434.33,
+          "Hortolândia": 1434.33,
+          "Sumaré": 1434.33,
+          "Indaiatuba": 1721.2,
+          "Ararquara": 2237.56,
+          "São Paulo": 2237.56
+        }
+      },
+      {
+        "faixa_placas": "181-190",
+        "valores": {
+          "Campinas": 1486.02,
+          "Vinhedo": null,
+          "Valinhos": 1486.02,
+          "Paulinia": 1649.48,
+          "Hortolândia": 1649.48,
+          "Sumaré": 1649.48,
+          "Indaiatuba": 1979.38,
+          "Ararquara": 2573.19,
+          "São Paulo": 2573.19
+        }
+      },
+      {
+        "faixa_placas": "191-200",
+        "valores": {
+          "Campinas": 1708.92,
+          "Vinhedo": null,
+          "Valinhos": 1708.92,
+          "Paulinia": 1896.9,
+          "Hortolândia": 1896.9,
+          "Sumaré": 1896.9,
+          "Indaiatuba": 2276.29,
+          "Ararquara": 2959.17,
+          "São Paulo": 2959.17
+        }
+      },
+      {
+        "faixa_placas": "201-210",
+        "valores": {
+          "Campinas": 1965.26,
+          "Vinhedo": null,
+          "Valinhos": 1965.26,
+          "Paulinia": 2181.44,
+          "Hortolândia": 2181.44,
+          "Sumaré": 2181.44,
+          "Indaiatuba": 2617.73,
+          "Ararquara": 3403.05,
+          "São Paulo": 3403.05
+        }
+      },
+      {
+        "faixa_placas": "211-220",
+        "valores": {
+          "Campinas": 1867.0,
+          "Vinhedo": null,
+          "Valinhos": 1867.0,
+          "Paulinia": 2072.37,
+          "Hortolândia": 2072.37,
+          "Sumaré": 2072.37,
+          "Indaiatuba": 2486.84,
+          "Ararquara": 3232.89,
+          "São Paulo": 3232.89
+        }
+      },
+      {
+        "faixa_placas": "221-230",
+        "valores": {
+          "Campinas": 1773.65,
+          "Vinhedo": null,
+          "Valinhos": 1773.65,
+          "Paulinia": 1968.75,
+          "Hortolândia": 1968.75,
+          "Sumaré": 1968.75,
+          "Indaiatuba": 2362.5,
+          "Ararquara": 3071.25,
+          "São Paulo": 3071.25
+        }
+      },
+      {
+        "faixa_placas": "231-240",
+        "valores": {
+          "Campinas": 1684.97,
+          "Vinhedo": null,
+          "Valinhos": 1684.97,
+          "Paulinia": 1870.31,
+          "Hortolândia": 1870.31,
+          "Sumaré": 1870.31,
+          "Indaiatuba": 2244.37,
+          "Ararquara": 2917.69,
+          "São Paulo": 2917.69
+        }
+      },
+      {
+        "faixa_placas": "241-250",
+        "valores": {
+          "Campinas": 1600.72,
+          "Vinhedo": null,
+          "Valinhos": 1600.72,
+          "Paulinia": 1776.8,
+          "Hortolândia": 1776.8,
+          "Sumaré": 1776.8,
+          "Indaiatuba": 2132.16,
+          "Ararquara": 2771.8,
+          "São Paulo": 2771.8
+        }
+      },
+      {
+        "faixa_placas": "251-260",
+        "valores": {
+          "Campinas": 1520.68,
+          "Vinhedo": null,
+          "Valinhos": 1520.68,
+          "Paulinia": 1687.96,
+          "Hortolândia": 1687.96,
+          "Sumaré": 1687.96,
+          "Indaiatuba": 2025.55,
+          "Ararquara": 2633.21,
+          "São Paulo": 2633.21
+        }
+      },
+      {
+        "faixa_placas": "261-270",
+        "valores": {
+          "Campinas": 1748.78,
+          "Vinhedo": null,
+          "Valinhos": 1748.78,
+          "Paulinia": 1941.15,
+          "Hortolândia": 1941.15,
+          "Sumaré": 1941.15,
+          "Indaiatuba": 2329.38,
+          "Ararquara": 3028.19,
+          "São Paulo": 3028.19
+        }
+      },
+      {
+        "faixa_placas": "271-280",
+        "valores": {
+          "Campinas": 2011.1,
+          "Vinhedo": null,
+          "Valinhos": 2011.1,
+          "Paulinia": 2232.32,
+          "Hortolândia": 2232.32,
+          "Sumaré": 2232.32,
+          "Indaiatuba": 2678.79,
+          "Ararquara": 3482.42,
+          "São Paulo": 3482.42
+        }
+      },
+      {
+        "faixa_placas": "281-290",
+        "valores": {
+          "Campinas": 2312.77,
+          "Vinhedo": null,
+          "Valinhos": 2312.77,
+          "Paulinia": 2567.17,
+          "Hortolândia": 2567.17,
+          "Sumaré": 2567.17,
+          "Indaiatuba": 3080.61,
+          "Ararquara": 4004.79,
+          "São Paulo": 4004.79
+        }
+      },
+      {
+        "faixa_placas": "291-300",
+        "valores": {
+          "Campinas": 2659.68,
+          "Vinhedo": null,
+          "Valinhos": 2659.68,
+          "Paulinia": 2952.25,
+          "Hortolândia": 2952.25,
+          "Sumaré": 2952.25,
+          "Indaiatuba": 3542.7,
+          "Ararquara": 4605.5,
+          "São Paulo": 4605.5
+        }
+      },
+      {
+        "faixa_placas": "301-310",
+        "valores": {
+          "Campinas": 2792.67,
+          "Vinhedo": null,
+          "Valinhos": 2792.67,
+          "Paulinia": 3099.86,
+          "Hortolândia": 3099.86,
+          "Sumaré": 3099.86,
+          "Indaiatuba": 3719.83,
+          "Ararquara": 4835.78,
+          "São Paulo": 4835.78
+        }
+      },
+      {
+        "faixa_placas": "311-320",
+        "valores": {
+          "Campinas": 2876.45,
+          "Vinhedo": null,
+          "Valinhos": 2876.45,
+          "Paulinia": 3192.85,
+          "Hortolândia": 3192.85,
+          "Sumaré": 3192.85,
+          "Indaiatuba": 3831.43,
+          "Ararquara": 4980.85,
+          "São Paulo": 4980.85
+        }
+      },
+      {
+        "faixa_placas": "321-330",
+        "valores": {
+          "Campinas": 2905.21,
+          "Vinhedo": null,
+          "Valinhos": 2905.21,
+          "Paulinia": 3224.78,
+          "Hortolândia": 3224.78,
+          "Sumaré": 3224.78,
+          "Indaiatuba": 3869.74,
+          "Ararquara": 5030.66,
+          "São Paulo": 5030.66
+        }
+      },
+      {
+        "faixa_placas": "331-340",
+        "valores": {
+          "Campinas": 2934.26,
+          "Vinhedo": null,
+          "Valinhos": 2934.26,
+          "Paulinia": 3257.03,
+          "Hortolândia": 3257.03,
+          "Sumaré": 3257.03,
+          "Indaiatuba": 3908.44,
+          "Ararquara": 5080.97,
+          "São Paulo": 5080.97
+        }
+      },
+      {
+        "faixa_placas": "341-350",
+        "valores": {
+          "Campinas": 2963.6,
+          "Vinhedo": null,
+          "Valinhos": 2963.6,
+          "Paulinia": 3289.6,
+          "Hortolândia": 3289.6,
+          "Sumaré": 3289.6,
+          "Indaiatuba": 3947.52,
+          "Ararquara": 5131.78,
+          "São Paulo": 5131.78
+        }
+      },
+      {
+        "faixa_placas": "351-360",
+        "valores": {
+          "Campinas": 2993.24,
+          "Vinhedo": null,
+          "Valinhos": 2993.24,
+          "Paulinia": 3322.5,
+          "Hortolândia": 3322.5,
+          "Sumaré": 3322.5,
+          "Indaiatuba": 3987.0,
+          "Ararquara": 5183.1,
+          "São Paulo": 5183.1
+        }
+      },
+      {
+        "faixa_placas": "361-370",
+        "valores": {
+          "Campinas": 3023.17,
+          "Vinhedo": null,
+          "Valinhos": 3023.17,
+          "Paulinia": 3355.72,
+          "Hortolândia": 3355.72,
+          "Sumaré": 3355.72,
+          "Indaiatuba": 4026.87,
+          "Ararquara": 5234.93,
+          "São Paulo": 5234.93
+        }
+      },
+      {
+        "faixa_placas": "371-380",
+        "valores": {
+          "Campinas": 3053.4,
+          "Vinhedo": null,
+          "Valinhos": 3053.4,
+          "Paulinia": 3389.28,
+          "Hortolândia": 3389.28,
+          "Sumaré": 3389.28,
+          "Indaiatuba": 4067.14,
+          "Ararquara": 5287.28,
+          "São Paulo": 5287.28
+        }
+      },
+      {
+        "faixa_placas": "381-390",
+        "valores": {
+          "Campinas": 3083.94,
+          "Vinhedo": null,
+          "Valinhos": 3083.94,
+          "Paulinia": 3423.17,
+          "Hortolândia": 3423.17,
+          "Sumaré": 3423.17,
+          "Indaiatuba": 4107.81,
+          "Ararquara": 5340.15,
+          "São Paulo": 5340.15
+        }
+      },
+      {
+        "faixa_placas": "391-400",
+        "valores": {
+          "Campinas": 3114.78,
+          "Vinhedo": null,
+          "Valinhos": 3114.78,
+          "Paulinia": 3457.4,
+          "Hortolândia": 3457.4,
+          "Sumaré": 3457.4,
+          "Indaiatuba": 4148.88,
+          "Ararquara": 5393.55,
+          "São Paulo": 5393.55
+        }
+      }
+    ]
+  }
 }

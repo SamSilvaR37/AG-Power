@@ -31,41 +31,45 @@ São quase 700 usinas sem acompanhamento recorrente.
 Cliente que a gente já conquistou, e deixa ir.
 
 9
-00:00:25,300 --> 00:00:30,000
-Se só 30% da base pagasse dez reais por mês, seriam 225 clientes:
+00:00:25,300 --> 00:00:31,567
+Se só 30% da base estivesse no Plano Power, pela nossa própria tabela, seriam 225 clientes:
 
 10
-00:00:30,000 --> 00:00:34,700
-dois mil duzentos e cinquenta por mês, vinte e sete mil por ano.
+00:00:31,567 --> 00:00:34,700
+mais de duzentos e sessenta mil por ano.
 
 11
 00:00:35,300 --> 00:00:41,700
-Só nesse cenário, são quase vinte mil reais por ano que a gente deixa na mesa.
+Comparado com hoje, são quase duzentos mil reais por ano que ficam na mesa.
 
 12
-00:00:42,300 --> 00:00:46,740
-Com um plano de vinte e nove reais, são setenta e oito mil por ano.
+00:00:42,300 --> 00:00:46,161
+Com metade da base, passa de quatrocentos e quarenta mil por ano.
 
 13
-00:00:46,740 --> 00:00:49,700
-Com quarenta e nove, passa de cento e trinta mil.
+00:00:46,161 --> 00:00:49,057
+E o plano já tem preço, já tem tabela.
 
 14
+00:00:49,057 --> 00:00:49,700
+Falta oferecer.
+
+15
 00:00:50,300 --> 00:00:51,800
 E a ferramenta já existe:
 
-15
+16
 00:00:51,800 --> 00:00:53,900
 mostra quem parou antes do cliente reclamar.
 
-16
+17
 00:00:53,900 --> 00:00:55,700
 E a base cresce todo mês.
 
-17
+18
 00:00:56,300 --> 00:00:58,729
 O dinheiro está na mesa.
 
-18
+19
 00:00:58,729 --> 00:00:59,700
 Bora pegar.

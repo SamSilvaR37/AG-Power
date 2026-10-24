@@ -1,11 +1,11 @@
 [
-  {"id": 1, "dur": 5,  "locucao": "Tem dinheiro na mesa. E ele é nosso."},
-  {"id": 2, "dur": 7,  "locucao": "Hoje a AG Power cuida de 751 usinas. 636 já estão gerando energia."},
-  {"id": 3, "dur": 7,  "locucao": "Mas só 59 estão no Plano Power. Menos de 8%."},
-  {"id": 4, "dur": 6,  "locucao": "São quase 700 usinas sem acompanhamento recorrente. Cliente que a gente já conquistou, e deixa ir."},
-  {"id": 5, "dur": 10, "locucao": "Se só 30% da base pagasse dez reais por mês, seriam 225 clientes: dois mil duzentos e cinquenta por mês, vinte e sete mil por ano."},
-  {"id": 6, "dur": 7,  "locucao": "Só nesse cenário, são quase vinte mil reais por ano que a gente deixa na mesa."},
-  {"id": 7, "dur": 8,  "locucao": "Com um plano de vinte e nove reais, são setenta e oito mil por ano. Com quarenta e nove, passa de cento e trinta mil."},
-  {"id": 8, "dur": 6,  "locucao": "E a ferramenta já existe: mostra quem parou antes do cliente reclamar. E a base cresce todo mês."},
-  {"id": 9, "dur": 4,  "locucao": "O dinheiro está na mesa. Bora pegar."}
+  {"id": 1, "dur": 5, "locucao": "Tem dinheiro na mesa. E ele é nosso."},
+  {"id": 2, "dur": 7, "locucao": "Hoje a AG Power cuida de 751 usinas. 636 já estão gerando energia."},
+  {"id": 3, "dur": 7, "locucao": "Mas só 59 estão no Plano Power. Menos de 8%."},
+  {"id": 4, "dur": 6, "locucao": "São quase 700 usinas sem acompanhamento recorrente. Cliente que a gente já conquistou, e deixa ir."},
+  {"id": 5, "dur": 10, "locucao": "Se só 30% da base estivesse no Plano Power, pela nossa própria tabela, seriam 225 clientes: mais de duzentos e sessenta mil por ano."},
+  {"id": 6, "dur": 7, "locucao": "Comparado com hoje, são quase duzentos mil reais por ano que ficam na mesa."},
+  {"id": 7, "dur": 8, "locucao": "Com metade da base, passa de quatrocentos e quarenta mil por ano. E o plano já tem preço, já tem tabela. Falta oferecer."},
+  {"id": 8, "dur": 6, "locucao": "E a ferramenta já existe: mostra quem parou antes do cliente reclamar. E a base cresce todo mês."},
+  {"id": 9, "dur": 4, "locucao": "O dinheiro está na mesa. Bora pegar."}
 ]

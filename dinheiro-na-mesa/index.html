@@ -39,7 +39,7 @@ body{font-family:Inter,"Inter Display",system-ui,-apple-system,"Segoe UI",Roboto
 .ico{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .logo-img{display:block;object-fit:contain}
 .sim{position:absolute;right:calc(var(--u)*3);top:calc(var(--u)*3);display:flex;align-items:center;gap:calc(var(--u)*.8);border:2px solid var(--sun);color:var(--sun);font-weight:900;font-size:calc(var(--u)*1.7);letter-spacing:.16em;padding:calc(var(--u)*.7) calc(var(--u)*1.4);border-radius:calc(var(--u)*.8);background:rgba(10,17,32,.7);z-index:20}
-.foot{position:absolute;left:0;right:0;bottom:calc(var(--u)*2.4);text-align:center;font-size:calc(var(--u)*1.45);color:var(--mute);padding:0 calc(var(--u)*4)}
+.foot{position:absolute;left:0;right:0;bottom:calc(var(--u)*2.4);text-align:center;font-size:calc(var(--u)*1.45);line-height:1.4;color:var(--mute);padding:0 calc(var(--u)*6)}
 .interno{position:absolute;left:calc(var(--u)*3);top:calc(var(--u)*3);font-weight:800;font-size:calc(var(--u)*1.3);letter-spacing:.2em;color:var(--dim);text-transform:uppercase;z-index:20}
 canvas.grid{display:block}
 
@@ -87,14 +87,15 @@ canvas.grid{display:block}
 
 /* ---------- 6 ---------- */
 #s6 .lay{position:absolute;inset:calc(var(--u)*8) calc(var(--u)*8) calc(var(--u)*7);display:flex;align-items:flex-end;justify-content:center;gap:calc(var(--u)*7)}
-.colb{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.2);width:calc(var(--u)*26)}
+.colb{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.2);width:calc(var(--u)*28)}
 .colb .bar{width:100%;border-radius:calc(var(--u)*1.4) calc(var(--u)*1.4) calc(var(--u)*.4) calc(var(--u)*.4);transform-origin:bottom}
-.colb .v{font-weight:900;font-size:calc(var(--u)*4.6);letter-spacing:-.02em;white-space:nowrap}
+.colb .v{font-weight:900;font-size:calc(var(--u)*4.6);letter-spacing:-.02em;white-space:nowrap;text-align:center;line-height:1.05}
+.colb .v span{display:block;font-size:.42em;font-weight:700}
 .colb .k{font-weight:800;font-size:calc(var(--u)*2.2)}
 .colb .s{font-size:calc(var(--u)*1.6);color:var(--mute)}
-#s6 .gain{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.4);width:calc(var(--u)*40)}
+#s6 .gain{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.4);width:calc(var(--u)*50)}
 #s6 .gain svg{width:calc(var(--u)*28);height:calc(var(--u)*34);overflow:visible}
-#s6 .gain .num{font-size:calc(var(--u)*7.4);color:var(--sun);white-space:nowrap}
+#s6 .gain .num{font-size:calc(var(--u)*6.4);color:var(--sun);white-space:nowrap}
 
 /* ---------- 7 ---------- */
 #s7 .lay{position:absolute;inset:calc(var(--u)*6) calc(var(--u)*8) calc(var(--u)*7);display:flex;flex-direction:column;gap:calc(var(--u)*3)}
@@ -128,7 +129,7 @@ canvas.grid{display:block}
 [data-f="1x1"] .gl .info{flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:calc(var(--u)*1) calc(var(--u)*3);min-width:0}
 [data-f="1x1"] .big{font-size:calc(var(--u)*11)}
 [data-f="1x1"] .nota{display:none}
-[data-f="9x16"] #s5 .lay{grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;align-content:center;gap:calc(var(--u)*8);inset:calc(var(--u)*12) calc(var(--u)*6)}
+[data-f="9x16"] #s5 .lay{grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;align-content:center;gap:calc(var(--u)*13);inset:calc(var(--u)*12) calc(var(--u)*6)}
 [data-f="9x16"] .track{width:calc(var(--u)*60);height:calc(var(--u)*14)}
 [data-f="9x16"] .track .fill,[data-f="9x16"] .track .today{top:0;right:auto;height:auto}
 [data-f="9x16"] .track .lbl{left:auto;top:calc(100% + var(--u)*1.6);transform:translateX(-50%)}
@@ -141,11 +142,12 @@ canvas.grid{display:block}
 [data-f="9x16"] #s6 .lay{flex-wrap:wrap;align-content:center;align-items:flex-end;gap:calc(var(--u)*4) calc(var(--u)*6);inset:calc(var(--u)*10) calc(var(--u)*5)}
 [data-f="9x16"] #s6 .gain{order:3;width:100%}
 [data-f="9x16"] .colb{width:calc(var(--u)*36)}
-[data-f="1x1"] #s6 .lay{gap:calc(var(--u)*3);inset:calc(var(--u)*9) calc(var(--u)*4) calc(var(--u)*7)}
+[data-f="1x1"] #s6 .lay{gap:calc(var(--u)*3);inset:calc(var(--u)*9) calc(var(--u)*4) calc(var(--u)*10)}
 [data-f="1x1"] .colb{width:calc(var(--u)*22)}
+[data-f="1x1"] .colb .v{font-size:calc(var(--u)*3.4) !important}
 [data-f="1x1"] .colb .v{font-size:calc(var(--u)*3.8)}
 [data-f="1x1"] #s6 .gain{width:calc(var(--u)*34)}
-[data-f="1x1"] #s6 .gain .num{font-size:calc(var(--u)*5.6)}
+[data-f="1x1"] #s6 .gain .num{font-size:calc(var(--u)*4.4)}
 [data-f="1x1"] #s6 .gain svg{width:calc(var(--u)*20);height:calc(var(--u)*26)}
 [data-f="9x16"] #s7 .lay{inset:calc(var(--u)*12) calc(var(--u)*5) calc(var(--u)*10)}
 [data-f="9x16"] #s7 .cols,[data-f="1x1"] #s7 .cols{gap:calc(var(--u)*2.4)}
@@ -185,9 +187,12 @@ canvas.grid{display:block}
 const D = {
   cadastradas: 751, operacao: 636, power: 59,
   pct: "7,9%", fora: 692, implantacoes30d: 108,
-  hoje: { mensal: 590 },
-  c30: { clientes: 225, r10: { mensal: 2250, anual: 27000 }, r29: { anual: 78300 }, r49: { anual: 132300 } },
-  diferencaAnual: 19920,
+  precoTipico: "98,64", // mediana das 97 usinas com nº de placas cadastrado (tabela oficial, Campinas 11–20 placas)
+  hoje: { clientes: 59, mensal: 5819.76 },
+  c30: { clientes: 225, mensal: 22194, anual: 266328 },
+  c50: { clientes: 375, anual: 443880 },
+  c100: { clientes: 751, anual: 888943.68 },
+  diferencaAnual: 196490.88, // 166 clientes a mais × R$ 98,64 × 12
 };
 
 /* ================= utilidades (mesmo motor do comercial) ================= */
@@ -231,7 +236,8 @@ const I = {
 };
 const ic = n => `<svg class="ico" viewBox="0 0 24 24">${I[n]}</svg>`;
 const SIM = `<div class="sim">${ic("flask")} SIMULAÇÃO</div>`;
-const FOOT = `<div class="foot">Simulação com preços de exemplo, base de 751 usinas. Não é faturamento real.</div>`;
+const FOOT = `<div class="foot">Simulação · preço típico R$ 98,64 por usina, da tabela oficial do Plano Power · *período da tabela tratado como mensal, a confirmar · base de 751 usinas · não é faturamento real</div>`;
+const MES = `/mês*`;
 const INTERNO = `<div class="interno">Uso interno</div>`;
 
 /* ================= grade das 751 usinas (canvas) ================= */
@@ -408,17 +414,17 @@ S({ id:4, name:"O que fica de fora", dur:6, cut:true,
   sfx: [...ticks(.3,1.4), [2.3,"alert"]],
 });
 
-/* ---------- 5. A simulação: 30% a R$ 10 ---------- */
-S({ id:5, name:"A simulação: 30% a R$ 10", dur:10,
+/* ---------- 5. A simulação: 30% da base no Plano Power ---------- */
+S({ id:5, name:"A simulação: 30% da base no Plano Power", dur:10,
   html: () => `<div class="bg-glow"></div>${SIM}${INTERNO}
     <div class="lay">
       <div class="track"><div class="top">751 usinas</div><div class="fill"></div><div class="today"></div>
         <div class="lbl l30 sun"></div><div class="lbl lh gray">Hoje: 59</div></div>
       <div class="vals">
-        <div class="kicker">Se 30% da base pagasse R$ 10/mês</div>
+        <div class="kicker">Se 30% da base estivesse no Plano Power</div>
         <div class="h2"><span class="sun">30%</span> da base = <span class="cl sun">59</span> clientes</div>
-        <div><span class="tag pill">${ic("coins")} R$ 10/mês por usina</span></div>
-        <div class="money m1"><span class="num">R$ 0</span><span>/mês</span></div>
+        <div class="pill"><span class="tag">${ic("coins")} R$ ${D.precoTipico} por usina (tabela oficial)</span><div class="nota" style="margin-top:${U}px">Preço típico: mediana das 97 usinas com número de placas cadastrado.</div></div>
+        <div class="money m1"><span class="num">R$ 0</span><span>${MES}</span></div>
         <div class="money y m2"><span class="num">R$ 0</span><span>/ano</span></div>
       </div>
     </div>${FOOT}`,
@@ -438,8 +444,8 @@ S({ id:5, name:"A simulação: 30% a R$ 10", dur:10,
     setText($(root,".cl"), fmt(cl));
     rise($(root,".pill"),t,1.6,.5,2);
     const m1 = $(root,".m1"), m2 = $(root,".m2");
-    rise(m1,t,3.4,.4,2); setText($(m1,".num"), brl(count(t,3.5,1.8,0,D.c30.r10.mensal)));
-    rise(m2,t,5.8,.4,2); setText($(m2,".num"), brl(count(t,5.9,1.9,0,D.c30.r10.anual)));
+    rise(m1,t,3.4,.4,2); setText($(m1,".num"), brl(count(t,3.5,1.8,0,D.c30.mensal)));
+    rise(m2,t,5.8,.4,2); setText($(m2,".num"), brl(count(t,5.9,1.9,0,D.c30.anual)));
     pop($(root,".sim"),t,.3,.4);
     rise($(root,".foot"),t,1,.5,1);
     // transição: os valores deslizam para o lado
@@ -455,22 +461,22 @@ const coinStack = n => Array.from({length:n},(_,i)=>`<g class="cs"><rect x="40" 
 S({ id:6, name:"Dinheiro na mesa", dur:7,
   html: () => `<div class="bg-glow"></div>${SIM}${INTERNO}
     <div class="lay">
-      <div class="colb hoje"><div class="v gray">R$ 590<span style="font-size:.45em">/mês</span></div><div class="bar" style="background:var(--gray)"></div><div class="k gray">Hoje</div><div class="s">59 clientes</div></div>
-      <div class="colb c30"><div class="v sun">R$ 2.250<span style="font-size:.45em">/mês</span></div><div class="bar" style="background:linear-gradient(#f7a531,#f2913d)"></div><div class="k sun">30% da base</div><div class="s">225 clientes</div></div>
+      <div class="colb hoje"><div class="v gray">R$ 5.820<span>${MES}</span></div><div class="bar" style="background:var(--gray)"></div><div class="k gray">Hoje</div><div class="s">59 clientes</div></div>
+      <div class="colb c30"><div class="v sun">R$ 22.194<span>${MES}</span></div><div class="bar" style="background:linear-gradient(#f7a531,#f2913d)"></div><div class="k sun">30% da base</div><div class="s">225 clientes</div></div>
       <div class="gain">
         <svg viewBox="0 0 280 330"><defs>
           <linearGradient id="s6top" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#f7b84a"/><stop offset="1" stop-color="#d98a22"/></linearGradient>
           <linearGradient id="s6side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a8640f"/><stop offset=".35" stop-color="#e9a03a"/><stop offset=".6" stop-color="#ffcf6e"/><stop offset="1" stop-color="#9c5c0d"/></linearGradient></defs>
           <ellipse cx="140" cy="304" rx="120" ry="24" fill="#000" opacity=".4"/>${coinStack(14)}</svg>
         <div class="num g">+ R$ 0</div>
-        <div class="tag">por ano a mais, nesse cenário</div>
+        <div class="tag">por ano a mais que hoje, nesse cenário</div>
       </div>
     </div>${FOOT}`,
   update(root,t,dur){
     pop($(root,".sim"),t,0,.3);
     const maxH = U*(PORTRAIT ? 36 : SQUARE ? 40 : 44);
     const bh = $(root,".hoje .bar"), b3 = $(root,".c30 .bar");
-    bh.style.height = (maxH * D.hoje.mensal / D.c30.r10.mensal) + "px";
+    bh.style.height = (maxH * D.hoje.mensal / D.c30.mensal) + "px";
     b3.style.height = maxH + "px";
     bh.style.transform = `scaleY(${p(t,.3,.7)})`; b3.style.transform = `scaleY(${p(t,.8,.9)})`;
     rise($(root,".hoje .v"),t,.6,.4,2); rise($(root,".c30 .v"),t,1.3,.4,2);
@@ -487,13 +493,14 @@ S({ id:6, name:"Dinheiro na mesa", dur:7,
   sfx: [[.4,"swish"],[.9,"swish"], ...Array.from({length:14},(_,i)=>[+(2.2+i*.09+.25).toFixed(2),"coin"]), ...ticks(2.3,1.4), [3.85,"chaching"]],
 });
 
-/* ---------- 7. E se o plano valer mais ---------- */
-const PLANOS = [[10, D.c30.r10.anual],[29, D.c30.r29.anual],[49, D.c30.r49.anual]];
-S({ id:7, name:"E se o plano valer mais", dur:8,
+/* ---------- 7. E se metade da base entrar ---------- */
+const ADESAO = [["30%", D.c30.anual],["50%", D.c50.anual],["100%", D.c100.anual]];
+const mil = v => `R$ ${fmt(v/1000)} mil`;
+S({ id:7, name:"E se metade da base entrar", dur:8,
   html: () => `<div class="bg-glow"></div>${SIM}${INTERNO}
     <div class="lay">
-      <div><div class="kicker">E se o plano valer mais?</div><div class="h2" style="margin-top:${U}px">30% da base <span class="gray">· 225 clientes · simulação</span></div></div>
-      <div class="cols">${PLANOS.map(([m])=>`<div class="c3"><div class="v"><span class="vn">R$ 0</span><small>/ano</small></div><div class="bar"></div><div class="k">R$ ${m}/mês</div></div>`).join("")}</div>
+      <div><div class="kicker">E se metade da base entrar?</div><div class="h2" style="margin-top:${U}px">Valor por ano <span class="gray">· preço típico R$ ${D.precoTipico} · simulação</span></div></div>
+      <div class="cols">${ADESAO.map(([a])=>`<div class="c3"><div class="v"><span class="vn">R$ 0 mil</span><small>/ano</small></div><div class="bar"></div><div class="k">${a} da base</div></div>`).join("")}</div>
     </div>${FOOT}`,
   update(root,t,dur){
     pop($(root,".sim"),t,0,.3);
@@ -501,11 +508,11 @@ S({ id:7, name:"E se o plano valer mais", dur:8,
     const box = $(root,".cols").getBoundingClientRect();
     const maxH = box.height/VIEW_SCALE - U*13;
     $$(root,".c3").forEach((c,i)=>{
-      const a = .6 + i*1.6, [, anual] = PLANOS[i];
+      const a = .6 + i*1.6, [, anual] = ADESAO[i];
       const k = p(t,a,1.2,eo);
-      const b = $(c,".bar"); b.style.height = (maxH * anual / PLANOS[2][1]) + "px"; b.style.transform = `scaleY(${k})`;
+      const b = $(c,".bar"); b.style.height = (maxH * anual / ADESAO[2][1]) + "px"; b.style.transform = `scaleY(${k})`;
       rise($(c,".k"),t,a-.3,.4,1.5); rise($(c,".v"),t,a,.3,1.5);
-      setText($(c,".vn"), brl(count(t,a,1.2,0,anual)));
+      setText($(c,".vn"), mil(count(t,a,1.2,0,anual)));
     });
     rise($(root,".foot"),t,.5,.5,1);
     // transição: as colunas viram a tela da plataforma
