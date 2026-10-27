@@ -1,0 +1,10 @@
+[
+  {"id": 1, "dur": 8, "locucao": "Quantas placas solares cabem num inversor de cinco quilowatts? Dividir potência não basta."},
+  {"id": 2, "dur": 10, "locucao": "Primeiro, consulte a ficha técnica. Precisamos conferir tensão, corrente, MPPTs e potência fotovoltaica recomendada."},
+  {"id": 3, "dur": 11, "locucao": "Agora veja os dados do módulo: quinhentos e cinquenta watts, tensão de operação, tensão de circuito aberto e suas correntes."},
+  {"id": 4, "dur": 13, "locucao": "Numa string de seis módulos, a tensão de operação soma duzentos e cinquenta vírgula oito volts. O Voc, a vinte e cinco graus, chega a duzentos e noventa e nove vírgula quatro."},
+  {"id": 5, "dur": 11, "locucao": "E atenção: no frio, o Voc aumenta. Neste exemplo, a zero grau, a string ficaria perto de trezentos e vinte volts."},
+  {"id": 6, "dur": 11, "locucao": "Na ligação em série, a corrente da string não é a soma das correntes dos módulos. Verifique os limites operacional e de curto-circuito."},
+  {"id": 7, "dur": 11, "locucao": "Com duas strings de seis módulos, uma por MPPT, teremos doze placas e seis vírgula seis quilowatts-pico em corrente contínua."},
+  {"id": 8, "dur": 10, "locucao": "O resultado é válido para as premissas deste exemplo. Num projeto real, confirme os dados do fabricante e as temperaturas locais."}
+]

@@ -1,0 +1,107 @@
+1
+00:00:00,300 --> 00:00:02,655
+Quantas placas solares cabem
+
+2
+00:00:02,655 --> 00:00:05,430
+num inversor de cinco quilowatts?
+
+3
+00:00:05,430 --> 00:00:07,700
+Dividir potência não basta.
+
+4
+00:00:08,300 --> 00:00:11,463
+Primeiro, consulte a ficha técnica.
+
+5
+00:00:11,463 --> 00:00:14,265
+Confira tensão, corrente, MPPTs
+
+6
+00:00:14,265 --> 00:00:17,700
+e a potência fotovoltaica recomendada.
+
+7
+00:00:18,300 --> 00:00:20,553
+Agora, os dados do módulo:
+
+8
+00:00:20,553 --> 00:00:23,587
+550 watts, tensão de operação, Vmp,
+
+9
+00:00:23,587 --> 00:00:26,273
+tensão de circuito aberto, Voc,
+
+10
+00:00:26,273 --> 00:00:28,700
+e suas correntes, Imp e Isc.
+
+11
+00:00:29,300 --> 00:00:33,033
+Numa string de seis módulos,
+
+12
+00:00:33,033 --> 00:00:37,567
+a tensão de operação soma 250,8 V.
+
+13
+00:00:37,567 --> 00:00:39,567
+O Voc, a 25 °C,
+
+14
+00:00:39,567 --> 00:00:41,700
+chega a 299,4 V.
+
+15
+00:00:42,300 --> 00:00:46,170
+Atenção: no frio, o Voc aumenta.
+
+16
+00:00:46,170 --> 00:00:48,830
+A 0 °C, neste exemplo,
+
+17
+00:00:48,830 --> 00:00:52,700
+a string ficaria perto de 320 V.
+
+18
+00:00:53,300 --> 00:00:55,879
+Em série, a corrente da string
+
+19
+00:00:55,879 --> 00:00:59,231
+não é a soma das correntes dos módulos.
+
+20
+00:00:59,231 --> 00:01:01,981
+Verifique os limites operacional
+
+21
+00:01:01,981 --> 00:01:03,700
+e de curto-circuito.
+
+22
+00:01:04,300 --> 00:01:07,838
+Com duas strings de seis módulos,
+
+23
+00:01:07,838 --> 00:01:11,376
+uma por MPPT, teremos doze placas
+
+24
+00:01:11,376 --> 00:01:14,700
+e 6,6 kWp em corrente contínua.
+
+25
+00:01:15,300 --> 00:01:19,045
+O resultado vale para as premissas deste exemplo.
+
+26
+00:01:19,045 --> 00:01:22,789
+Num projeto real, confirme os dados do fabricante
+
+27
+00:01:22,789 --> 00:01:24,700
+e as temperaturas locais.

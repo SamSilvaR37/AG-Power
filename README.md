@@ -2,6 +2,8 @@
 
 > Este repositório também tem o vídeo interno **Dinheiro na Mesa — Plano Power** (60 s):
 > veja [`dinheiro-na-mesa/README.md`](dinheiro-na-mesa/README.md).
+> E o vídeo educativo **Quantas placas cabem em um inversor de 5 kW?** (9:16, 85 s):
+> veja [`dimensionamento-5kw/README.md`](dimensionamento-5kw/README.md).
 
 Comercial institucional de 90 s (pt-BR) feito a partir do briefing em `briefing.json`.
 O vídeo é **animado em HTML**: cada quadro é calculado a partir do tempo, então o mesmo

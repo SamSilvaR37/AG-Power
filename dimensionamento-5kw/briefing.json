@@ -1,0 +1,133 @@
+{
+  "titulo": "Quantas placas solares cabem em um inversor de 5 kW?",
+  "tipo": "prompt_para_geracao_de_video_educativo",
+  "idioma": "pt-BR",
+  "objetivo": "Criar um vídeo educativo, dinâmico e tecnicamente responsável sobre dimensionamento de módulos fotovoltaicos por tensão, corrente e potência. Inspirar-se na estrutura didática da referência, sem copiar identidade, cenas exatas ou marca d'água.",
+  "formato": {
+    "proporcao": "9:16",
+    "resolucao": "1080x1920",
+    "duracao_segundos": 85,
+    "fps": 30,
+    "plataforma": "Instagram Reels / TikTok / Shorts"
+  },
+  "direcao_de_arte": {
+    "estilo": "motion graphics 2D técnico, vetorial, minimalista e profissional",
+    "cores": {
+      "fundo": "#0B2030",
+      "cor_principal": "#FFFFFF",
+      "destaques": "#FFC32B",
+      "sucesso": "#47C98B",
+      "alerta": "#FF6262",
+      "diagramas": "#79A9C8"
+    },
+    "tipografia": "sans-serif forte e legível, títulos em negrito, valores tabulares",
+    "elementos": "diagramas elétricos simples de módulos e inversor, setas discretas, barras de comparação, ficha técnica animada e números grandes",
+    "composicao": "margens seguras para interface do Reels, hierarquia visual clara, um conceito por tela, sem excesso de elementos",
+    "movimento": "entradas suaves, zoom discreto, destaque de parâmetros, contagem visual de módulos, conexão progressiva das strings",
+    "evitar": "neon, 3D excessivo, personagens, poluição visual, textos ilegíveis, logotipos de terceiros"
+  },
+  "audio": {
+    "voz": "narrador brasileiro, natural, seguro e didático, sem tom robótico",
+    "ritmo": "energético, com pausas nos números",
+    "musica": "instrumental leve, discreta, sem competir com a voz",
+    "legendas": "sincronizadas com a narração, em português brasileiro, com palavras-chave em amarelo"
+  },
+  "cenario_ilustrativo": {
+    "aviso": "Os dados abaixo são HIPOTÉTICOS e servem somente para uma simulação didática. Conferir fichas técnicas reais antes de dimensionar um projeto.",
+    "inversor": {
+      "potencia_nominal_ca_kw": 5.0,
+      "potencia_fv_recomendada_max_kwp": 7.5,
+      "tensao_cc_max_v": 600,
+      "faixa_mppt_v": [
+        90,
+        550
+      ],
+      "tensao_partida_v": 100,
+      "mppts": 2,
+      "strings_por_mppt": 1,
+      "corrente_operacional_max_por_mppt_a": 16,
+      "corrente_curto_circuito_max_por_mppt_a": 20
+    },
+    "modulo": {
+      "potencia_wp": 550,
+      "voc_stc_v": 49.9,
+      "vmp_stc_v": 41.8,
+      "imp_stc_a": 13.16,
+      "isc_stc_a": 13.9,
+      "coeficiente_temperatura_voc_pct_por_c": -0.28
+    },
+    "temperatura_minima_ambiente_exemplo_c": 0,
+    "configuracao_demonstrativa": {
+      "strings": 2,
+      "modulos_em_serie_por_string": 6,
+      "total_modulos": 12,
+      "potencia_total_kwp": 6.6,
+      "potencia_por_string_kwp": 3.3,
+      "vmp_por_string_a_25c_v": 250.8,
+      "voc_por_string_a_25c_v": 299.4,
+      "voc_estimado_por_string_a_0c_v": 320.36,
+      "corrente_operacional_por_string_a": 13.16,
+      "corrente_curto_circuito_por_string_a": 13.9,
+      "relacao_cc_ca": 1.32
+    }
+  },
+  "roteiro_cenas": [
+    {
+      "tempo": "00:00-00:08",
+      "visual": "Fundo azul-escuro. Surgem 12 módulos solares esquemáticos acima de um inversor central com etiqueta 5 kW. Um cálculo simplista '5.000 ÷ 550 = 9?' aparece e recebe um X vermelho.",
+      "texto_tela": "QUANTAS PLACAS CABEM NUM INVERSOR DE 5 kW?",
+      "narracao": "Quantas placas solares cabem num inversor de cinco quilowatts? Dividir potência não basta."
+    },
+    {
+      "tempo": "00:08-00:18",
+      "visual": "Ficha técnica do inversor surge em cartão claro. Destacar: 600 V máximos, partida em 100 V, dois MPPTs, 16 A e recomendação de 7,5 kWp.",
+      "texto_tela": "COMECE PELO DATASHEET",
+      "narracao": "Primeiro, consulte a ficha técnica. Precisamos conferir tensão, corrente, MPPTs e potência fotovoltaica recomendada."
+    },
+    {
+      "tempo": "00:18-00:29",
+      "visual": "Ficha do módulo 550 Wp, com indicação Vmp 41,8 V, Voc 49,9 V, Imp 13,16 A e Isc 13,9 A. Cores consistentes para cada grandeza.",
+      "texto_tela": "MÓDULO DE 550 Wp — Vmp, Voc, Imp e Isc",
+      "narracao": "Agora veja os dados do módulo: quinhentos e cinquenta watts, tensão de operação, tensão de circuito aberto e suas correntes."
+    },
+    {
+      "tempo": "00:29-00:42",
+      "visual": "Seis módulos entram um a um em série e suas tensões são somadas numa barra. Destacar 6 × 41,8 = 250,8 V. Em seguida mostrar 6 × 49,9 = 299,4 V de circuito aberto a 25 °C.",
+      "texto_tela": "6 EM SÉRIE | Vmp = 250,8 V | Voc = 299,4 V",
+      "narracao": "Numa string de seis módulos, a tensão de operação soma duzentos e cinquenta vírgula oito volts. O Voc, a vinte e cinco graus, chega a duzentos e noventa e nove vírgula quatro."
+    },
+    {
+      "tempo": "00:42-00:53",
+      "visual": "Termômetro desce de 25 °C para 0 °C. A tensão Voc sobe de 299,4 V para cerca de 320,4 V. Barra permanece abaixo do máximo de 600 V.",
+      "texto_tela": "FRIO AUMENTA O Voc | ≈ 320,4 V A 0 °C",
+      "narracao": "E atenção: no frio, o Voc aumenta. Neste exemplo, a zero grau, a string ficaria perto de trezentos e vinte volts."
+    },
+    {
+      "tempo": "00:53-01:04",
+      "visual": "Diagrama mostra seis módulos ligados ao MPPT 1. Etiquetas Imp 13,16 A e Isc 13,9 A comparadas com os limites de 16 A e 20 A. Não somar correntes de módulos em série.",
+      "texto_tela": "EM SÉRIE: SOMA TENSÃO, NÃO CORRENTE",
+      "narracao": "Na ligação em série, a corrente da string não é a soma das correntes dos módulos. Verifique os limites operacional e de curto-circuito."
+    },
+    {
+      "tempo": "01:04-01:15",
+      "visual": "Surge a segunda string de seis módulos, conectada separadamente ao MPPT 2. Contador soma 12 × 550 Wp = 6.600 Wp = 6,6 kWp. Mostrar 6,6 dividido por 5 = 1,32.",
+      "texto_tela": "2 STRINGS × 6 MÓDULOS = 12 | 6,6 kWp CC",
+      "narracao": "Com duas strings de seis módulos, uma por MPPT, teremos doze placas e seis vírgula seis quilowatts-pico em corrente contínua."
+    },
+    {
+      "tempo": "01:15-01:25",
+      "visual": "Tela-resumo: 5 kW CA, 6,6 kWp CC, 2 MPPTs, 6 módulos por string. Selo pequeno 'EXEMPLO ILUSTRATIVO'. Final limpo, sem chamada comercial falsa.",
+      "texto_tela": "NÃO DIMENSIONE SÓ PELOS WATTS. CONFIRA O DATASHEET.",
+      "narracao": "O resultado é válido para as premissas deste exemplo. Num projeto real, confirme os dados do fabricante e as temperaturas locais."
+    }
+  ],
+  "instrucoes_de_producao": [
+    "Use as cenas como storyboard: gere planos curtos e depois monte-os na edição, se o gerador não entregar 85 segundos com texto preciso.",
+    "Todos os números e fórmulas devem ser inseridos como gráficos e textos editáveis na pós-produção, não confiados apenas ao gerador de vídeo.",
+    "Preserve símbolos e unidades: Wp, kWp, kW, V, A, Voc, Vmp, Imp e Isc.",
+    "Não alegar que 12 módulos servem para todo inversor de 5 kW: a conclusão depende das fichas técnicas e do local.",
+    "Antes de publicar, revisar dimensionamento completo com profissional habilitado, incluindo temperatura extrema, limites de MPPT, corrente, conectores e normas aplicáveis.",
+    "Não imitar nome de perfil, logotipo, marca d'água, voz ou identidade proprietária da referência."
+  ],
+  "prompt_principal": "Vídeo vertical educativo de 85 segundos, em motion graphics 2D técnico e minimalista, fundo azul-marinho, elementos vetoriais de painéis fotovoltaicos e inversor, fichas técnicas limpas, destaques amarelos, verde para validação e vermelho para alertas, tipografia grande e legível, animações fluidas de strings elétricas, números e fórmulas em português do Brasil. Ensinar por que a quantidade de módulos não depende só da potência nominal CA do inversor. Usar exatamente o storyboard e os parâmetros hipotéticos fornecidos; resultado do exemplo: duas strings independentes de seis módulos de 550 Wp, somando 12 módulos e 6,6 kWp para inversor nominal de 5 kW. Apresentar de forma explícita a verificação de Voc em temperatura baixa, Vmp, Imp, Isc, MPPT e recomendação CC. Finalizar com aviso de que os dados são ilustrativos e a ficha técnica real prevalece. Visual profissional e humano, sem neon, sem personagens, sem marcas de terceiros."
+}

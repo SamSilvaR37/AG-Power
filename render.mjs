@@ -47,6 +47,12 @@ for (const f of formats) {
     const tl = join(DIST, `timeline-${tag}.json`);
     writeFileSync(tl, JSON.stringify(info, null, 2));
     execFileSync("python3", [join(HERE, "audio.py"), tl, audioBase], { stdio: "inherit" });
+    // legendas embutidas na página → .srt ao lado do vídeo
+    if (info.CAPS) {
+      const ts = (s) => { const ms = Math.round(s * 1000), z = (n, w = 2) => String(n).padStart(w, "0");
+        return `${z(Math.floor(ms / 3600000))}:${z(Math.floor(ms / 60000) % 60)}:${z(Math.floor(ms / 1000) % 60)},${z(ms % 1000, 3)}`; };
+      writeFileSync(join(DIST, `legendas-${tag}.srt`), info.CAPS.map((c, i) => `${i + 1}\n${ts(c.a)} --> ${ts(c.b)}\n${c.txt}\n`).join("\n"));
+    }
     audioDone = true;
   }
 
