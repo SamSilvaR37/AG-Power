@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema Solar Híbrido</title>
+<!--
+  "Quando falta energia, a casa com solar continua ligada?" — sistema híbrido com backup (9:16, 120 s).
+  Direção de arte: maquete arquitetônica em isometria, paredes em corte, telhado elevado (vista explodida),
+  inversor híbrido e bateria genéricos desenhados aqui, sem marca. Fluxos: âmbar = solar, verde = backup, petróleo = rede.
+  Mesmo motor dos outros vídeos: cada quadro é função do tempo (window.renderAt(t)).
+  Parâmetros: ?t=12.5  ?render=1
+  Render: node ../render.mjs 9x16 --pagina sistema-hibrido/index.html --nome sistema-hibrido
+-->
+<style>
+:root{
+  --bg:#F4F1E9; --ink:#263238; --sol:#D99A36; --bk:#6E927C; --rede:#294B5B; --bat:#79828A;
+  --mute:#6b7680; --red:#B5523B; --card:#FFFFFF; --line:#D9D2C3;
+  --u:10.8px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#d9d3c5;overflow:hidden}
+body{font-family:Inter,"Inter Display",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+#wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;overflow:hidden;background:var(--bg);flex:none;transform-origin:center center}
+.paper{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,#fbf9f4 0%,#F4F1E9 55%,#e9e4d8 100%)}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+.art{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.ttl{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*20);font-weight:800;font-size:calc(var(--u)*5.6);line-height:1.06;letter-spacing:-.015em}
+.ttl small{display:block;font-size:calc(var(--u)*1.8);font-weight:700;letter-spacing:.14em;color:var(--mute);margin-bottom:calc(var(--u)*1)}
+.sol{color:var(--sol)} .bk{color:var(--bk)} .rede{color:var(--rede)} .red{color:var(--red)} .mute{color:var(--mute)}
+.ico{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tag{position:absolute;display:flex;align-items:center;gap:calc(var(--u)*.7);background:var(--card);border:1px solid var(--line);border-radius:calc(var(--u)*1);padding:calc(var(--u)*.7) calc(var(--u)*1.2);font-weight:700;font-size:calc(var(--u)*1.9);box-shadow:0 calc(var(--u)*.6) calc(var(--u)*1.6) rgba(38,50,56,.12);white-space:nowrap;transform-origin:left center}
+.tag i{width:calc(var(--u)*1.3);height:calc(var(--u)*1.3);border-radius:50%;display:inline-block}
+.note{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);font-size:calc(var(--u)*1.7);color:var(--mute);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:calc(var(--u)*2);box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(38,50,56,.10)}
+.pill{display:inline-flex;align-items:center;gap:calc(var(--u)*.8);border-radius:999px;padding:calc(var(--u)*.8) calc(var(--u)*1.6);font-weight:800;font-size:calc(var(--u)*2.1);white-space:nowrap}
+.pill.bk{background:rgba(110,146,124,.16)} .pill.red{background:rgba(181,82,59,.13)} .pill.sol{background:rgba(217,154,54,.16)} .pill.rede{background:rgba(41,75,91,.12)}
+
+/* legendas: grandes, até 2 linhas, acima dos botões do Instagram */
+.cap{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*121);z-index:40;display:flex;justify-content:center}
+.cap span{display:inline-block;max-width:100%;text-align:center;background:#263238;color:#F4F1E9;border-radius:calc(var(--u)*1.2);padding:calc(var(--u)*1.2) calc(var(--u)*2);font-weight:800;font-size:calc(var(--u)*3.8);line-height:1.22}
+.cap b{color:#F0B85A;font-weight:800}
+
+/* cena 6: quadro de cargas */
+.qd{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*40);display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2.4)}
+.qd .col{padding:calc(var(--u)*2.2);display:flex;flex-direction:column;gap:calc(var(--u)*1.6)}
+.qd .hd{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:calc(var(--u)*2.2);letter-spacing:.08em}
+.load{display:flex;align-items:center;gap:calc(var(--u)*1.4);border-radius:calc(var(--u)*1.2);padding:calc(var(--u)*1.4);font-weight:700;font-size:calc(var(--u)*2.3);border:1px solid var(--line);background:#faf8f3}
+.load .li{width:calc(var(--u)*6);height:calc(var(--u)*6);border-radius:calc(var(--u)*1.2);display:flex;align-items:center;justify-content:center;font-size:calc(var(--u)*3.4);flex:none;background:#ece7dc;color:#9aa2a8}
+.load.on{border-color:rgba(110,146,124,.6);background:rgba(110,146,124,.10)}
+.load.on .li{background:var(--bk);color:#fff;box-shadow:0 0 calc(var(--u)*2.4) rgba(110,146,124,.55)}
+.load.off{opacity:.55}
+.brk{width:calc(var(--u)*2.2);height:calc(var(--u)*3.4);border-radius:calc(var(--u)*.5);background:#263238;position:relative;margin-left:auto;flex:none}
+.brk::after{content:"";position:absolute;left:25%;right:25%;height:40%;border-radius:2px;background:#cfd4d6;top:8%}
+.brk.dn::after{top:52%}
+/* cena 7 */
+.split{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*38);display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2)}
+.split .card{position:relative;height:calc(var(--u)*66);overflow:hidden}
+.split .night{background:#263238;border-color:#263238;color:#F4F1E9}
+.socbar{position:absolute;left:calc(var(--u)*2);right:calc(var(--u)*2);bottom:calc(var(--u)*2);}
+.socbar .t{display:flex;justify-content:space-between;font-weight:800;font-size:calc(var(--u)*1.9);margin-bottom:calc(var(--u)*.8)}
+.socbar .b{height:calc(var(--u)*2.4);border-radius:calc(var(--u)*.6);border:2px solid currentColor;padding:2px}
+.socbar .b i{display:block;height:100%;border-radius:calc(var(--u)*.3);background:var(--bk)}
+.split .lbl{position:absolute;left:calc(var(--u)*2);top:calc(var(--u)*1.8);font-weight:800;font-size:calc(var(--u)*2.6)}
+/* cena 8 */
+.gauges{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*38);display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2)}
+.gauges .card{padding:calc(var(--u)*2);text-align:center}
+.gauges .k{font-weight:800;font-size:calc(var(--u)*1.8);letter-spacing:.1em;color:var(--mute)}
+.gauges .v{font-weight:800;font-size:calc(var(--u)*6.4);letter-spacing:-.02em;line-height:1}
+.gauges .s{font-size:calc(var(--u)*1.8);color:var(--mute);font-weight:600;margin-top:calc(var(--u)*.6)}
+.ruler{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*80);padding:calc(var(--u)*2.2)}
+.ruler .track{position:relative;height:calc(var(--u)*5);border-radius:calc(var(--u)*1);background:#ece7dc;overflow:hidden}
+.ruler .track i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#6E927C,#8fb19c)}
+.ruler .ticks{display:flex;justify-content:space-between;font-size:calc(var(--u)*1.6);color:var(--mute);font-weight:700;margin-top:calc(var(--u)*.8)}
+.ruler .eq{font-weight:800;font-size:calc(var(--u)*4.6);text-align:center;margin-bottom:calc(var(--u)*1.6);letter-spacing:-.01em}
+/* cena 9 */
+.chart{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*38);height:calc(var(--u)*64);padding:calc(var(--u)*2)}
+/* cena 10 */
+.inds{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*96);display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.4)}
+.inds .card{padding:calc(var(--u)*1.6) calc(var(--u)*1);text-align:center;font-weight:800;font-size:calc(var(--u)*1.9)}
+.inds .card .ico{font-size:calc(var(--u)*3.4);display:block;margin:0 auto calc(var(--u)*.8)}
+
+#ctl[hidden]{display:none}
+#ctl{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;padding:10px 14px;background:rgba(38,50,56,.94);font:13px Inter,system-ui,sans-serif;color:#eee;z-index:100}
+#ctl button{background:#37474f;color:#fff;border:1px solid #546e7a;border-radius:6px;padding:6px 10px;font:inherit;cursor:pointer}
+#ctl input[type=range]{flex:1}
+#ctl .tc{font-variant-numeric:tabular-nums;min-width:120px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <radialGradient id="glowA"><stop offset="0" stop-color="#F0B85A" stop-opacity=".75"/><stop offset="1" stop-color="#F0B85A" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowG"><stop offset="0" stop-color="#8fb19c" stop-opacity=".75"/><stop offset="1" stop-color="#8fb19c" stop-opacity="0"/></radialGradient>
+  <linearGradient id="cellP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d6476"/><stop offset="1" stop-color="#294B5B"/></linearGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+</defs></svg>
+<div id="wrap"><div id="stage"></div></div>
+<div id="ctl" hidden>
+  <button id="play">▶︎</button>
+  <span class="tc" id="tc">0.0 s</span>
+  <input id="scrub" type="range" min="0" max="120" step="0.01" value="0">
+  <span id="scn"></span>
+</div>
+<script>
+"use strict";
+/* ================= utilidades (mesmo motor) ================= */
+const Q = new URLSearchParams(location.search);
+const [W,H] = [1080,1920];
+const U = W/100;
+const clamp = (x,a=0,b=1) => Math.min(b,Math.max(a,x));
+const eo = x => 1-Math.pow(1-x,3);
+const eio = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const back = x => { const c=1.7; return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2); };
+const lerp = (a,b,k) => a+(b-a)*k;
+const p = (t,a,d=.5,fn=eo) => fn(clamp((t-a)/d));
+const $ = (root,s) => root.querySelector(s);
+const $$ = (root,s) => [...root.querySelectorAll(s)];
+function css(el,o){ if(!el) return; for(const k in o) el.style[k]=o[k]; }
+function rise(el,t,a,d=.5,dy=2.5){ if(!el) return; const k=p(t,a,d); el.style.opacity=k; el.style.transform=`translateY(${(1-k)*dy*U}px)`; }
+function pop(el,t,a,d=.45){ if(!el) return; const k=clamp((t-a)/d); el.style.opacity=clamp(k*2.5); el.style.transform=`scale(${k<=0?.7:lerp(.7,1,back(k))})`; }
+function setText(el,txt){ if(el && el.textContent!==txt) el.textContent=txt; }
+const nf = (v,d=1) => v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+function draw(el,k){ if(!el) return; el.style.strokeDasharray = 1; el.style.strokeDashoffset = 1-k; }
+
+const I = {
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  fridge:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14M9 5v2M9 13v3"/>',
+  bulb:'<path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  wifi:'<path d="M12 20h.01M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 14 0M2 8.8a15 15 0 0 1 20 0"/>',
+  shower:'<path d="M4 4h6a6 6 0 0 1 6 6"/><circle cx="16" cy="12" r="0"/><path d="M12 12h8M13 16l-.5 2M16 16v2M19 16l.5 2M14 19l-.5 2M18 19l.5 2"/>',
+  oven:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M7 5.5h.01M11 5.5h.01M7 12h10v6H7z"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  bat:'<rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2M6 11v2M10 11v2"/>',
+  grid:'<path d="M12 2v20M5 6h14M7 10h10M9 6l-4 16M15 6l4 16"/>',
+  alert:'<path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  gauge:'<path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+};
+const ic = n => `<svg class="ico" viewBox="0 0 24 24">${I[n]}</svg>`;
+
+/* ================= maquete isométrica ================= */
+const iso = (o, s) => (x, y, z=0) => [o[0] + (x - y) * 0.866 * s, o[1] + (x + y) * 0.5 * s - z * s];
+const pts = a => a.map(q => q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
+const poly = (a, at) => `<polygon points="${pts(a)}" ${at}/>`;
+const line = (a, b, at) => `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" ${at}/>`;
+const pathD = arr => "M" + arr.map(q => q[0].toFixed(1)+" "+q[1].toFixed(1)).join(" L");
+
+/** caixa isométrica: faces visíveis = topo, frente (plano y = y+dy) e lateral (plano x = x+dx) */
+function box(P, x,y,z, dx,dy,dz, c){
+  const t = [P(x,y,z+dz),P(x+dx,y,z+dz),P(x+dx,y+dy,z+dz),P(x,y+dy,z+dz)];
+  const f = [P(x,y+dy,z),P(x+dx,y+dy,z),P(x+dx,y+dy,z+dz),P(x,y+dy,z+dz)];
+  const s = [P(x+dx,y,z),P(x+dx,y+dy,z),P(x+dx,y+dy,z+dz),P(x+dx,y,z+dz)];
+  const st = c.stroke ? `stroke="${c.stroke}" stroke-width="1" stroke-linejoin="round"` : "";
+  return poly(s,`fill="${c.side}" ${st}`) + poly(f,`fill="${c.front}" ${st}`) + poly(t,`fill="${c.top}" ${st}`);
+}
+/** retângulo num plano vertical: plano x = X (eixo u = y) ou plano y = Y (eixo u = x) */
+const rectX = (P, X, y0,y1, z0,z1, at) => poly([P(X,y0,z0),P(X,y1,z0),P(X,y1,z1),P(X,y0,z1)], at);
+const rectY = (P, Y, x0,x1, z0,z1, at) => poly([P(x0,Y,z0),P(x1,Y,z0),P(x1,Y,z1),P(x0,Y,z1)], at);
+
+const WALL = { top:"#F7F4EC", front:"#E9E3D5", side:"#DBD3C2", stroke:"#cfc6b3" };
+const CUT  = { top:"#263238", front:"#E9E3D5", side:"#DBD3C2" };
+
+/** telhado monoinclinado com painéis (usado solto, acima da casa, ou apoiado) */
+function roof(P, x0,y0, X,Y, zLow, zHigh, o={}){
+  const z = (y) => lerp(zHigh, zLow, (y-y0)/Y);  // alto atrás (y0), baixo na frente
+  const Pr = (x,y,dz=0) => P(x, y, z(y)+dz);
+  let g = "";
+  g += poly([Pr(x0,y0+Y),Pr(x0+X,y0+Y),Pr(x0+X,y0+Y,-.12),Pr(x0,y0+Y,-.12)], 'fill="#1d282d"');
+  g += poly([Pr(x0+X,y0),Pr(x0+X,y0+Y),Pr(x0+X,y0+Y,-.12),Pr(x0+X,y0,-.12)], 'fill="#2a363c"');
+  g += poly([Pr(x0,y0),Pr(x0+X,y0),Pr(x0+X,y0+Y),Pr(x0,y0+Y)], 'fill="#37474F"');
+  const cols = o.cols ?? 4, rows = o.rows ?? 2, mx = .18, my = .2, gw = (X-2*mx)/cols, gh = (Y-2*my)/rows;
+  for (let r=0;r<rows;r++) for (let c=0;c<cols;c++){
+    const a = x0+mx+c*gw+.04, b = y0+my+r*gh+.04, w = gw-.08, h = gh-.08;
+    g += poly([Pr(a,b,.02),Pr(a+w,b,.02),Pr(a+w,b+h,.02),Pr(a,b+h,.02)], 'fill="url(#cellP)" stroke="#9fb7c2" stroke-width="1"');
+    g += line(Pr(a+w/2,b,.03), Pr(a+w/2,b+h,.03), 'stroke="#9fb7c2" stroke-opacity=".5" stroke-width="1"');
+  }
+  return { svg: g, center: Pr(x0+X/2, y0+Y/2), under: (x,y) => Pr(x,y,-.12) };
+}
+
+/** casa externa (vizinhas e vista geral): paredes, janelas, telhado com ou sem painéis */
+function houseExt(P, x0,y0, X,Y,Hw, o={}){
+  let g = "";
+  g += poly([P(x0-.25,y0-.25,0),P(x0+X+.25,y0-.25,0),P(x0+X+.25,y0+Y+.25,0),P(x0-.25,y0+Y+.25,0)].map(q=>[q[0]+U*1.2,q[1]+U*.6]), 'fill="#263238" opacity=".10" filter="url(#soft)"');
+  g += box(P, x0,y0,0, X,Y,Hw, WALL);
+  const win = (k) => `class="win${k}" fill="#cdd3d5"`;
+  // janelas na frente (plano y = y0+Y) e na lateral (plano x = x0+X)
+  const wf = o.winsF ?? [[.2,.42],[.58,.8]], ws = o.winsS ?? [[.25,.55]];
+  wf.forEach(([a,b],i)=>{ g += rectY(P, y0+Y+.001, x0+a*X, x0+b*X, Hw*.35, Hw*.75, win(o.k??"")); });
+  ws.forEach(([a,b])=>{ g += rectX(P, x0+X+.001, y0+a*Y, y0+b*Y, Hw*.35, Hw*.75, win(o.k??"")); });
+  if (o.door) g += rectX(P, x0+X+.002, y0+.68*Y, y0+.85*Y, 0, Hw*.7, 'fill="#8d6e52"');
+  const r = o.panels ? roof(P, x0-.15, y0-.15, X+.3, Y+.3, Hw+.05, Hw+.75, { cols:o.cols??4, rows:o.rows??2 })
+                     : roof(P, x0-.15, y0-.15, X+.3, Y+.3, Hw+.05, Hw+.65, { cols:0, rows:0 });
+  g += r.svg;
+  return g;
+}
+
+/** poste da rua com luminária e fio até a casa */
+function pole(P, x,y, h=2.6){
+  const b = P(x,y,0), t = P(x,y,h), arm1 = P(x-.3,y,h-.15), arm2 = P(x+.3,y,h-.15), lamp = P(x+.55,y+.0,h-.35);
+  return `<g class="pole">${line(b,t,'stroke="#5d6a72" stroke-width="7" stroke-linecap="round"')}${line(arm1,arm2,'stroke="#5d6a72" stroke-width="5" stroke-linecap="round"')}
+    <path d="M${t[0]} ${t[1]+U*1.2} Q ${lamp[0]} ${t[1]} ${lamp[0]} ${lamp[1]}" fill="none" stroke="#5d6a72" stroke-width="4"/>
+    <circle class="lampGlow" cx="${lamp[0]}" cy="${lamp[1]+U*1}" r="${U*7}" fill="url(#glowA)"/>
+    <ellipse class="lampHead" cx="${lamp[0]}" cy="${lamp[1]+U*.4}" rx="${U*1.6}" ry="${U*.7}" fill="#F0B85A" stroke="#5d6a72" stroke-width="2"/></g>`;
+}
+
+/** casa em corte (paredes do fundo + mureta frontal em corte + telhado elevado com painéis).
+ *  Devolve pontos-chave para fluxos e etiquetas. o.hybrid: inversor híbrido + bateria; senão inversor on-grid. */
+function houseCut(P, o={}){
+  const X=4, Y=3, Hw=1.45;
+  let g = "";
+  // base da maquete
+  g += poly([P(-.7,-.7,-.2),P(X+.8,-.7,-.2),P(X+.8,Y+.8,-.2),P(-.7,Y+.8,-.2)].map(q=>[q[0]+U*1.6,q[1]+U*1]), 'fill="#263238" opacity=".12" filter="url(#soft)"');
+  g += box(P, -.7,-.7,-.2, X+1.5, Y+1.5, .2, { top:"#EFEADF", front:"#d8d0bf", side:"#cbc2ae" });
+  g += box(P, 0,0,0, X,Y,.06, { top:"#E3D6BE", front:"#cdbd9f", side:"#c2b293" });
+  // paredes do fundo (vistas por dentro)
+  g += box(P, -.14,0,0, .14,Y,Hw, { top:"#263238", front:"#E9E3D5", side:"#F3EFE6" });
+  g += box(P, -.14,-.14,0, X+.14,.14,Hw, { top:"#263238", front:"#EDE8DD", side:"#E3DccD" });
+  // janelas no fundo
+  g += rectY(P, .001, 2.2, 3.4, .7, 1.2, 'class="winIn" fill="#cdd3d5"');
+  g += rectX(P, .001, 2.2, 2.85, .7, 1.2, 'class="winIn" fill="#cdd3d5"');
+  const K = {};
+  // inversor
+  if (o.hybrid){
+    // híbrido: gabinete vertical branco fosco, faixa grafite na lateral, visor pequeno embaixo (3/4, na parede x=0)
+    g += box(P, 0, .45, .55, .2, .55, .9, { top:"#ffffff", front:"#3a464c", side:"#F5F5F2", stroke:"#c9c4b8" });
+    g += rectX(P, .201, .58, .88, .64, .76, 'class="disp" fill="#263238"');
+    g += `<g class="dispTxt"></g>`;
+    K.inv = P(.2, .72, 1.0); K.invTop = P(.1, .72, 1.45); K.invBot = P(.1, .72, .55); K.disp = P(.2, .73, .70);
+    // bateria: dois módulos grafite no chão
+    [[1.25],[1.75]].forEach(([y],i)=>{ g += box(P, 0, y, .06, .42, .42, .78, { top:"#8b949b", front:"#5f686f", side:"#79828A", stroke:"#4a5258" });
+      g += rectX(P, .421, y+.1, y+.32, .5, .56, `class="batLed" fill="#6E927C"`); });
+    K.bat = P(.42, 1.7, .5); K.batTop = P(.2, 1.7, .84);
+  } else {
+    // on-grid convencional: caixa cinza quadrada, sem bateria
+    g += box(P, 0, .5, .7, .16, .5, .5, { top:"#d5d8d8", front:"#9aa1a3", side:"#bcc2c3", stroke:"#8b9294" });
+    g += rectX(P, .161, .6, .9, 1.02, 1.1, 'class="disp" fill="#263238"');
+    K.inv = P(.16, .75, .95); K.invTop = P(.08, .75, 1.2); K.disp = P(.16, .75, 1.06);
+  }
+  // quadro elétrico
+  g += box(P, 0, 2.45, .75, .1, .38, .5, { top:"#ffffff", front:"#b9bdbd", side:"#E4E4E0", stroke:"#b9bdbd" });
+  K.qd = P(.1, 2.64, 1.0);
+  // cargas: geladeira, luminária, roteador
+  g += box(P, 2.7, 0, .06, .55, .5, 1.05, { top:"#f2f2f0", front:"#d7dadb", side:"#e8eaea", stroke:"#c3c6c7" });
+  K.fridge = P(2.95, .5, .6);
+  g += box(P, 1.6, 1.9, .06, .9, .5, .45, { top:"#b89b78", front:"#9a7d5d", side:"#a88b6a" }); // móvel
+  g += box(P, 1.95, 2.0, .51, .26, .18, .08, { top:"#ffffff", front:"#cfd3d4", side:"#e1e4e4" }); // roteador
+  K.router = P(2.08, 2.1, .6);
+  const lamp = P(2.0, 1.2, 1.25);
+  g += line(P(2.0,1.2,1.45), lamp, 'stroke="#5d6a72" stroke-width="2"');
+  g += `<circle class="roomGlow" cx="${lamp[0]}" cy="${lamp[1]+U*5}" r="${U*14}" fill="url(#glowA)"/><circle class="bulb" cx="${lamp[0]}" cy="${lamp[1]}" r="${U*1.1}" fill="#F0B85A" stroke="#5d6a72" stroke-width="2"/>`;
+  K.lamp = lamp;
+  // mureta frontal em corte (topo grafite, como em corte arquitetônico)
+  g += box(P, 0, Y, 0, X+.14, .14, .3, CUT);
+  g += box(P, X, 0, 0, .14, Y, .3, CUT);
+  // poste e entrada da rede
+  g += pole(P, X+1.0, -.4);
+  K.poleTop = P(X+1.0, -.4, 2.45); K.entry = P(X, .25, 1.3);
+  // telhado elevado (vista explodida)
+  const r = roof(P, -.15, -.15, X+.3, Y+.3, Hw+1.5, Hw+2.1, { cols:4, rows:2 });
+  g += `<g class="roofG">${r.svg}</g>`;
+  K.roof = r.center; K.roofUnder = r.under(.4, .6);
+  K.P = P;
+  return { svg: g, K };
+}
+
+/** partículas de energia correndo por um caminho SVG */
+function flowDots(path, dots, t, speed, on){
+  const L = path.getTotalLength();
+  dots.forEach((c,i)=>{ if (!on){ c.style.opacity = 0; return; } const q = ((t*speed + i/dots.length) % 1) * L; const pt = path.getPointAtLength(q); c.setAttribute("cx",pt.x); c.setAttribute("cy",pt.y); c.style.opacity = 1; });
+}
+const flowSvg = (cls, d, color, n=5, dash="") => `<path class="${cls}" d="${d}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" ${dash ? `stroke-dasharray="${dash}"` : 'pathLength="1"'} opacity=".85"/>` +
+  Array.from({length:n},()=>`<circle class="${cls}D" r="7" fill="${color}" stroke="#fff" stroke-width="2"/>`).join("");
+/** posiciona uma etiqueta HTML perto de um ponto da maquete */
+function tagAt(el, xy, dx=0, dy=0){ el.style.left = (xy[0]+dx)+"px"; el.style.top = (xy[1]+dy)+"px"; }
+/** luz da casa (lâmpada, brilho, janelas, LEDs) */
+function lights(root, on, k=1){
+  $$(root,".roomGlow").forEach(e=>e.style.opacity = on ? k : 0);
+  $$(root,".bulb").forEach(e=>e.setAttribute("fill", on ? "#F0B85A" : "#9aa2a8"));
+  $$(root,".winIn").forEach(e=>e.setAttribute("fill", on ? "#F3D69B" : "#cdd3d5"));
+}
+function poleLight(root, on){ $$(root,".lampGlow").forEach(e=>e.style.opacity = on?1:0); $$(root,".lampHead").forEach(e=>e.setAttribute("fill", on?"#F0B85A":"#9aa2a8")); }
+const SUN = (x,y,r=U*5) => `<g class="sunG" transform="translate(${x} ${y})"><circle r="${r*1.8}" fill="url(#glowA)"/><circle r="${r}" fill="#E8B04E"/></g>`;
+
+/* ================= cenas (tempos do storyboard) ================= */
+const SCENES = []; const S = o => SCENES.push(o);
+const O_CUT = [U*36, U*76], S_CUT = U*10.4;   // enquadramento padrão da maquete em corte
+
+/* ---------- 1. O apagão (0–8) ---------- */
+S({ id:1, name:"O apagão", dur:8,
+  cap:["Você instalou *energia solar*.", "A luz da rua acabou. *Sua casa continua funcionando?*", "A resposta *depende do sistema*."],
+  html(){
+    const P = iso([U*46, U*66], U*7.2);
+    let g = "";
+    g += houseExt(P, -3.4, -1.2, 2.2, 1.8, 1.1, { k:"N" });
+    g += houseExt(P, -1.0, -3.8, 2.2, 1.8, 1.1, { k:"N" });
+    g += pole(P, 2.6, -2.6, 2.8);
+    g += houseExt(P, .2, .6, 3.2, 2.6, 1.4, { panels:true, door:true, k:"H", winsF:[[.15,.38],[.55,.82]], winsS:[[.15,.45]] });
+    const q = P(1.8, 1.9, 3.1);
+    return `<svg class="art">${g}<g transform="translate(${q[0]} ${q[1]})"><g class="qm" style="transform-box:fill-box;transform-origin:center"><circle r="${U*4.6}" fill="#263238"/><text y="${U*1.9}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${U*5.4}" fill="#F4F1E9">?</text></g></g></svg>
+      <div class="ttl"><small>Sistema solar híbrido</small>FALTOU ENERGIA.<br><span class="sol">E AGORA?</span></div>`;
+  },
+  update(root,t){
+    const off = t >= 2.6;
+    poleLight(root, !off);
+    $$(root,".winN").forEach(e=>e.setAttribute("fill", off ? "#9aa2a8" : "#F3D69B"));
+    $$(root,".winH").forEach(e=>e.setAttribute("fill", off ? "#cdd3d5" : "#F3D69B"));
+    pop($(root,".qm"),t,3.4,.5);
+    rise($(root,".ttl"),t,.2,.6);
+    css($(root,".art"),{transformOrigin:"50% 60%", transform:`scale(${lerp(1.04,1,p(t,0,8,x=>x))})`});
+  },
+  sfx: [[2.6,"falha"],[3.45,"pop"]],
+});
+
+/* ---------- 2. On-grid (8–20) ---------- */
+S({ id:2, name:"O que acontece no on-grid", dur:12,
+  cap:["No *on-grid convencional*, o inversor *interrompe a operação*", "quando a rede cai, *mesmo com sol*.", "Essa proteção evita *energizar a rede* da distribuidora."],
+  html(){
+    const P = iso(O_CUT, S_CUT);
+    const h = houseCut(P, { hybrid:false }); const K = h.K; this.K = K;
+    const solar = pathD([K.roofUnder, K.invTop]);
+    const toGrid = pathD([K.inv, P(.16,.2,1.3), K.entry, K.poleTop]);
+    const toHome = pathD([K.inv, K.lamp]);
+    const xm = P(4.5, -.1, 1.9);
+    return `<svg class="art">${SUN(U*82, U*40)}${h.svg}${flowSvg("fs", solar, "#D99A36")}${flowSvg("fh", toHome, "#D99A36", 3)}${flowSvg("fg", toGrid, "#294B5B")}
+      <g transform="translate(${xm[0]} ${xm[1]})"><g class="cutX" style="transform-box:fill-box;transform-origin:center"><circle r="${U*2.8}" fill="#fff" stroke="#B5523B" stroke-width="3"/><path d="M${-U*1.2} ${-U*1.2}L${U*1.2} ${U*1.2}M${U*1.2} ${-U*1.2}L${-U*1.2} ${U*1.2}" stroke="#B5523B" stroke-width="4" stroke-linecap="round"/></g></g></svg>
+      <div class="ttl"><small>Sistema convencional</small>ON-GRID: <span class="red">DESLIGA</span> SEM REDE</div>
+      <div class="tag t1"><i style="background:#9aa1a3"></i>Inversor on-grid</div>
+      <div class="tag t2">${ic("shield")} Proteção: não energiza a rede</div>
+      <div class="tag t3 red" style="color:#B5523B">${ic("bolt")} Rede caiu</div>`;
+  },
+  update(root,t){
+    const K = this.K, down = t >= 4.2;
+    rise($(root,".ttl"),t,0,.5);
+    poleLight(root, !down);
+    lights(root, !down);
+    const fs = $(root,".fs"), fh = $(root,".fh"), fg = $(root,".fg");
+    draw(fs, p(t,.6,.6)); draw(fh, p(t,1.0,.6)); draw(fg, p(t,1.2,.8));
+    [fs,fh,fg].forEach(e=>e.style.opacity = down ? .18 : .85);
+    flowDots(fs, $$(root,".fsD"), t, .5, t>1.2 && !down);
+    flowDots(fh, $$(root,".fhD"), t, .5, t>1.6 && !down);
+    flowDots(fg, $$(root,".fgD"), t, .35, t>2.0 && !down);   // nunca mostra fluxo para a rede depois da queda
+    pop($(root,".cutX"),t,4.2,.4);
+    const disp = $(root,".disp"); disp.setAttribute("fill", down ? "#B5523B" : "#3c8d63");
+    tagAt($(root,".t1"), K.inv, -U*22, -U*9); pop($(root,".t1"),t,1.4,.4);
+    tagAt($(root,".t3"), K.poleTop, -U*12, -U*9); pop($(root,".t3"),t,4.3,.4);
+    tagAt($(root,".t2"), K.inv, -U*14, U*20); pop($(root,".t2"),t,5.8,.45);
+  },
+  sfx: [[4.2,"falha"],[4.35,"alert"],[5.85,"pop"]],
+});
+
+/* ---------- 3. Os quatro elementos (20–32) ---------- */
+S({ id:3, name:"Os quatro elementos do híbrido", dur:12,
+  cap:["No *híbrido com backup*, painéis, inversor, baterias e rede", "*trabalham juntos*.", "O equipamento *gerencia de onde vem a energia* e para onde ela vai."],
+  html(){
+    const P = iso(O_CUT, S_CUT);
+    const h = houseCut(P, { hybrid:true }); const K = h.K; this.K = K;
+    const paths = [pathD([K.roofUnder, K.invTop]), pathD([K.invBot, K.batTop]), pathD([K.inv, P(.2,1.6,1.25), K.lamp]), pathD([K.inv, P(.2,.2,1.32), K.entry, K.poleTop])];
+    return `<svg class="art">${h.svg}${paths.map((d,i)=>`<path class="pp" d="${d}" fill="none" stroke="#7d8a92" stroke-width="3" stroke-dasharray="8 8"/>`).join("")}</svg>
+      <div class="ttl"><small>Sistema híbrido com backup</small><span class="sol">SOL</span> + INVERSOR + <span class="bk">BATERIA</span> + <span class="rede">REDE</span></div>
+      <div class="tag a1"><i style="background:#D99A36"></i>Painéis solares</div>
+      <div class="tag a2"><i style="background:#ffffff;border:2px solid #3a464c"></i>Inversor híbrido</div>
+      <div class="tag a3"><i style="background:#79828A"></i>Bateria</div>
+      <div class="tag a4"><i style="background:#294B5B"></i>Rede</div>
+      <div class="tag a5"><i style="background:#b9bdbd"></i>Quadro elétrico</div>`;
+  },
+  update(root,t){
+    const K = this.K;
+    rise($(root,".ttl"),t,0,.5);
+    lights(root, true, .7); poleLight(root, true);
+    css($(root,".roofG"),{transform:`translateY(${Math.sin(t*1.2)*U*.5}px)`});
+    $$(root,".pp").forEach((e,i)=>{ e.style.opacity = p(t,5.2+i*.4,.4); e.style.strokeDashoffset = -t*30; });
+    const tg = [[".a1",K.roof,-U*8,-U*12],[".a2",K.inv,-U*24,-U*4],[".a3",K.bat,-U*24,U*4],[".a4",K.poleTop,-U*4,-U*10],[".a5",K.qd,-U*12,U*3]];
+    tg.forEach(([c,xy,dx,dy],i)=>{ const el=$(root,c); tagAt(el,xy,dx,dy); pop(el,t,1.0+i*.75,.4); });
+  },
+  sfx: [[1.0,"pop"],[1.75,"pop"],[2.5,"pop"],[3.25,"pop"],[4.0,"pop"],[5.2,"swish"]],
+});
+
+/* ---------- 4. Dia (32–45) ---------- */
+S({ id:4, name:"Funcionamento durante o dia", dur:13,
+  cap:["Com a rede disponível, a energia solar pode *alimentar a casa*", "e *carregar a bateria*.", "Dependendo das configurações e das regras de conexão,", "o *excedente pode seguir para a rede*."],
+  html(){
+    const P = iso(O_CUT, S_CUT);
+    const h = houseCut(P, { hybrid:true }); const K = h.K; this.K = K;
+    return `<svg class="art">${SUN(U*82, U*40)}${h.svg}
+      ${flowSvg("fs", pathD([K.roofUnder, K.invTop]), "#D99A36")}
+      ${flowSvg("fh", pathD([K.inv, P(.2,1.6,1.25), K.lamp]), "#D99A36", 4)}
+      ${flowSvg("fb", pathD([K.invBot, K.batTop]), "#D99A36", 3)}
+      ${flowSvg("fg", pathD([K.inv, P(.2,.2,1.32), K.entry, K.poleTop]), "#D99A36", 4, "3 10")}</svg>
+      <div class="ttl"><small>Rede disponível</small><span class="sol">DIA:</span> CONSUMO + RECARGA</div>
+      <div class="tag soc">${ic("bat")} <span class="sv">40%</span></div>
+      <div class="tag gx" style="border-style:dashed">${ic("grid")} excedente: se permitido</div>
+      <div class="note" style="top:${U*113}px">Os caminhos variam com o modelo, as configurações e as regras de conexão.</div>`;
+  },
+  update(root,t){
+    const K = this.K;
+    rise($(root,".ttl"),t,0,.5);
+    lights(root, true); poleLight(root, false);
+    const fs=$(root,".fs"), fh=$(root,".fh"), fb=$(root,".fb"), fg=$(root,".fg");
+    draw(fs,p(t,.5,.6)); draw(fh,p(t,1.4,.6)); draw(fb,p(t,3.0,.5));
+    fg.style.opacity = p(t,6.4,.4)*.8; fg.style.strokeDashoffset = -t*20;
+    flowDots(fs,$$(root,".fsD"),t,.45,t>1.0);
+    flowDots(fh,$$(root,".fhD"),t,.45,t>2.0);
+    flowDots(fb,$$(root,".fbD"),t,.4,t>3.4);
+    flowDots(fg,$$(root,".fgD"),t,.3,t>6.8);
+    const soc = lerp(40, 85, p(t,3.4,7,x=>x));
+    setText($(root,".sv"), Math.round(soc)+"%");
+    $$(root,".batLed").forEach(e=>e.setAttribute("fill", "#6E927C"));
+    tagAt($(root,".soc"), K.bat, -U*12, U*4); pop($(root,".soc"),t,3.2,.4);
+    tagAt($(root,".gx"), K.poleTop, -U*24, -U*12); pop($(root,".gx"),t,6.6,.45);
+    rise($(root,".note"),t,7.5,.5,1);
+  },
+  sfx: [[.5,"swish"],[3.0,"pop"],[6.6,"soft"]],
+});
+
+/* ---------- 5. Falta energia: separação segura (45–58) ---------- */
+S({ id:5, name:"Falta energia: separação segura", dur:13,
+  cap:["Quando a rede falha, o híbrido compatível *se isola da distribuidora*.", "O sistema entra no *modo backup*", "e usa a energia disponível para *os circuitos protegidos*."],
+  html(){
+    const P = iso(O_CUT, S_CUT);
+    const h = houseCut(P, { hybrid:true }); const K = h.K; this.K = K;
+    const sw = P(.25, .25, 1.32);
+    const brk = P(3.0, .02, 1.36);
+    return `<svg class="art">${SUN(U*82, U*40)}${h.svg}
+      <path class="gl" d="${pathD([K.inv, P(.2,.2,1.32), K.entry, K.poleTop])}" fill="none" stroke="#294B5B" stroke-width="4" stroke-linejoin="round"/>
+      ${flowSvg("fs", pathD([K.roofUnder, K.invTop]), "#D99A36", 4)}
+      ${flowSvg("fb", pathD([K.batTop, K.invBot]), "#6E927C", 3)}
+      ${flowSvg("fh", pathD([K.inv, P(.2,1.6,1.25), K.lamp]), "#6E927C", 4)}
+      <g transform="translate(${sw[0]} ${sw[1]})"><g class="sw" style="transform-box:fill-box;transform-origin:center"><circle r="${U*2.6}" fill="#fff" stroke="#263238" stroke-width="2"/><circle cx="${-U*1.2}" cy="${U*.5}" r="4" fill="#263238"/><circle cx="${U*1.2}" cy="${U*.5}" r="4" fill="#263238"/><line class="swArm" x1="${-U*1.2}" y1="${U*.5}" x2="${U*1.2}" y2="${U*.5}" stroke="#263238" stroke-width="4" stroke-linecap="round"/></g></g>
+      <g transform="translate(${brk[0]} ${brk[1]})"><g class="brk" style="transform-box:fill-box;transform-origin:center"><circle r="${U*2.4}" fill="#fff" stroke="#B5523B" stroke-width="3"/><path d="M${-U}${-U}L${U} ${U}M${U} ${-U}L${-U} ${U}" stroke="#B5523B" stroke-width="4" stroke-linecap="round"/></g></g></svg>
+      <div class="ttl"><small>Rede indisponível</small>FALTOU REDE → <span class="bk">MODO BACKUP</span></div>
+      <div class="tag m1">${ic("check")} Isolado da rede</div>
+      <div class="tag m2" style="color:#6E927C">${ic("bolt")} MODO BACKUP</div>`;
+  },
+  update(root,t){
+    const K = this.K, down = t >= 1.6, iso_ = t >= 2.4, bk = t >= 3.0;
+    rise($(root,".ttl"),t,0,.5);
+    poleLight(root, !down);
+    // carga pisca na queda e volta no backup (sem cronometrar a transferência)
+    const dip = down && !bk;
+    lights(root, !dip);
+    const gl = $(root,".gl");
+    gl.setAttribute("stroke", down ? "#B5523B" : "#294B5B"); gl.setAttribute("stroke-dasharray", down ? "10 10" : "none");
+    const arm = $(root,".swArm"); const a = iso_ ? -32 : 0; arm.setAttribute("transform", `rotate(${a} ${-U*1.2} ${U*.5})`);
+    pop($(root,".sw"),t,1.0,.4); pop($(root,".brk"),t,1.7,.4);
+    const fs=$(root,".fs"), fb=$(root,".fb"), fh=$(root,".fh");
+    draw(fs,p(t,3.2,.5)); draw(fb,p(t,3.0,.5)); draw(fh,p(t,3.4,.6));
+    flowDots(fs,$$(root,".fsD"),t,.45,t>3.6);
+    flowDots(fb,$$(root,".fbD"),t,.4,t>3.4);
+    flowDots(fh,$$(root,".fhD"),t,.45,t>3.8);
+    $(root,".disp").setAttribute("fill", bk ? "#6E927C" : (down ? "#B5523B" : "#263238"));
+    tagAt($(root,".m1"), K.poleTop, -U*26, -U*10); pop($(root,".m1"),t,2.5,.4);
+    tagAt($(root,".m2"), K.inv, -U*24, -U*6); pop($(root,".m2"),t,3.1,.4);
+  },
+  sfx: [[1.6,"falha"],[2.4,"clique"],[3.1,"check"]],
+});
+
+/* ---------- 6. Cargas prioritárias (58–70) ---------- */
+const BK = [["fridge","Geladeira"],["bulb","Iluminação"],["wifi","Internet"]];
+const CM = [["shower","Chuveiro"],["oven","Forno"]];
+S({ id:6, name:"Cargas prioritárias", dur:12,
+  cap:["Geralmente, *geladeira, iluminação e internet*", "ficam no *quadro de cargas prioritárias*.", "Chuveiro e outras cargas pesadas podem ficar fora.", "*Tudo depende do projeto*."],
+  html(){
+    return `<div class="ttl"><small>Quadro de cargas</small>BACKUP <span class="sol">≠</span> CASA INTEIRA</div>
+      <div class="qd">
+        <div class="card col cb"><div class="hd bk">BACKUP <span class="pill bk">${ic("bolt")} ligado</span></div>
+          ${BK.map(([i,n])=>`<div class="load"><span class="li">${ic(i)}</span>${n}<span class="brk"></span></div>`).join("")}</div>
+        <div class="card col cc"><div class="hd mute">CARGAS COMUNS <span class="pill red" style="color:#B5523B">sem rede</span></div>
+          ${CM.map(([i,n])=>`<div class="load"><span class="li">${ic(i)}</span>${n}<span class="brk dn"></span></div>`).join("")}</div>
+      </div>
+      <div class="note" style="top:${U*104}px">Quais circuitos entram no backup é decisão do projeto. Backup da casa inteira exige dimensionamento, chaveamento e equipamentos compatíveis.</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    rise($(root,".cb"),t,.4,.5,3); rise($(root,".cc"),t,.7,.5,3);
+    $$(root,".cb .load").forEach((l,i)=>{ const on = t >= 1.6 + i*.6; l.classList.toggle("on",on); });
+    $$(root,".cc .load").forEach((l,i)=>{ l.classList.toggle("off", t >= 4.8 + i*.5); });
+    rise($(root,".note"),t,7.6,.5,1);
+  },
+  sfx: [[1.6,"clique"],[2.2,"clique"],[2.8,"clique"],[4.8,"soft"],[5.3,"soft"]],
+});
+
+/* ---------- 7. Dia, noite e bateria (70–82) ---------- */
+S({ id:7, name:"Dia, noite e bateria", dur:12,
+  cap:["Durante o dia, os painéis *podem ajudar no backup*.", "À noite, sem geração solar, *a bateria assume*.", "A autonomia depende *da carga e da energia armazenada*."],
+  html(){
+    const mini = (night) => {
+      const P = iso([U*20, U*40], U*5.2);
+      let g = houseExt(P, -.8, -.6, 2.6, 2.1, 1.2, { panels:true, k: night ? "Ng" : "Dy", winsF:[[.18,.42],[.58,.82]], winsS:[[.2,.5]] });
+      g += box(P, 2.2, 1.2, 0, .45, .45, .8, { top:"#8b949b", front:"#5f686f", side:"#79828A" });
+      const b = P(2.42, 1.42, .82), hs = P(.5, 1.0, .8);
+      g += `<path class="${night?"fn":"fd"}" d="M${b[0]} ${b[1]} Q ${(b[0]+hs[0])/2} ${b[1]-U*8} ${hs[0]} ${hs[1]}" fill="none" stroke="#6E927C" stroke-width="4" pathLength="1"/>`;
+      if (!night){ const r = P(.5,.4,2.0); g += `<path class="fds" d="M${U*30} ${U*10} L${r[0]} ${r[1]}" fill="none" stroke="#D99A36" stroke-width="4" stroke-dasharray="4 10"/>`; }
+      return `<svg class="art">${night ? `<g transform="translate(${U*30} ${U*10})" fill="none" stroke="#F4F1E9" stroke-width="2.5"><g transform="scale(${U*3.4/24})">${I.moon}</g></g>` : SUN(U*31, U*11, U*3.4)}${g}</svg>`;
+    };
+    return `<div class="ttl"><small>Modo backup</small><span class="sol">DIA:</span> SOL + BATERIA<br><span class="rede">NOITE:</span> BATERIA</div>
+      <div class="split">
+        <div class="card day">${mini(false)}<div class="lbl sol">${ic("sun")} Dia</div><div class="socbar"><div class="t"><span>Bateria</span><span class="s1">80%</span></div><div class="b"><i class="b1"></i></div></div></div>
+        <div class="card night">${mini(true)}<div class="lbl" style="color:#9fb7c2">${ic("moon")} Noite</div><div class="socbar"><div class="t"><span>Bateria</span><span class="s2">80%</span></div><div class="b"><i class="b2"></i></div></div></div>
+      </div>
+      <div class="note" style="top:${U*107}px;text-align:right">conforme o modelo e as configurações</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    rise($(root,".day"),t,.4,.5,3); rise($(root,".night"),t,.8,.5,3);
+    $$(root,".winDy").forEach(e=>e.setAttribute("fill","#F3D69B"));
+    $$(root,".winNg").forEach(e=>e.setAttribute("fill","#F3D69B"));
+    draw($(root,".fd"), p(t,1.4,.6)); draw($(root,".fn"), p(t,4.4,.6));
+    const fds = $(root,".fds"); if (fds){ fds.style.opacity = p(t,1.2,.4); fds.style.strokeDashoffset = -t*25; }
+    const d = lerp(80, 72, p(t,2,8,x=>x)), n = lerp(80, 35, p(t,4.6,6.5,x=>x));
+    setText($(root,".s1"), Math.round(d)+"%"); setText($(root,".s2"), Math.round(n)+"%");
+    $(root,".b1").style.width = d+"%"; $(root,".b2").style.width = n+"%";
+    rise($(root,".note"),t,5.5,.5,1);
+  },
+  sfx: [[1.4,"swish"],[4.4,"swish"]],
+});
+
+/* ---------- 8. Potência × autonomia (82–98) ---------- */
+S({ id:8, name:"Potência versus autonomia", dur:16,
+  cap:["*Potência e autonomia* são coisas diferentes.", "Imagine *8 kWh efetivamente disponíveis* no backup", "e consumo constante de *1 kW*.", "Isso dá *aproximadamente 8 horas* de funcionamento."],
+  html(){
+    const arc = (cls) => `<svg viewBox="0 0 200 120" style="width:100%;height:${U*13}px"><path d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="#ece7dc" stroke-width="16" stroke-linecap="round"/><path class="${cls}" d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="#D99A36" stroke-width="16" stroke-linecap="round" pathLength="1"/></svg>`;
+    return `<div class="ttl"><small>Potência × energia</small>8 kWh ÷ 1 kW ≈ <span class="bk">8 HORAS</span></div>
+      <div class="gauges">
+        <div class="card g1"><div class="k">POTÊNCIA</div>${arc("a1")}<div class="v sol"><span class="pv">0,0</span> kW</div><div class="s">quanto a casa puxa agora</div></div>
+        <div class="card g2"><div class="k">ENERGIA DISPONÍVEL</div>
+          <div style="display:flex;justify-content:center;margin:${U*1.2}px 0"><div style="width:${U*12}px;height:${U*10.6}px;border:3px solid #263238;border-radius:${U*1}px;padding:3px;position:relative"><i class="lvl" style="position:absolute;left:3px;right:3px;bottom:3px;background:#6E927C;border-radius:${U*.5}px"></i></div></div>
+          <div class="v bk"><span class="ev">8,0</span> kWh</div><div class="s">quanto tempo ela dura</div></div>
+      </div>
+      <div class="card ruler">
+        <div class="eq">8 kWh ÷ 1 kW ≈ <span class="bk">8 h</span></div>
+        <div class="track"><i class="rl"></i></div>
+        <div class="ticks">${Array.from({length:9},(_,i)=>`<span>${i}h</span>`).join("")}</div>
+        <div style="display:flex;justify-content:space-between;margin-top:${U*1.4}px;font-weight:800;font-size:${U*2.4}px"><span>tempo: <span class="hh">0,0 h</span></span><span class="bk">restam <span class="rk">8,0</span> kWh</span></div>
+      </div>
+      <div class="note" style="top:${U*108}px">Exemplo idealizado; consumo constante. 8 kWh já disponíveis na saída CA, o que não é o mesmo que a capacidade nominal da bateria.</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    rise($(root,".g1"),t,.5,.5,3); rise($(root,".g2"),t,.9,.5,3);
+    const pw = lerp(0,1,p(t,1.2,1));
+    draw($(root,".a1"), pw*.2);       // 1 kW num mostrador de 0–5 kW
+    setText($(root,".pv"), nf(pw));
+    rise($(root,".ruler"),t,4.0,.5,3);
+    const k = clamp((t-6.0)/7.0);    // 8 h simuladas em 7 s
+    const hrs = 8*k, rem = 8-hrs;
+    setText($(root,".hh"), nf(hrs)+" h"); setText($(root,".rk"), nf(rem));
+    setText($(root,".ev"), nf(rem));
+    $(root,".lvl").style.height = `calc(${rem/8*100}% - 6px)`;
+    $(root,".rl").style.width = (k*100)+"%";
+    rise($(root,".note"),t,8,.5,1);
+  },
+  sfx: [[1.2,"tick"],[4.0,"swish"],...Array.from({length:8},(_,i)=>[+(6.0+(i+1)*7/8).toFixed(2),"tick"]),[13.1,"check"]],
+});
+
+/* ---------- 9. Limite de potência (98–110) ---------- */
+S({ id:9, name:"Limite de potência", dur:12,
+  cap:["Atenção: bateria com energia *não significa potência ilimitada*.", "Se aparelhos e *picos de partida* ultrapassarem o limite", "do inversor ou da bateria, *o backup pode desligar*."],
+  html(){
+    // barras sem valores individuais: só o limite do exemplo (5 kW) é numérico
+    const cw = U*78, chH = U*52, base = chH - U*6, lim = base - U*34;
+    const stack = (x, parts, cls) => { let y = base, s = ""; parts.forEach(([h,c],i)=>{ s += `<rect class="${cls}" data-i="${i}" x="${x}" y="${y-h*U}" width="${U*22}" height="${h*U}" rx="${U*.8}" fill="${c}" stroke="#fff" stroke-width="2"/>`; y -= h*U; }); return s; };
+    const left = stack(U*8, [[7,"#6E927C"],[5,"#8fb19c"],[4,"#a9c4b2"]], "lb");
+    const right = stack(U*44, [[12,"#D99A36"],[11,"#e3ad57"],[9,"#C98A2C"],[8,"#e8b86a"]], "rb");
+    const spikes = [0,1,2,3].map(i=>`<line class="sp" x1="${U*(46+i*5)}" x2="${U*(46+i*5)}" y1="0" y2="0" stroke="#B5523B" stroke-width="4" stroke-linecap="round"/>`).join("");
+    return `<div class="ttl"><small>Limite de saída do backup</small>NÃO ULTRAPASSE A <span class="red">POTÊNCIA</span> DO BACKUP</div>
+      <div class="card chart"><svg class="art" viewBox="0 0 ${cw} ${chH}" style="position:relative;height:${chH}px">
+        <line x1="${U*2}" x2="${cw-U*2}" y1="${base}" y2="${base}" stroke="#cfc6b3" stroke-width="2"/>
+        <line class="limL" x1="${U*2}" x2="${cw-U*2}" y1="${lim}" y2="${lim}" stroke="#263238" stroke-width="3" stroke-dasharray="12 8"/>
+        <text x="${U*3}" y="${lim-U*1.2}" text-anchor="start" font-family="Inter,sans-serif" font-weight="800" font-size="${U*2.1}" fill="#263238">5 kW — exemplo hipotético</text>
+        ${left}${right}${spikes}
+        <text x="${U*19}" y="${base+U*3.6}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="${U*1.9}" fill="#6b7680">cargas essenciais</text>
+        <text x="${U*55}" y="${base+U*3.6}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="${U*1.9}" fill="#6b7680">várias cargas pesadas</text>
+      </svg>
+        <div class="ok" style="position:absolute;left:${U*4}px;top:${U*19}px"><span class="pill bk">${ic("check")} dentro do limite</span></div>
+        <div class="ov" style="position:absolute;left:${U*4}px;top:${U*24.5}px"><span class="pill red" style="color:#B5523B">${ic("alert")} sobrecarga: backup pode desligar</span></div>
+      </div>
+      <div class="note" style="top:${U*106}px">Respeite a potência de backup do inversor, a potência de descarga da bateria e os picos de partida dos aparelhos.</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    rise($(root,".chart"),t,.3,.5,3);
+    const base = U*52 - U*6;
+    $$(root,".lb").forEach((r,i)=>{ const k = p(t,1.0+i*.4,.4); r.style.transformOrigin = `0 ${base}px`; r.style.transform = `scaleY(${k})`; r.style.transformBox = "view-box"; });
+    pop($(root,".ok"),t,2.6,.4);
+    $$(root,".rb").forEach((r,i)=>{ const k = p(t,4.0+i*.55,.4); r.style.transformOrigin = `0 ${base}px`; r.style.transform = `scaleY(${k})`; r.style.transformBox = "view-box"; });
+    // picos de partida: traços curtos acima da média, quando cada carga liga
+    const tops = [12,23,32,40];
+    $$(root,".sp").forEach((l,i)=>{ const a = 4.3+i*.55; const k = t>=a ? Math.max(0, 1-(t-a)/.5) : 0; const y = base - tops[i]*U; l.setAttribute("y1", y); l.setAttribute("y2", y - k*U*6); l.style.opacity = k>0 ? 1 : 0; });
+    const over = t >= 5.9;
+    pop($(root,".ov"),t,6.0,.4);
+    const limL = $(root,".limL"); limL.setAttribute("stroke", over ? "#B5523B" : "#263238");
+    rise($(root,".note"),t,7.6,.5,1);
+  },
+  sfx: [[1.0,"tick"],[1.4,"tick"],[1.8,"tick"],[2.65,"check"],[4.3,"clique"],[4.85,"clique"],[5.4,"clique"],[5.95,"clique"],[6.05,"alert"]],
+});
+
+/* ---------- 10. Conclusão (110–120) ---------- */
+S({ id:10, name:"Conclusão", dur:10,
+  cap:["O sistema híbrido *não é energia infinita*.", "É *geração, armazenamento e controle*.", "Para funcionar como esperado, *tudo precisa ser dimensionado corretamente*."],
+  html(){
+    const P = iso([U*44, U*66], U*7.6);
+    let g = pole(P, 3.1, -2.4, 2.8);
+    g += houseExt(P, -.4, -.2, 3.4, 2.8, 1.45, { panels:true, door:true, k:"H", winsF:[[.12,.34],[.42,.64],[.72,.9]], winsS:[[.15,.45]] });
+    g += box(P, 3.1, 1.6, 0, .4, .4, .7, { top:"#8b949b", front:"#5f686f", side:"#79828A" });
+    return `<svg class="art">${g}</svg>
+      <div class="ttl"><small>Conclusão</small>HÍBRIDO BEM DIMENSIONADO = <span class="bk">BACKUP CONFIÁVEL</span></div>
+      <div class="inds">
+        <div class="card i1"><span class="sol">${ic("gauge")}</span>Potência</div>
+        <div class="card i2"><span class="bk">${ic("bat")}</span>Energia armazenada</div>
+        <div class="card i3"><span class="rede">${ic("list")}</span>Cargas prioritárias</div>
+      </div>
+      <div class="note" style="top:${U*110}px;text-align:center">Exemplo educativo. Confira o manual dos equipamentos e as regras da distribuidora.</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,.2,.6);
+    poleLight(root, false);
+    // parte da casa iluminada (circuitos de backup), rede ainda apagada
+    $$(root,".winH").forEach((e,i)=>e.setAttribute("fill", i%2===0 ? "#F3D69B" : "#cdd3d5"));
+    [".i1",".i2",".i3"].forEach((c,i)=>pop($(root,c),t,2.0+i*.5,.4));
+    rise($(root,".note"),t,4,.5,1);
+    css($(root,".art"),{transformOrigin:"50% 55%", transform:`scale(${lerp(1,1.04,p(t,0,10,x=>x))})`});
+  },
+  sfx: [[2.0,"pop"],[2.5,"pop"],[3.0,"pop"],[4.2,"chime"]],
+});
+
+/* ================= linha do tempo ================= */
+const ACTIVE = SCENES;
+let acc = 0; for (const s of ACTIVE){ s.start = acc; acc += s.dur; }
+const TOTAL = acc, XF = .5;
+const stage = document.getElementById("stage");
+stage.style.width = W+"px"; stage.style.height = H+"px";
+document.documentElement.style.setProperty("--u", U+"px");
+let VIEW_SCALE = 1;
+stage.innerHTML = `<div class="paper"></div>`;
+for (const s of ACTIVE){ const el = document.createElement("section"); el.className="scene"; el.id="s"+s.id; el.innerHTML=s.html(); stage.appendChild(el); s.el=el; }
+
+const CAPS = ACTIVE.flatMap(s => {
+  const tot = s.cap.reduce((a,c)=>a+c.replace(/\*/g,"").length,0);
+  let t = s.start + .3; const util = s.dur - .6;
+  return s.cap.map(c => { const d = util * c.replace(/\*/g,"").length / tot; const o = { a:t, b:t+d, txt:c }; t += d; return o; });
+});
+const capEl = document.createElement("div"); capEl.className = "cap"; capEl.innerHTML = "<span></span>"; stage.appendChild(capEl);
+const capHtml = s => s.replace(/\*(.+?)\*/g,"<b>$1</b>");
+
+function renderAt(T){
+  T = clamp(T,0,TOTAL);
+  ACTIVE.forEach((s,i)=>{
+    const local = T - s.start, next = ACTIVE[i+1];
+    const visible = local >= 0 && (local < s.dur || (next && local < s.dur + XF) || (!next && local <= s.dur));
+    if (!visible){ s.el.style.visibility="hidden"; s.el.style.opacity=0; return; }
+    s.el.style.visibility = "visible";
+    // transição: dissolve suave com leve aproximação (câmera de maquete)
+    const kin = i===0 ? 1 : eio(clamp(local/XF));
+    const kout = next && local > s.dur ? eio(clamp((local-s.dur)/XF)) : 0;
+    s.el.style.opacity = kin * (1-kout);
+    s.el.style.transform = `scale(${lerp(1.025,1,kin) * lerp(1,.985,kout)})`;
+    s.update(s.el, Math.min(local, s.dur + XF), s.dur);
+  });
+  const c = CAPS.find(c => T >= c.a && T < c.b), span = capEl.firstChild;
+  if (c){ const h = capHtml(c.txt); if (span.innerHTML !== h) span.innerHTML = h; const k = clamp((T-c.a)/.12); capEl.style.opacity = k; capEl.style.transform = `translateY(${(1-k)*U*.8}px)`; }
+  else capEl.style.opacity = 0;
+  stage.style.filter = T > TOTAL-.6 ? `brightness(${clamp((TOTAL-T)/.6)*.6+.4})` : "none";
+  return T;
+}
+const SFX = ACTIVE.flatMap(s => (s.sfx||[]).map(([t,k]) => ({ t: +(s.start+t).toFixed(3), k })));
+// música discreta, sem bateria nem efeitos futuristas
+const MUSIC = { bpm: 88, arp: 1, kick: 9999, hat: 9999, clap: 9999, prog: "I-V-vi-IV" };
+window.COMMERCIAL = { W, H, FMT:"9x16", CUT:false, TOTAL, SFX, MUSIC,
+  CAPS: CAPS.map(c => ({ a:+c.a.toFixed(3), b:+c.b.toFixed(3), txt:c.txt.replace(/\*/g,"") })),
+  scenes: ACTIVE.map(s=>({id:s.id,name:s.name,start:s.start,dur:s.dur})) };
+window.renderAt = renderAt;
+
+function fit(){
+  const ctlH = Q.get("render") ? 0 : 56;
+  VIEW_SCALE = Math.min(innerWidth/W, (innerHeight-ctlH)/H);
+  stage.style.transform = `scale(${VIEW_SCALE})`;
+  document.getElementById("wrap").style.bottom = ctlH+"px";
+}
+if (Q.get("render")){
+  document.getElementById("wrap").style.cssText = "position:absolute;left:0;top:0;display:block";
+  VIEW_SCALE = 1; renderAt(+Q.get("t")||0);
+} else {
+  addEventListener("resize",fit); fit();
+  const ctl = document.getElementById("ctl"); ctl.hidden = false;
+  const scrub = document.getElementById("scrub"), tc = document.getElementById("tc"), scn = document.getElementById("scn"), play = document.getElementById("play");
+  scrub.max = TOTAL;
+  let t = +Q.get("t")||0, playing = !Q.get("t"), last = performance.now();
+  const audio = new Audio("../videos/sistema-hibrido-120s-9x16.mp4"); audio.preload = "auto";
+  const syncAudio = () => { if (!audio.error){ audio.currentTime = t; playing ? audio.play().catch(()=>{}) : audio.pause(); } };
+  const show = () => { renderAt(t); scrub.value = t; tc.textContent = t.toFixed(1)+" s / "+TOTAL+" s"; const s = ACTIVE.find(s=>t>=s.start && t<s.start+s.dur) || ACTIVE[ACTIVE.length-1]; scn.textContent = `Cena ${s.id} — ${s.name}`; play.textContent = playing ? "❚❚" : "▶︎"; };
+  play.onclick = () => { playing = !playing; if (t>=TOTAL) t=0; syncAudio(); show(); };
+  scrub.oninput = () => { t = +scrub.value; syncAudio(); show(); };
+  addEventListener("keydown", e => { if (e.code==="Space"){ e.preventDefault(); play.click(); } });
+  const loop = now => { const dt = (now-last)/1000; last = now; if (playing){ t += dt; if (t>=TOTAL){ t=TOTAL; playing=false; audio.pause(); } } show(); requestAnimationFrame(loop); };
+  if (playing) syncAudio();
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

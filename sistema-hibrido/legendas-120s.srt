@@ -1,0 +1,131 @@
+1
+00:00:00,300 --> 00:00:02,201
+Você instalou energia solar.
+
+2
+00:00:02,201 --> 00:00:05,663
+A luz da rua acabou. Sua casa continua funcionando?
+
+3
+00:00:05,663 --> 00:00:07,700
+A resposta depende do sistema.
+
+4
+00:00:08,300 --> 00:00:12,813
+No on-grid convencional, o inversor interrompe a operação
+
+5
+00:00:12,813 --> 00:00:15,425
+quando a rede cai, mesmo com sol.
+
+6
+00:00:15,425 --> 00:00:19,700
+Essa proteção evita energizar a rede da distribuidora.
+
+7
+00:00:20,300 --> 00:00:24,975
+No híbrido com backup, painéis, inversor, baterias e rede
+
+8
+00:00:24,975 --> 00:00:26,369
+trabalham juntos.
+
+9
+00:00:26,369 --> 00:00:31,700
+O equipamento gerencia de onde vem a energia e para onde ela vai.
+
+10
+00:00:32,300 --> 00:00:36,676
+Com a rede disponível, a energia solar pode alimentar a casa
+
+11
+00:00:36,676 --> 00:00:38,208
+e carregar a bateria.
+
+12
+00:00:38,208 --> 00:00:42,074
+Dependendo das configurações e das regras de conexão,
+
+13
+00:00:42,074 --> 00:00:44,700
+o excedente pode seguir para a rede.
+
+14
+00:00:45,300 --> 00:00:50,775
+Quando a rede falha, o híbrido compatível se isola da distribuidora.
+
+15
+00:00:50,775 --> 00:00:53,191
+O sistema entra no modo backup
+
+16
+00:00:53,191 --> 00:00:57,700
+e usa a energia disponível para os circuitos protegidos.
+
+17
+00:00:58,300 --> 00:01:01,495
+Geralmente, geladeira, iluminação e internet
+
+18
+00:01:01,495 --> 00:01:04,327
+ficam no quadro de cargas prioritárias.
+
+19
+00:01:04,327 --> 00:01:07,957
+Chuveiro e outras cargas pesadas podem ficar fora.
+
+20
+00:01:07,957 --> 00:01:09,700
+Tudo depende do projeto.
+
+21
+00:01:10,300 --> 00:01:14,100
+Durante o dia, os painéis podem ajudar no backup.
+
+22
+00:01:14,100 --> 00:01:17,590
+À noite, sem geração solar, a bateria assume.
+
+23
+00:01:17,590 --> 00:01:21,700
+A autonomia depende da carga e da energia armazenada.
+
+24
+00:01:22,300 --> 00:01:26,242
+Potência e autonomia são coisas diferentes.
+
+25
+00:01:26,242 --> 00:01:30,642
+Imagine 8 kWh efetivamente disponíveis no backup
+
+26
+00:01:30,642 --> 00:01:33,208
+e consumo constante de 1 kW.
+
+27
+00:01:33,208 --> 00:01:37,700
+Isso dá aproximadamente 8 horas de funcionamento.
+
+28
+00:01:38,300 --> 00:01:42,558
+Atenção: bateria com energia não significa potência ilimitada.
+
+29
+00:01:42,558 --> 00:01:46,266
+Se aparelhos e picos de partida ultrapassarem o limite
+
+30
+00:01:46,266 --> 00:01:49,700
+do inversor ou da bateria, o backup pode desligar.
+
+31
+00:01:50,300 --> 00:01:52,869
+O sistema híbrido não é energia infinita.
+
+32
+00:01:52,869 --> 00:01:55,125
+É geração, armazenamento e controle.
+
+33
+00:01:55,125 --> 00:01:59,700
+Para funcionar como esperado, tudo precisa ser dimensionado corretamente.

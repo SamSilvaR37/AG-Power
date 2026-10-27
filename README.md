@@ -6,6 +6,8 @@
 > veja [`dimensionamento-5kw/README.md`](dimensionamento-5kw/README.md).
 > E a **versão autoral** desse vídeo (isométrico, HUD de engenharia): veja
 > [`dimensionamento-5kw-autoral/README.md`](dimensionamento-5kw-autoral/README.md).
+> E o vídeo **Quando falta energia, a casa com solar continua ligada?** (sistema híbrido, 9:16,
+> 120 s): veja [`sistema-hibrido/README.md`](sistema-hibrido/README.md).
 
 Comercial institucional de 90 s (pt-BR) feito a partir do briefing em `briefing.json`.
 O vídeo é **animado em HTML**: cada quadro é calculado a partir do tempo, então o mesmo

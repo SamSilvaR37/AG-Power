@@ -1,0 +1,154 @@
+{
+  "titulo": "Quando falta energia, a casa com solar continua ligada?",
+  "objetivo": "Vídeo educativo original que explica sistemas fotovoltaicos híbridos com backup, funcionamento normal, falta da rede, separação de circuitos e dimensionamento de energia e potência.",
+  "video": {
+    "formato": "9:16",
+    "resolucao": "1080x1920",
+    "duracao_segundos": 120,
+    "fps": 30,
+    "idioma": "pt-BR",
+    "estilo": "Animação 3D de maquete arquitetônica minimalista com fluxo elétrico didático",
+    "narracao": "Voz brasileira natural e informativa, sem exageros publicitários"
+  },
+  "identidade_visual": {
+    "conceito": "Maquete residencial em corte 3D, objetos técnicos originais e apresentação integrada ao ambiente, não replicar o vídeo original",
+    "paleta": {
+      "fundo": "#F4F1E9",
+      "texto": "#263238",
+      "energia_solar": "#D99A36",
+      "backup": "#6E927C",
+      "rede": "#294B5B"
+    },
+    "inversor": "Gabinete híbrido genérico de design autoral: retangular vertical, branco fosco, faixa lateral grafite e pequeno visor na parte inferior, perspectiva 3/4, instalado na parede; sem marcas, sem semelhança específica com referência",
+    "bateria": "Dois módulos de armazenamento grafite, desenho minimalista original, instalados ao lado do inversor",
+    "tipografia": "Sans-serif editorial, títulos legíveis em 1–2 linhas",
+    "evitar": [
+      "mesmas cenas, design e enquadramentos da referência",
+      "inversor frontal idêntico ao vídeo anterior",
+      "neon, hologramas, interface fictícia complexa",
+      "setas energizando a rede da distribuidora durante queda de energia",
+      "marca de fabricante não autorizada"
+    ]
+  },
+  "cenas": [
+    {
+      "id": 1,
+      "inicio": "00:00",
+      "fim": "00:08",
+      "titulo": "O apagão",
+      "imagem": "Maquete arquitetônica 3D de uma residência brasileira com painéis solares no telhado, vista em perspectiva 3/4. Um poste de rua ao fundo apaga; duas casas comuns escurecem, enquanto a residência em destaque congela com um ponto de interrogação. Fundo off-white, luz natural, sem neon.",
+      "texto_tela": "FALTOU ENERGIA. E AGORA?",
+      "narracao": "Você instalou energia solar. A luz da rua acabou. Sua casa continua funcionando? A resposta depende do sistema.",
+      "palavras": 18
+    },
+    {
+      "id": 2,
+      "inicio": "00:08",
+      "fim": "00:20",
+      "titulo": "O que acontece no on-grid",
+      "imagem": "Infográfico limpo: painéis no telhado, inversor convencional em parede e rede elétrica. O fio que liga o inversor à distribuidora é interrompido simbolicamente; luzes da casa apagam. Aparece selo de proteção, nunca mostrar retorno de energia à rede desligada.",
+      "texto_tela": "ON-GRID: DESLIGA SEM REDE",
+      "narracao": "No sistema on-grid convencional, o inversor interrompe a operação quando a rede cai, mesmo com sol. Essa proteção evita energizar a rede da distribuidora.",
+      "palavras": 24
+    },
+    {
+      "id": 3,
+      "inicio": "00:20",
+      "fim": "00:32",
+      "titulo": "Os quatro elementos do híbrido",
+      "imagem": "Corte arquitetônico da residência mostra painéis, inversor híbrido original retangular em perspectiva, bateria modular ao lado, quadro elétrico e poste. Linhas surgem para representar possíveis caminhos de energia, com legenda física clara.",
+      "texto_tela": "SOL + INVERSOR + BATERIA + REDE",
+      "narracao": "No híbrido com backup, painéis, inversor, baterias e rede trabalham juntos. O equipamento gerencia de onde vem a energia e para onde ela vai.",
+      "palavras": 24
+    },
+    {
+      "id": 4,
+      "inicio": "00:32",
+      "fim": "00:45",
+      "titulo": "Funcionamento durante o dia",
+      "imagem": "Iluminação diurna. Setas discretas amarelo-âmbar saem dos painéis até a casa. Fluxo adicional vai à bateria, cujo nível sobe. Um fluxo pontilhado segue até a rede com rótulo 'se permitido'. Nenhuma seta representa regra fixa.",
+      "texto_tela": "DIA: CONSUMO + RECARGA",
+      "narracao": "Com a rede disponível, a energia solar pode alimentar a casa e carregar a bateria. Dependendo das configurações e das regras de conexão, o excedente pode seguir para a rede.",
+      "palavras": 30
+    },
+    {
+      "id": 5,
+      "inicio": "00:45",
+      "fim": "00:58",
+      "titulo": "Falta energia: separação segura",
+      "imagem": "O poste da rua apaga, a chave de isolamento dentro do inversor muda de estado, aparece linha vermelha interrompida em direção à rede. O circuito backup continua aceso a partir da bateria e solar. Indicar interrupção de transferência rapidamente mas sem cronometrar.",
+      "texto_tela": "FALTOU REDE → MODO BACKUP",
+      "narracao": "Quando a rede falha, o híbrido compatível se isola da distribuidora. O sistema entra no modo backup e usa a energia disponível para alimentar os circuitos protegidos.",
+      "palavras": 27
+    },
+    {
+      "id": 6,
+      "inicio": "00:58",
+      "fim": "01:10",
+      "titulo": "Cargas prioritárias",
+      "imagem": "Quadro elétrico dividido em dois grupos claramente identificados: BACKUP e CARGAS COMUNS. Geladeira, iluminação e roteador estão iluminados no grupo backup; chuveiro e forno ficam desativados no grupo comum. Conexões realistas, sem desenho de terminais de instalação.",
+      "texto_tela": "BACKUP ≠ CASA INTEIRA",
+      "narracao": "Geralmente, geladeira, iluminação e internet ficam no quadro de cargas prioritárias. Chuveiro e outras cargas pesadas podem ficar fora. Tudo depende do projeto.",
+      "palavras": 23
+    },
+    {
+      "id": 7,
+      "inicio": "01:10",
+      "fim": "01:22",
+      "titulo": "Dia, noite e bateria",
+      "imagem": "Tela dividida ao meio: à esquerda dia com sol gerando e bateria apoiando, à direita noite com bateria descarregando para cargas essenciais. O indicador de bateria cai gradualmente. Exibir 'conforme o modelo' discretamente.",
+      "texto_tela": "DIA: SOL + BATERIA | NOITE: BATERIA",
+      "narracao": "Durante o dia, os painéis podem ajudar no backup. À noite, sem geração solar, a bateria assume. A autonomia depende da carga e da energia armazenada.",
+      "palavras": 26
+    },
+    {
+      "id": 8,
+      "inicio": "01:22",
+      "fim": "01:38",
+      "titulo": "Potência versus autonomia",
+      "imagem": "Dois medidores aparecem lado a lado: potência instantânea 'kW' e energia disponível 'kWh'. Um gráfico limpo exibe bateria hipotética com 8 kWh disponíveis em corrente alternada e consumo constante 1 kW. Régua de 8 horas decresce. Nota de rodapé 'Exemplo idealizado; consumo constante'.",
+      "texto_tela": "8 kWh ÷ 1 kW ≈ 8 HORAS",
+      "narracao": "Potência e autonomia são coisas diferentes. Imagine oito quilowatts-hora efetivamente disponíveis no backup e consumo constante de um quilowatt. Isso representa aproximadamente oito horas de funcionamento.",
+      "palavras": 26
+    },
+    {
+      "id": 9,
+      "inicio": "01:38",
+      "fim": "01:50",
+      "titulo": "Limite de potência",
+      "imagem": "Indicador de limite de saída backup rotulado '5 kW — exemplo hipotético'. À esquerda, cargas essenciais abaixo do limite com barra verde. À direita, várias cargas pesadas acionadas simultaneamente cruzam o limite e surge aviso de sobrecarga. Mostrar picos de partida como linhas curtas acima da média.",
+      "texto_tela": "NÃO ULTRAPASSE A POTÊNCIA DO BACKUP",
+      "narracao": "Mas atenção: bateria com energia não significa potência ilimitada. Se aparelhos e picos de partida ultrapassarem o limite do inversor ou da bateria, o backup pode desligar.",
+      "palavras": 27
+    },
+    {
+      "id": 10,
+      "inicio": "01:50",
+      "fim": "02:00",
+      "titulo": "Conclusão",
+      "imagem": "Maquete inteira retorna com parte da casa iluminada e a rede ainda apagada. Três indicadores surgem: potência, energia armazenada, cargas prioritárias. Tela limpa com título de encerramento.",
+      "texto_tela": "HIBRIDO BEM DIMENSIONADO = BACKUP CONFIÁVEL",
+      "narracao": "O sistema híbrido não é energia infinita. É geração, armazenamento e controle. Para funcionar como esperado, tudo precisa ser dimensionado corretamente.",
+      "palavras": 21
+    }
+  ],
+  "notas_tecnicas": {
+    "modo": "sistema híbrido com saída de backup/EPS compatível",
+    "potencia_e_energia": "kW limita potência instantânea; kWh representa energia e contribui para estimar autonomia",
+    "exemplo": "8 kWh efetivamente disponíveis na saída CA / carga constante de 1 kW ≈ 8 horas",
+    "alertas": [
+      "Autonomia varia com carga, SOC, perdas, temperatura e geração solar",
+      "Exige compatibilidade de inversor, bateria e instalação elétrica",
+      "Tempo de transferência não é universal",
+      "Nem toda residência fica toda energizada; existem circuitos prioritários",
+      "Sem garantir backup com bateria ausente",
+      "Conferir manual e regras de conexão antes de qualquer instalação"
+    ]
+  },
+  "fontes": [
+    "https://solis-service.solisinverters.com/en/support/solutions/articles/44002827896-whole-home-backup-topology-using-eps-and-ats",
+    "https://solis-service.solisinverters.com/en/support/solutions/articles/44002778622-solis-installation-guide",
+    "https://goodwetechnology.zendesk.com/hc/en-gb/articles/47270447603353-Back-up-function-of-the-inverter?page=1",
+    "https://www.gov.br/aneel/pt-br/assuntos/geracao-distribuida/"
+  ]
+}

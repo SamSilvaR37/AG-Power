@@ -1,0 +1,12 @@
+[
+  {"id": 1, "dur": 8, "locucao": "Você instalou energia solar. A luz da rua acabou. Sua casa continua funcionando? A resposta depende do sistema."},
+  {"id": 2, "dur": 12, "locucao": "No sistema on-grid convencional, o inversor interrompe a operação quando a rede cai, mesmo com sol. Essa proteção evita energizar a rede da distribuidora."},
+  {"id": 3, "dur": 12, "locucao": "No híbrido com backup, painéis, inversor, baterias e rede trabalham juntos. O equipamento gerencia de onde vem a energia e para onde ela vai."},
+  {"id": 4, "dur": 13, "locucao": "Com a rede disponível, a energia solar pode alimentar a casa e carregar a bateria. Dependendo das configurações e das regras de conexão, o excedente pode seguir para a rede."},
+  {"id": 5, "dur": 13, "locucao": "Quando a rede falha, o híbrido compatível se isola da distribuidora. O sistema entra no modo backup e usa a energia disponível para alimentar os circuitos protegidos."},
+  {"id": 6, "dur": 12, "locucao": "Geralmente, geladeira, iluminação e internet ficam no quadro de cargas prioritárias. Chuveiro e outras cargas pesadas podem ficar fora. Tudo depende do projeto."},
+  {"id": 7, "dur": 12, "locucao": "Durante o dia, os painéis podem ajudar no backup. À noite, sem geração solar, a bateria assume. A autonomia depende da carga e da energia armazenada."},
+  {"id": 8, "dur": 16, "locucao": "Potência e autonomia são coisas diferentes. Imagine oito quilowatts-hora efetivamente disponíveis no backup e consumo constante de um quilowatt. Isso representa aproximadamente oito horas de funcionamento."},
+  {"id": 9, "dur": 12, "locucao": "Mas atenção: bateria com energia não significa potência ilimitada. Se aparelhos e picos de partida ultrapassarem o limite do inversor ou da bateria, o backup pode desligar."},
+  {"id": 10, "dur": 10, "locucao": "O sistema híbrido não é energia infinita. É geração, armazenamento e controle. Para funcionar como esperado, tudo precisa ser dimensionado corretamente."}
+]
