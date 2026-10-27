@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dimensionamento Solar Autoral</title>
+<!--
+  "Dimensionamento Solar Autoral — Inversor 5 kW" (9:16, 85 s).
+  Direção de arte própria: infográfico isométrico + HUD de engenharia sobre blueprint digital.
+  Inversor e módulos são desenhos genéricos, sem marca, gerados aqui em isometria.
+  Exemplo educativo HIPOTÉTICO (briefing em briefing.json).
+  Parâmetros: ?t=12.5  ?render=1
+  Render: node ../render.mjs 9x16 --pagina dimensionamento-5kw-autoral/index.html --nome dimensionamento-5kw-autoral
+-->
+<style>
+:root{
+  --bg:#0F172A; --ink:#F8FAFC; --amber:#F59E0B; --sky:#38BDF8; --green:#22C55E; --red:#EF4444;
+  --panel:rgba(15,23,42,.78); --edge:rgba(56,189,248,.38); --mute:#94A3B8; --dim:#475569;
+  --u:10.8px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#020617;overflow:hidden}
+body{font-family:Inter,"Inter Display",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;font-weight:500}
+#wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;overflow:hidden;background:var(--bg);flex:none;transform-origin:center center}
+/* blueprint digital: grade fina + grade maior + leve granulado */
+.blueprint{position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle at 50% 40%,rgba(56,189,248,.07),transparent 60%),
+    linear-gradient(rgba(56,189,248,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.10) 1px,transparent 1px),
+    linear-gradient(rgba(56,189,248,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.045) 1px,transparent 1px),
+    radial-gradient(rgba(248,250,252,.035) 1px,transparent 1.2px);
+  background-size:100% 100%,calc(var(--u)*10) calc(var(--u)*10),calc(var(--u)*10) calc(var(--u)*10),calc(var(--u)*2) calc(var(--u)*2),calc(var(--u)*2) calc(var(--u)*2),calc(var(--u)*.7) calc(var(--u)*.7)}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(2,6,23,.75))}
+.scene{position:absolute;inset:0;visibility:hidden;overflow:hidden}
+.art{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.ico{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.amber{color:var(--amber)} .sky{color:var(--sky)} .green{color:var(--green)} .red{color:var(--red)} .mute{color:var(--mute)}
+
+/* HUD global: indicador de etapa e cantoneiras */
+.hud{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*16.5);z-index:40;display:flex;flex-direction:column;gap:calc(var(--u)*.9)}
+.hud .lbl{display:flex;justify-content:space-between;font-weight:800;font-size:calc(var(--u)*1.75);letter-spacing:.16em;text-transform:uppercase;color:var(--sky)}
+.hud .lbl span:last-child{color:var(--mute);letter-spacing:.08em}
+.hud .seg{display:grid;grid-template-columns:repeat(8,1fr);gap:calc(var(--u)*.6)}
+.hud .seg i{height:calc(var(--u)*.55);border-radius:99px;background:rgba(56,189,248,.18)}
+.hud .seg i.on{background:var(--sky)} .hud .seg i.now{background:var(--amber)}
+.corner{position:absolute;width:calc(var(--u)*4);height:calc(var(--u)*4);border:2px solid rgba(56,189,248,.45);z-index:40}
+
+/* textos */
+.ttl{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*23);font-weight:800;font-size:calc(var(--u)*6);line-height:1.04;letter-spacing:-.02em}
+.ttl small{display:block;font-size:calc(var(--u)*1.8);font-weight:700;letter-spacing:.16em;color:var(--sky);margin-bottom:calc(var(--u)*1)}
+/* títulos escritos em maiúsculas à mão para não estragar unidades (kW, Wp, Voc) */
+
+/* cards de HUD */
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:calc(var(--u)*1.6);padding:calc(var(--u)*2) calc(var(--u)*2.2);position:relative;backdrop-filter:blur(2px)}
+.card::before,.card::after{content:"";position:absolute;width:calc(var(--u)*1.8);height:calc(var(--u)*1.8);border-color:var(--sky);border-style:solid}
+.card::before{left:-1px;top:-1px;border-width:3px 0 0 3px;border-top-left-radius:calc(var(--u)*1.6)}
+.card::after{right:-1px;bottom:-1px;border-width:0 3px 3px 0;border-bottom-right-radius:calc(var(--u)*1.6)}
+.k{font-size:calc(var(--u)*1.7);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.v{font-weight:800;font-size:calc(var(--u)*4.2);letter-spacing:-.01em;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:calc(var(--u)*.8);border-radius:calc(var(--u)*.9);padding:calc(var(--u)*.8) calc(var(--u)*1.6);font-weight:800;font-size:calc(var(--u)*2.3);white-space:nowrap}
+.chip.g{background:rgba(34,197,94,.15);color:var(--green)} .chip.r{background:rgba(239,68,68,.15);color:var(--red)} .chip.a{background:rgba(245,158,11,.15);color:var(--amber)} .chip.s{background:rgba(56,189,248,.14);color:var(--sky)}
+
+/* legendas: faixa inferior de alto contraste, palavras-chave em âmbar */
+.cap{position:absolute;left:0;right:0;top:calc(var(--u)*120);z-index:45;display:flex;justify-content:center;padding:0 calc(var(--u)*10) 0 calc(var(--u)*6)}
+.cap div{width:100%;text-align:center;font-weight:800;font-size:calc(var(--u)*3.7);line-height:1.25;padding:calc(var(--u)*1.3) calc(var(--u)*1.6);background:linear-gradient(90deg,rgba(2,6,23,0),rgba(2,6,23,.88) 12%,rgba(2,6,23,.88) 88%,rgba(2,6,23,0));border-top:1px solid rgba(56,189,248,.35);border-bottom:1px solid rgba(56,189,248,.35)}
+.cap b{color:var(--amber);font-weight:800}
+/* varredura da transição */
+.scan{position:absolute;left:0;right:0;height:3px;background:var(--sky);box-shadow:0 0 calc(var(--u)*2) var(--sky),0 0 calc(var(--u)*6) rgba(56,189,248,.6);z-index:44;opacity:0}
+
+/* cena 2 */
+#s2 .grid4{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*46);display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2.6)}
+#s2 .card{height:calc(var(--u)*30);display:flex;flex-direction:column;justify-content:space-between}
+#s2 .n{font-weight:800;font-size:calc(var(--u)*1.8);color:var(--sky);letter-spacing:.14em}
+#s2 .big{font-weight:800;font-size:calc(var(--u)*8.5);letter-spacing:-.03em;line-height:1}
+#s2 .nm{font-weight:800;font-size:calc(var(--u)*3.4)}
+#s2 .bar{height:calc(var(--u)*.8);border-radius:99px;background:rgba(56,189,248,.15);overflow:hidden}
+#s2 .bar i{display:block;height:100%;background:var(--amber);border-radius:99px}
+/* cena 3 */
+#s3 .rows{position:absolute;left:calc(var(--u)*50);right:calc(var(--u)*10);top:calc(var(--u)*40);display:flex;flex-direction:column;gap:calc(var(--u)*1.8)}
+#s3 .rowc{padding:calc(var(--u)*1.5) calc(var(--u)*1.8);transition:none}
+#s3 .rowc .v{font-size:calc(var(--u)*3.8)}
+#s3 .rowc.hl{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber),0 0 calc(var(--u)*3) rgba(245,158,11,.25)}
+#s3 .rowc.hl::before,#s3 .rowc.hl::after{border-color:var(--amber)}
+/* cena 4 */
+.callout{position:absolute;padding:calc(var(--u)*1.2) calc(var(--u)*1.6)}
+.callout .v{font-size:calc(var(--u)*3.6)}
+/* cena 5/6/7 */
+.formula{font-weight:800;font-size:calc(var(--u)*5);letter-spacing:-.01em;white-space:nowrap}
+.gauge{position:relative;height:calc(var(--u)*4.4);border-radius:calc(var(--u)*1);background:rgba(56,189,248,.12);border:1px solid var(--edge)}
+.gauge .f{position:absolute;left:0;top:0;bottom:0;border-radius:calc(var(--u)*1);background:linear-gradient(90deg,#0ea5e9,#38BDF8)}
+.gauge .lim{position:absolute;top:calc(var(--u)*-1.2);bottom:calc(var(--u)*-1.2);width:4px;background:var(--amber);border-radius:2px}
+.stats{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1.4)}
+.stats .card{padding:calc(var(--u)*1.6) calc(var(--u)*1);text-align:center}
+.stats .v{font-size:calc(var(--u)*4.4)}
+.stats .k{font-size:calc(var(--u)*1.45);letter-spacing:.06em}
+/* cena 8 */
+#s8 .check{display:flex;align-items:center;gap:calc(var(--u)*1.8);font-weight:800;font-size:calc(var(--u)*3);padding:calc(var(--u)*1.6) 0;border-bottom:1px solid rgba(56,189,248,.18)}
+#s8 .box{width:calc(var(--u)*4.4);height:calc(var(--u)*4.4);border-radius:calc(var(--u)*1);border:3px solid var(--dim);display:flex;align-items:center;justify-content:center;font-size:calc(var(--u)*3);color:transparent;flex:none}
+#s8 .box.on{border-color:var(--green);background:rgba(34,197,94,.18);color:var(--green)}
+#s8 .final{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*10);top:calc(var(--u)*86);border:3px solid var(--amber);border-radius:calc(var(--u)*1.6);padding:calc(var(--u)*2.4);text-align:center;font-weight:800;font-size:calc(var(--u)*3.7);line-height:1.2;background:rgba(245,158,11,.08)}
+
+#ctl[hidden]{display:none}
+#ctl{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;padding:10px 14px;background:rgba(2,6,23,.92);font:13px Inter,system-ui,sans-serif;color:#cbd5e1;z-index:100}
+#ctl button{background:#1e293b;color:#fff;border:1px solid #334155;border-radius:6px;padding:6px 10px;font:inherit;cursor:pointer}
+#ctl input[type=range]{flex:1}
+#ctl .tc{font-variant-numeric:tabular-nums;min-width:120px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="cell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset=".55" stop-color="#172554"/><stop offset="1" stop-color="#0b1a3d"/></linearGradient>
+    <linearGradient id="invFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+    <linearGradient id="invSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#475569"/><stop offset="1" stop-color="#334155"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+</svg>
+<div id="wrap"><div id="stage"></div></div>
+<div id="ctl" hidden>
+  <button id="play">▶︎</button>
+  <span class="tc" id="tc">0.0 s</span>
+  <input id="scrub" type="range" min="0" max="85" step="0.01" value="0">
+  <span id="scn"></span>
+</div>
+<script>
+"use strict";
+/* ================= exemplo educativo hipotético (briefing) ================= */
+const INV = { kw: 5, kwpRec: 7.5, vMax: 600, vStart: 100, mppts: 2, iMax: 16 };
+const MOD = { wp: 550, voc: 49.9, vmp: 41.8, imp: 13.16, isc: 13.9 };
+const N = 6;
+const V_STR = N * MOD.vmp;            // 250,8 V
+const KWP = 2 * N * MOD.wp / 1000;    // 6,6 kWp
+
+/* ================= utilidades (mesmo motor dos outros vídeos) ================= */
+const Q = new URLSearchParams(location.search);
+const [W,H] = [1080,1920];
+const U = W/100;
+const clamp = (x,a=0,b=1) => Math.min(b,Math.max(a,x));
+const eo = x => 1-Math.pow(1-x,3);
+const eio = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const back = x => { const c=1.7; return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2); };
+const lerp = (a,b,k) => a+(b-a)*k;
+const p = (t,a,d=.5,fn=eo) => fn(clamp((t-a)/d));
+const $ = (root,s) => root.querySelector(s);
+const $$ = (root,s) => [...root.querySelectorAll(s)];
+function css(el,o){ if(!el) return; for(const k in o) el.style[k]=o[k]; }
+/** entra deslizando de lado (dx em u) */
+function slide(el,t,a,d=.5,dx=8){ if(!el) return; const k=p(t,a,d); el.style.opacity=k; el.style.transform=`translateX(${(1-k)*dx*U}px)`; }
+function rise(el,t,a,d=.5,dy=2.5){ if(!el) return; const k=p(t,a,d); el.style.opacity=k; el.style.transform=`translateY(${(1-k)*dy*U}px)`; }
+function pop(el,t,a,d=.45){ if(!el) return; const k=clamp((t-a)/d); el.style.opacity=clamp(k*2.5); el.style.transform=`scale(${k<=0?.7:lerp(.7,1,back(k))})`; }
+function setText(el,txt){ if(el && el.textContent!==txt) el.textContent=txt; }
+const nf = (v,d=1) => v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const count = (t,a,d,from,to) => lerp(from,to,p(t,a,d,eo));
+const ticks = (a,d,step=.08) => Array.from({length:Math.floor(d/step)},(_,i)=>[+(a+i*step).toFixed(3),"tick"]);
+/** desenha um traço SVG (pathLength="1") até a fração k */
+function draw(el,k){ if(!el) return; el.style.strokeDasharray = 1; el.style.strokeDashoffset = 1-k; }
+
+const I = {
+  bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  gauge:'<path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/>',
+  wave:'<path d="M2 12h3l3-8 4 16 3-8h7"/>',
+  split:'<path d="M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM15 6a9 9 0 0 0-9 9"/>',
+};
+const ic = n => `<svg class="ico" viewBox="0 0 24 24">${I[n]}</svg>`;
+
+/* ================= desenho isométrico (equipamentos genéricos, sem marca) ================= */
+/** projeção isométrica: mundo (x, y, z) → tela, a partir da origem o e da escala s (px por unidade) */
+const iso = (o, s) => (x, y, z=0) => [o[0] + (x - y) * 0.866 * s, o[1] + (x + y) * 0.5 * s - z * s];
+const pts = a => a.map(q => q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
+const poly = (a, attrs) => `<polygon points="${pts(a)}" ${attrs}/>`;
+
+/** módulo FV inclinado: moldura preta fina, células azul-escuras; borda traseira mais alta */
+function isoModule(P, x0, y0, o={}){
+  const w=o.w??1, h=o.h??1.65, tilt=o.tilt??.42, cols=o.cols??6, rows=o.rows??10, fr=.05, gap=.012, th=.06;
+  const Qp = (u,v,dz=0) => P(x0+u*w, y0+v*h, (1-v)*tilt + dz);
+  let g = "";
+  g += poly([P(x0,y0,-.6),P(x0+w,y0,-.6),P(x0+w,y0+h,-.6),P(x0,y0+h,-.6)], 'fill="#000" opacity=".25"');
+  g += poly([Qp(0,1),Qp(1,1),Qp(1,1,-th),Qp(0,1,-th)], 'fill="#05070c"');
+  g += poly([Qp(1,0),Qp(1,1),Qp(1,1,-th),Qp(1,0,-th)], 'fill="#0b0f17"');
+  g += poly([Qp(0,0),Qp(1,0),Qp(1,1),Qp(0,1)], 'fill="#0a0d14" stroke="#1f2937" stroke-width="1"');
+  const cw = (1-2*fr)/cols, ch = (1-2*fr)/rows;
+  for (let j=0;j<rows;j++) for (let i=0;i<cols;i++){
+    const u0=fr+i*cw+gap, u1=fr+(i+1)*cw-gap, v0=fr+j*ch+gap, v1=fr+(j+1)*ch-gap;
+    g += poly([Qp(u0,v0),Qp(u1,v0),Qp(u1,v1),Qp(u0,v1)], 'fill="url(#cell)"');
+  }
+  // reflexo diagonal discreto
+  g += poly([Qp(.08,.05),Qp(.32,.05),Qp(.12,.45),Qp(.05,.45)], 'fill="#93c5fd" opacity=".07"');
+  return g;
+}
+/** pontos úteis do módulo (bordas da frente) para ligar cabos */
+const modPorts = (P, x0, y0, w=1, h=1.65) => ({ neg: P(x0+.2*w, y0+h, -.03), pos: P(x0+.8*w, y0+h, -.03), mid: P(x0+.5*w, y0+h, -.03) });
+
+/** inversor genérico em isometria 3/4: corpo cinza-claro fosco, lateral grafite, LCD no canto superior direito,
+ *  dois LEDs e entradas na parte de baixo da frente */
+function isoInverter(P, x0, y0, o={}){
+  const Wd=o.w??1.1, D=o.d??.42, Hh=o.h??1.5, s=o.s;
+  const F = (u,v) => P(x0+u*Wd, y0+D, v*Hh);          // frente (plano y = y0+D)
+  const Sd = (u,v) => P(x0+Wd, y0+u*D, v*Hh);         // lateral (plano x = x0+Wd)
+  let g = "";
+  g += poly([P(x0,y0,-.02),P(x0+Wd,y0,-.02),P(x0+Wd,y0+D,-.02),P(x0,y0+D,-.02)].map(q=>[q[0]+s*.25,q[1]+s*.12]), 'fill="#000" opacity=".28"');
+  g += poly([Sd(0,0),Sd(1,0),Sd(1,1),Sd(0,1)], 'fill="url(#invSide)"');
+  for (let k=1;k<7;k++){ const v=.12+k*.11; g += `<line x1="${Sd(.1,v)[0]}" y1="${Sd(.1,v)[1]}" x2="${Sd(.9,v)[0]}" y2="${Sd(.9,v)[1]}" stroke="#1e293b" stroke-width="2"/>`; }
+  g += poly([F(0,0),F(1,0),F(1,1),F(0,1)], 'fill="url(#invFront)"');
+  g += poly([P(x0,y0,Hh),P(x0+Wd,y0,Hh),P(x0+Wd,y0+D,Hh),P(x0,y0+D,Hh)], 'fill="#f1f5f9"');
+  // faixa grafite inferior com as entradas
+  g += poly([F(0,0),F(1,0),F(1,.17),F(0,.17)], 'fill="#334155"');
+  // contorno suave das arestas
+  g += `<polyline points="${pts([F(0,0),F(0,1),P(x0,y0,Hh),P(x0+Wd,y0,Hh),Sd(1,1),F(1,1),F(0,1)])}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round"/>`;
+  // LCD no canto superior direito
+  g += poly([F(.55,.72),F(.9,.72),F(.9,.88),F(.55,.88)], 'fill="#0F172A" stroke="#64748b" stroke-width="1.5"');
+  const lcd = F(.58,.86), k = s;
+  g += `<g transform="matrix(${.866*k*Wd},${.5*k*Wd},0,${k*Hh},${lcd[0]},${lcd[1]})"><text x="0" y=".085" font-family="Inter,sans-serif" font-weight="800" font-size=".075" fill="#F59E0B" transform="scale(${1/Wd} ${1/Hh})">${o.label??"5 kW"}</text></g>`;
+  // dois LEDs
+  [[.62,.64,"#22C55E"],[.7,.64,"#38BDF8"]].forEach(([u,v,c]) => { const q=F(u,v); g += `<ellipse cx="${q[0]}" cy="${q[1]}" rx="${s*.022}" ry="${s*.022}" fill="${c}" filter="url(#glow)"/>`; });
+  // entradas: dois pares (MPPT 1 e MPPT 2)
+  const ins = [];
+  [.18,.30,.62,.74].forEach(u => { const q=F(u,.07); ins.push(q); g += `<ellipse cx="${q[0]}" cy="${q[1]}" rx="${s*.035}" ry="${s*.045}" fill="#0f172a" stroke="#94a3b8" stroke-width="1.5"/>`; });
+  return { svg: g, inputs: ins, front: F };
+}
+
+/* ================= cenas ================= */
+const SCENES = []; const S = o => SCENES.push(o);
+
+/* ---------- 1. Gancho (7 s) ---------- */
+S({ id:1, name:"Gancho inicial", dur:7, step:"A pergunta",
+  cap:["Quantas placas solares você pode ligar", "em um inversor de *cinco quilowatts*", "sem errar no *dimensionamento*?"],
+  html(){
+    const P = iso([U*44, U*49], U*6);
+    let mods = "";
+    for (let r=0;r<4;r++) for (let c=0;c<3;c++) mods += `<g class="m" data-i="${r*3+c}">${isoModule(P, c*1.25, r*1.95)}</g>`;
+    const Pi = iso([U*68, U*84], U*15);
+    const inv = isoInverter(Pi, 0, 0, { s:U*15 });
+    return `<svg class="art"><g class="cluster">${mods}</g><g class="inv">${inv.svg}</g>
+      <g class="icons">${[[14,64,"sun"],[86,52,"bolt"],[20,104,"bolt"],[88,74,"sun"]].map(([x,y,n])=>`<g class="ic" transform="translate(${x*U} ${y*U})"><circle r="${U*3.2}" fill="rgba(56,189,248,.12)" stroke="rgba(56,189,248,.5)"/><g transform="translate(${-U*1.8} ${-U*1.8}) scale(${U*3.6/24})" fill="none" stroke="#38BDF8" stroke-width="2">${I[n]}</g></g>`).join("")}</g></svg>
+      <div class="ttl"><small>Dimensionamento fotovoltaico</small>QUANTAS PLACAS CABEM EM UM INVERSOR DE <span class="amber">5 kW</span>?</div>`;
+  },
+  update(root,t,dur){
+    rise($(root,".ttl"),t,.15,.6,2.5);
+    $$(root,".m").forEach((g,i)=>{ const k=p(t,.5+i*.1,.45); const bob=Math.sin(t*1.6+i)*U*.5; g.style.opacity=k; g.style.transform=`translateY(${(1-k)*-U*6+bob}px)`; });
+    const ki = p(t,1.9,.6); css($(root,".inv"),{opacity:ki, transform:`translate(${(1-ki)*U*10}px,0)`});
+    $$(root,".ic").forEach((g,i)=>{ const k=p(t,1.2+i*.25,.4); g.style.opacity=k*.9; });
+    css($(root,".art"),{transformOrigin:"50% 55%", transform:`scale(${lerp(1,1.06,t/dur)})`});
+  },
+  sfx: [...Array.from({length:12},(_,i)=>[+(.5+i*.1).toFixed(2),"tick"]), [1.9,"whoosh"], [3.0,"soft"]],
+});
+
+/* ---------- 2. Não é só potência (8 s) ---------- */
+const QUATRO = [["01","Potência","kWp","gauge"],["02","Tensão","V","wave"],["03","Corrente","A","bolt"],["04","MPPT","2×","split"]];
+S({ id:2, name:"Regra principal", dur:8, step:"A regra",
+  cap:["Pra descobrir isso, olhe *quatro pontos*:", "*potência*, *tensão*, *corrente*", "e o número de entradas *MPPT*."],
+  html(){
+    return `<div class="ttl"><small>Regra principal</small>NÃO É SÓ <span class="amber">POTÊNCIA</span></div>
+      <div class="grid4">${QUATRO.map(([n,nm,un,icn])=>`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span class="n">${n}</span><span class="sky" style="font-size:${U*3.2}px">${ic(icn)}</span></div>
+        <div class="big amber">${un}</div><div><div class="nm">${nm}</div><div class="bar" style="margin-top:${U*1.2}px"><i></i></div></div></div>`).join("")}</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    $$(root,".card").forEach((c,i)=>{ slide(c,t,.6+i*.55,.5, i%2 ? 10 : -10); $(c,".bar i").style.width = (p(t,1.0+i*.55,.6)*100)+"%"; });
+  },
+  sfx: [[.6,"swish"],[1.15,"swish"],[1.7,"swish"],[2.25,"swish"]],
+});
+
+/* ---------- 3. Dados do inversor (12,5 s) ---------- */
+const INV_DATA = [["Potência CA","5 kW"],["Potência FV recomendada","7,5 kWp"],["Tensão máxima","600 V"],["MPPTs","2"],["Corrente máx. por MPPT","16 A"]];
+S({ id:3, name:"Dados do inversor", dur:12.5, step:"O inversor",
+  cap:["Neste exemplo, o inversor tem *5 kW* de potência nominal,", "potência fotovoltaica recomendada de *7,5 kWp*,", "tensão máxima de *600 V*, *dois MPPTs*", "e corrente máxima de *16 A* por MPPT."],
+  html(){
+    const P = iso([U*15, U*78], U*21);
+    const inv = isoInverter(P, 0, 0, { s:U*21 });
+    this.lcd = inv.front(.72,.8);
+    return `<svg class="art"><g class="inv">${inv.svg}</g><path class="lead" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="6 6"/><circle class="leadDot" r="6" fill="#F59E0B"/></svg>
+      <div class="ttl"><small>Etapa de leitura</small>DADOS DO <span class="amber">INVERSOR</span></div>
+      <div class="rows">${INV_DATA.map(([k,v])=>`<div class="card rowc"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}</div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    const ki = p(t,.2,.7); css($(root,".inv"),{opacity:ki, transform:`translateY(${(1-ki)*U*5}px)`});
+    const rows = $$(root,".rowc");
+    rows.forEach((r,i)=>slide(r,t,.6+i*.15,.45,8));
+    const seq = [1.6, 3.6, 6.0, 7.8, 9.2];
+    let cur = -1; seq.forEach((a,i)=>{ if (t>=a) cur=i; });
+    rows.forEach((r,i)=>r.classList.toggle("hl", i===cur));
+    const lead = $(root,".lead"), dot = $(root,".leadDot");
+    if (cur>=0){
+      const r = rows[cur].getBoundingClientRect(), s = root.getBoundingClientRect();
+      const tx = (r.left - s.left)/VIEW_SCALE, ty = (r.top + r.height/2 - s.top)/VIEW_SCALE;
+      const [lx,ly] = this.lcd;
+      lead.setAttribute("d", `M${lx} ${ly} C ${lx+U*8} ${ly}, ${tx-U*8} ${ty}, ${tx} ${ty}`);
+      lead.style.opacity = 1; dot.setAttribute("cx", tx); dot.setAttribute("cy", ty); dot.style.opacity = 1;
+    } else { lead.style.opacity = 0; dot.style.opacity = 0; }
+  },
+  sfx: [[.2,"whoosh"],[1.6,"tick"],[3.6,"tick"],[6.0,"tick"],[7.8,"tick"],[9.2,"tick"]],
+});
+
+/* ---------- 4. Dados do módulo (13,5 s) ---------- */
+const CALL = [["Potência","550 Wp","amber",[.5,.15],[8,42]],["Voc","49,9 V","amber",[.95,.25],[62,40]],["Vmp","41,8 V","amber",[1,.75],[64,84]],["Imp","13,16 A","sky",[.6,1],[50,98]],["Isc","13,9 A","sky",[.05,.85],[6,92]]];
+S({ id:4, name:"Dados do módulo", dur:13.5, step:"O módulo",
+  cap:["Agora, um módulo de *550 Wp*,", "com *Voc de 49,9 V*,", "*Vmp de 41,8 V*", "e corrente de operação de *13,16 A*."],
+  html(){
+    const P = iso([U*40, U*50], U*25);
+    const mod = isoModule(P, 0, 0, { w:1, h:1.65, cols:6, rows:10 });
+    // pontos da moldura para os balões (u, v no plano do módulo)
+    this.anchor = ([u,v]) => P(u*1, v*1.65, (1-v)*.42);
+    return `<svg class="art"><g class="mod">${mod}</g>${CALL.map(()=>`<g class="ln"><path fill="none" stroke="#38BDF8" stroke-width="2" pathLength="1"/><circle r="7" fill="#38BDF8"/></g>`).join("")}</svg>
+      <div class="ttl"><small>Etapa de leitura</small>DADOS DO <span class="amber">MÓDULO</span></div>
+      ${CALL.map(([k,v,c,,pos])=>`<div class="card callout" style="left:${pos[0]*U}px;top:${pos[1]*U}px"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`).join("")}`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    const km = p(t,.2,.8); css($(root,".mod"),{opacity:km, transform:`translateY(${(1-km)*U*6}px)`});
+    const cards = $$(root,".callout"), lns = $$(root,".ln");
+    const seq = [1.4, 3.6, 5.6, 7.8, 9.8];
+    CALL.forEach((c,i)=>{
+      const card = cards[i]; pop(card,t,seq[i]+.35,.4);
+      const r = card.getBoundingClientRect(), s = root.getBoundingClientRect();
+      const cx = (r.left + r.width/2 - s.left)/VIEW_SCALE, cy = (r.top + r.height/2 - s.top)/VIEW_SCALE;
+      const [ax,ay] = this.anchor(c[3]);
+      const pth = $(lns[i],"path"), dot = $(lns[i],"circle");
+      pth.setAttribute("d", `M${ax} ${ay} L${cx} ${cy}`); draw(pth, p(t,seq[i],.4));
+      dot.setAttribute("cx",ax); dot.setAttribute("cy",ay); dot.style.opacity = p(t,seq[i],.2);
+    });
+  },
+  sfx: [[.2,"whoosh"],[1.75,"pop"],[3.95,"pop"],[5.95,"pop"],[8.15,"pop"],[10.15,"pop"]],
+});
+
+/* ---------- 5. Tensão da string (9 s) ---------- */
+S({ id:5, name:"Ligação em série", dur:9, step:"Tensão da string",
+  cap:["Com *seis módulos em série*,", "a tensão de operação da string", "fica em *250,8 V*."],
+  html(){
+    const P = iso([U*18, U*46], U*8.6);
+    let mods = "", wires = "", tags = "";
+    for (let i=0;i<N;i++){
+      const x0 = i*1.22;
+      mods += `<g class="m">${isoModule(P, x0, 0)}</g>`;
+      const a = modPorts(P, x0, 0);
+      const top = P(x0+.5, 0, .42);
+      tags += `<g class="tg"><text x="${top[0]}" y="${top[1]-U*1.6}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${U*2.1}" fill="#F59E0B">+41,8 V</text></g>`;
+      if (i<N-1){ const b = modPorts(P, x0+1.22, 0); wires += `<path class="w" d="M${a.pos[0]} ${a.pos[1]} Q ${(a.pos[0]+b.neg[0])/2} ${(a.pos[1]+b.neg[1])/2+U*2.4} ${b.neg[0]} ${b.neg[1]}" fill="none" stroke="#F59E0B" stroke-width="3.5" pathLength="1"/>`; }
+    }
+    return `<svg class="art">${mods}${wires}${tags}</svg>
+      <div class="ttl"><small>Ligação em série</small>TENSÃO DA <span class="amber">STRING</span></div>
+      <div class="card tot" style="position:absolute;left:${U*6}px;right:${U*10}px;top:${U*86}px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="k">Vmp da string</div><div class="k nmod">0 de 6 módulos</div></div>
+        <div class="v amber vv" style="font-size:${U*9}px;margin:${U*.6}px 0">0,0 V</div>
+        <div class="formula fm" style="font-size:${U*3.8}px">6 × 41,8 V = <span class="amber">250,8 V</span></div>
+      </div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    const mods = $$(root,".m"), ws = $$(root,".w"), tgs = $$(root,".tg");
+    mods.forEach((m,i)=>{ const k=p(t,.3+i*.12,.4); m.style.opacity=k; m.style.transform=`translateY(${(1-k)*-U*4}px)`; });
+    const c0 = 1.4, step = .75;
+    let n = 0;
+    for (let i=0;i<N;i++){ if (t >= c0 + i*step) n = i+1; }
+    tgs.forEach((g,i)=>{ g.style.opacity = p(t,c0+i*step,.3); });
+    ws.forEach((w,i)=>draw(w, p(t,c0+i*step+.2,.45)));
+    rise($(root,".tot"),t,1.0,.5);
+    setText($(root,".vv"), nf(n*MOD.vmp)+" V");
+    setText($(root,".nmod"), `${n} de 6 módulos`);
+    rise($(root,".fm"),t,c0+N*step+.3,.5,1.5);
+  },
+  sfx: [...Array.from({length:N},(_,i)=>[+(1.4+i*.75).toFixed(2),"pop"]), [6.25,"check"]],
+});
+
+/* ---------- 6. Corrente da string (9,5 s) ---------- */
+S({ id:6, name:"Corrente da string", dur:9.5, step:"Corrente da string",
+  cap:["Em série, *a corrente não se soma*.", "A string continua com *13,16 A*,", "abaixo do limite de *16 A* por MPPT."],
+  html(){
+    const P = iso([U*18, U*40], U*7.6);
+    let mods = "", d = "";
+    for (let i=0;i<N;i++){ const x0=i*1.22; mods += isoModule(P, x0, 0, { tilt:.36 }); const a = modPorts(P,x0,0); d += (i? " L":"M")+`${a.neg[0]} ${a.neg[1]} L${a.pos[0]} ${a.pos[1]}`; }
+    const end = modPorts(P,(N-1)*1.22,0).pos, start = modPorts(P,0,0).neg;
+    d += ` L${end[0]+U*3} ${end[1]+U*2} L${end[0]+U*3} ${end[1]+U*8} L${start[0]-U*3} ${start[1]+U*8} L${start[0]-U*3} ${start[1]+U*2} Z`;
+    return `<svg class="art"><g class="row">${mods}</g><path class="loop" d="${d}" fill="none" stroke="#38BDF8" stroke-width="3.5" stroke-linejoin="round" pathLength="1"/>
+      ${Array.from({length:8},()=>`<circle class="fl" r="7" fill="#38BDF8" filter="url(#glow)"/>`).join("")}
+      ${Array.from({length:3},()=>`<g class="al"><rect width="${U*13}" height="${U*4.2}" rx="${U*1}" fill="rgba(15,23,42,.9)" stroke="#38BDF8"/><text x="${U*6.5}" y="${U*2.9}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${U*2.3}" fill="#38BDF8">13,16 A</text></g>`).join("")}</svg>
+      <div class="ttl"><small>Ligação em série</small>CORRENTE DA <span class="sky">STRING</span></div>
+      <div class="card gc" style="position:absolute;left:${U*6}px;right:${U*10}px;top:${U*76}px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div><div class="k">Imp da string</div><div class="v sky ia">0,00 A</div></div><div style="text-align:right"><div class="k">Limite do MPPT</div><div class="v amber">16 A</div></div></div>
+        <div class="gauge" style="margin:${U*2.4}px 0 ${U*2}px"><div class="f"></div><div class="lim" style="left:calc(100% - 2px)"></div></div>
+        <div style="display:flex;gap:${U*1.2}px;flex-wrap:wrap"><span class="chip r nsoma">${ic("x")} 6 × 13,16 A? não</span><span class="chip g okc">${ic("check")} 13,16 A &lt; 16 A</span></div>
+      </div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    rise($(root,".row"),t,.2,.5,2);
+    const loop = $(root,".loop"); draw(loop, p(t,.6,1.0));
+    const L = loop.getTotalLength();
+    const on = t > 1.6;
+    $$(root,".fl").forEach((c,i)=>{ const q = ((t*0.12 + i/8) % 1) * L; const pt = loop.getPointAtLength(q); c.setAttribute("cx",pt.x); c.setAttribute("cy",pt.y); c.style.opacity = on ? 1 : 0; });
+    $$(root,".al").forEach((g,i)=>{ const pt = loop.getPointAtLength(L*(.12+i*.28)); g.setAttribute("transform",`translate(${pt.x-U*6.5} ${pt.y-U*9})`); g.style.opacity = p(t,2.0+i*.4,.3); });
+    rise($(root,".gc"),t,3.0,.5);
+    const ia = count(t,3.4,1.4,0,MOD.imp);
+    setText($(root,".ia"), nf(ia,2)+" A");
+    $(root,".gauge .f").style.width = (ia/INV.iMax*100)+"%";
+    pop($(root,".nsoma"),t,1.9,.4);
+    pop($(root,".okc"),t,5.2,.4);
+  },
+  sfx: [[.6,"swish"],[1.95,"alert"], ...ticks(3.4,1.3), [5.25,"check"]],
+});
+
+/* ---------- 7. Configuração final (10 s) ---------- */
+S({ id:7, name:"Configuração final", dur:10, step:"Configuração final",
+  cap:["Com *dois MPPTs*, usamos *duas strings de seis módulos*.", "No total, *12 módulos*", "e *6,6 kWp* de potência instalada."],
+  html(){
+    const Pm = iso([U*35, U*34], U*4.8);
+    let s1 = "", s2 = "";
+    for (let i=0;i<N;i++){ s1 += `<g class="ma">${isoModule(Pm, i*1.18, 0, {tilt:.36})}</g>`; s2 += `<g class="mb">${isoModule(Pm, i*1.18, 2.9, {tilt:.36})}</g>`; }
+    const e1 = modPorts(Pm, (N-1)*1.18, 0).pos, e2 = modPorts(Pm, (N-1)*1.18, 2.9).pos;
+    const Pi = iso([U*70, U*80], U*13);
+    const inv = isoInverter(Pi, 0, 0, { s:U*13 });
+    const [i1,,i3] = inv.inputs;
+    const c1 = `M${e1[0]} ${e1[1]} C ${e1[0]+U*14} ${e1[1]}, ${i1[0]} ${i1[1]+U*10}, ${i1[0]} ${i1[1]}`;
+    const c2 = `M${e2[0]} ${e2[1]} C ${e2[0]+U*10} ${e2[1]+U*6}, ${i3[0]} ${i3[1]+U*12}, ${i3[0]} ${i3[1]}`;
+    const lab = (q,txt,dy) => `<g class="lb"><rect x="${q[0]-U*6}" y="${q[1]+dy}" width="${U*12}" height="${U*3.6}" rx="${U*.8}" fill="rgba(15,23,42,.92)" stroke="#38BDF8"/><text x="${q[0]}" y="${q[1]+dy+U*2.5}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${U*1.9}" fill="#38BDF8">${txt}</text></g>`;
+    return `<svg class="art">${s1}${s2}
+      <path class="c1" d="${c1}" fill="none" stroke="#F59E0B" stroke-width="3.5" pathLength="1"/><path class="c2" d="${c2}" fill="none" stroke="#38BDF8" stroke-width="3.5" pathLength="1"/>
+      <g class="inv">${inv.svg}</g>${lab(i1,"MPPT 1",U*2.4)}${lab(i3,"MPPT 2",U*6.6)}
+      ${Array.from({length:6},(_,i)=>`<circle class="fa" r="6" fill="${i<3?"#F59E0B":"#38BDF8"}" filter="url(#glow)"/>`).join("")}
+      <text class="t1" font-family="Inter,sans-serif" font-weight="800" font-size="${U*2}" fill="#F59E0B" x="${Pm(0,0)[0]-U*6}" y="${Pm(0,1)[1]}">S1</text>
+      <text class="t2" font-family="Inter,sans-serif" font-weight="800" font-size="${U*2}" fill="#38BDF8" x="${Pm(0,2.9)[0]-U*6}" y="${Pm(0,3.9)[1]}">S2</text></svg>
+      <div class="ttl"><small>Solução do exemplo</small>CONFIGURAÇÃO <span class="amber">FINAL</span></div>
+      <div class="stats" style="top:${U*101}px">
+        <div class="card"><div class="v amber n1">0</div><div class="k">strings</div></div>
+        <div class="card"><div class="v amber n2">0</div><div class="k">módulos/string</div></div>
+        <div class="card"><div class="v amber n3">0</div><div class="k">módulos</div></div>
+        <div class="card"><div class="v amber n4">0,0</div><div class="k">kWp</div></div>
+      </div>`;
+  },
+  update(root,t){
+    rise($(root,".ttl"),t,0,.5);
+    $$(root,".ma").forEach((g,i)=>g.style.opacity=p(t,.2+i*.07,.3));
+    $$(root,".mb").forEach((g,i)=>g.style.opacity=p(t,.9+i*.07,.3));
+    const ki = p(t,.5,.6); css($(root,".inv"),{opacity:ki});
+    const c1 = $(root,".c1"), c2 = $(root,".c2");
+    draw(c1, p(t,1.6,.8)); draw(c2, p(t,2.6,.8));
+    $$(root,".lb").forEach((g,i)=>g.style.opacity=p(t,2.2+i,.3));
+    $(root,".t1").style.opacity = p(t,.4,.3); $(root,".t2").style.opacity = p(t,1.1,.3);
+    const L1 = c1.getTotalLength(), L2 = c2.getTotalLength();
+    $$(root,".fa").forEach((c,i)=>{ const path = i<3 ? c1 : c2, L = i<3 ? L1 : L2, k = ((t*.35 + (i%3)/3) % 1); const pt = path.getPointAtLength(k*L); c.setAttribute("cx",pt.x); c.setAttribute("cy",pt.y); c.style.opacity = t > (i<3 ? 2.5 : 3.5) ? 1 : 0; });
+    const st = $$(root,".stats .card"); st.forEach((c,i)=>pop(c,t,4.0+i*.5,.4));
+    setText($(root,".n1"), String(Math.round(count(t,4.0,.5,0,2))));
+    setText($(root,".n2"), String(Math.round(count(t,4.5,.6,0,6))));
+    setText($(root,".n3"), String(Math.round(count(t,5.0,1.0,0,12))));
+    setText($(root,".n4"), nf(count(t,5.5,1.2,0,KWP)));
+  },
+  sfx: [[.5,"whoosh"],[1.6,"swish"],[2.6,"swish"],[4.0,"pop"],[4.5,"pop"],[5.0,"pop"], ...ticks(5.5,1.1,.1), [6.75,"check"]],
+});
+
+/* ---------- 8. Fechamento técnico (15,5 s) ---------- */
+const CHECK = ["Verifique potência","Verifique tensão","Verifique corrente","Considere os limites do inversor"];
+S({ id:8, name:"Fechamento técnico", dur:15.5, step:"Fechamento",
+  cap:["O número de placas *não depende só da potência*.", "O certo é *dimensionar pelo datasheet*,", "verificando *tensão*, *corrente* e os *limites reais do inversor*.", "Esse é um *exemplo educativo*.", "Antes de instalar, *confira o datasheet real* dos equipamentos."],
+  html(){
+    return `<div class="ttl"><small>Lição principal</small>DIMENSIONE PELO <span class="amber">DATASHEET</span></div>
+      <div class="card list" style="position:absolute;left:${U*6}px;right:${U*10}px;top:${U*44}px;padding-top:${U*1}px;padding-bottom:${U*1}px">
+        ${CHECK.map(c=>`<div class="check"><span class="box">${ic("check")}</span>${c}</div>`).join("")}
+      </div>
+      <div class="final">EXEMPLO EDUCATIVO.<br><span class="amber">SEMPRE CONFIRA O DATASHEET REAL.</span></div>`;
+  },
+  update(root,t,dur){
+    rise($(root,".ttl"),t,0,.5);
+    slide($(root,".list"),t,.4,.5,-8);
+    $$(root,".box").forEach((b,i)=>b.classList.toggle("on", t >= 1.6 + i*1.3));
+    $$(root,".check").forEach((c,i)=>c.style.color = t >= 1.6 + i*1.3 ? "var(--ink)" : "var(--mute)");
+    pop($(root,".final"),t,8.6,.5);
+    css($(root,".list"),{transform:`translateX(${(1-p(t,.4,.5))*-8*U}px) scale(${lerp(1,1.03,p(t,10,5,eio))})`});
+  },
+  sfx: [[.4,"swish"],[1.6,"check"],[2.9,"check"],[4.2,"check"],[5.5,"check"],[8.6,"chime"]],
+});
+
+/* ================= linha do tempo ================= */
+const ACTIVE = SCENES;
+let acc = 0; for (const s of ACTIVE){ s.start = acc; acc += s.dur; }
+const TOTAL = acc, XF = .6;
+const stage = document.getElementById("stage");
+stage.style.width = W+"px"; stage.style.height = H+"px";
+document.documentElement.style.setProperty("--u", U+"px");
+let VIEW_SCALE = 1;
+stage.innerHTML = `<div class="blueprint"></div><div class="vignette"></div>`;
+for (const s of ACTIVE){ const el = document.createElement("section"); el.className="scene"; el.id="s"+s.id; el.innerHTML=s.html(); stage.appendChild(el); s.el=el; }
+// HUD global
+const hud = document.createElement("div"); hud.className = "hud";
+hud.innerHTML = `<div class="lbl"><span class="st"></span><span class="nn"></span></div><div class="seg">${ACTIVE.map(()=>"<i></i>").join("")}</div>`;
+stage.appendChild(hud);
+const corners = [["left","top","2px 0 0 2px"],["right","top","2px 2px 0 0"],["left","bottom","0 0 2px 2px"],["right","bottom","0 2px 2px 0"]];
+corners.forEach(([h,v,bw])=>{ const c=document.createElement("div"); c.className="corner"; c.style[h]=`${U*2.4}px`; c.style[v]=`${U*2.4}px`; c.style.borderWidth=bw; stage.appendChild(c); });
+const scan = document.createElement("div"); scan.className = "scan"; stage.appendChild(scan);
+
+/* legendas: trechos com duração proporcional ao texto, respiro de 0,3 s no começo e no fim da cena */
+const CAPS = ACTIVE.flatMap(s => {
+  const tot = s.cap.reduce((a,c)=>a+c.replace(/\*/g,"").length,0);
+  let t = s.start + .3; const util = s.dur - .6;
+  return s.cap.map(c => { const d = util * c.replace(/\*/g,"").length / tot; const o = { a:t, b:t+d, txt:c }; t += d; return o; });
+});
+const capEl = document.createElement("div"); capEl.className = "cap"; capEl.innerHTML = "<div></div>"; stage.appendChild(capEl);
+const capHtml = s => s.replace(/\*(.+?)\*/g,"<b>$1</b>");
+
+function renderAt(T){
+  T = clamp(T,0,TOTAL);
+  let scanY = -1;
+  ACTIVE.forEach((s,i)=>{
+    const local = T - s.start, next = ACTIVE[i+1];
+    const visible = local >= 0 && (local < s.dur || (next && local < s.dur + XF) || (!next && local <= s.dur));
+    if (!visible){ s.el.style.visibility="hidden"; return; }
+    s.el.style.visibility = "visible";
+    // transição: varredura técnica de cima para baixo revelando a cena nova
+    // a cena antiga é recortada de forma complementar (some onde a nova já apareceu), sem sobreposição
+    if (i > 0 && local < XF){ const k = eio(clamp(local/XF)); s.el.style.clipPath = `inset(0 0 ${(1-k)*100}% 0)`; scanY = k*H; }
+    else if (next && local >= s.dur){ const k = eio(clamp((local-s.dur)/XF)); s.el.style.clipPath = `inset(${k*100}% 0 0 0)`; }
+    else s.el.style.clipPath = "none";
+    s.update(s.el, Math.min(local, s.dur + XF), s.dur);
+  });
+  css(scan,{opacity: scanY >= 0 ? 1 : 0, top: (scanY-1.5)+"px"});
+  // HUD de etapas
+  const idx = Math.max(0, ACTIVE.findIndex(s => T >= s.start && T < s.start + s.dur));
+  const cur = T >= TOTAL ? ACTIVE.length-1 : idx;
+  setText($(hud,".st"), ACTIVE[cur].step);
+  setText($(hud,".nn"), `${String(cur+1).padStart(2,"0")} / ${String(ACTIVE.length).padStart(2,"0")}`);
+  $$(hud,".seg i").forEach((e,i)=>{ e.className = i < cur ? "on" : i === cur ? "now" : ""; });
+  hud.style.opacity = p(T,.2,.5);
+  // legenda
+  const c = CAPS.find(c => T >= c.a && T < c.b), box = capEl.firstChild;
+  if (c){ const h = capHtml(c.txt); if (box.innerHTML !== h) box.innerHTML = h; capEl.style.opacity = clamp((T-c.a)/.12); }
+  else capEl.style.opacity = 0;
+  stage.style.filter = T > TOTAL-.6 ? `brightness(${clamp((TOTAL-T)/.6)*.6+.4})` : "none";
+  return T;
+}
+const SFX = [...ACTIVE.flatMap(s => (s.sfx||[]).map(([t,k]) => ({ t: +(s.start+t).toFixed(3), k }))),
+             ...ACTIVE.slice(1).map(s => ({ t: +s.start.toFixed(3), k: "swish" }))];
+// trilha leve tecnológica: pad + arpejo, sem bateria, discreta
+const MUSIC = { bpm: 100, arp: 1, kick: 9999, hat: 30, clap: 9999, prog: "vi-IV-I-V" };
+window.COMMERCIAL = { W, H, FMT:"9x16", CUT:false, TOTAL, SFX, MUSIC,
+  CAPS: CAPS.map(c => ({ a:+c.a.toFixed(3), b:+c.b.toFixed(3), txt:c.txt.replace(/\*/g,"") })),
+  scenes: ACTIVE.map(s=>({id:s.id,name:s.name,start:s.start,dur:s.dur})) };
+window.renderAt = renderAt;
+
+function fit(){
+  const ctlH = Q.get("render") ? 0 : 56;
+  VIEW_SCALE = Math.min(innerWidth/W, (innerHeight-ctlH)/H);
+  stage.style.transform = `scale(${VIEW_SCALE})`;
+  document.getElementById("wrap").style.bottom = ctlH+"px";
+}
+if (Q.get("render")){
+  document.getElementById("wrap").style.cssText = "position:absolute;left:0;top:0;display:block";
+  VIEW_SCALE = 1; renderAt(+Q.get("t")||0);
+} else {
+  addEventListener("resize",fit); fit();
+  const ctl = document.getElementById("ctl"); ctl.hidden = false;
+  const scrub = document.getElementById("scrub"), tc = document.getElementById("tc"), scn = document.getElementById("scn"), play = document.getElementById("play");
+  scrub.max = TOTAL;
+  let t = +Q.get("t")||0, playing = !Q.get("t"), last = performance.now();
+  const audio = new Audio("../videos/dimensionamento-5kw-autoral-85s-9x16.mp4"); audio.preload = "auto";
+  const syncAudio = () => { if (!audio.error){ audio.currentTime = t; playing ? audio.play().catch(()=>{}) : audio.pause(); } };
+  const show = () => { renderAt(t); scrub.value = t; tc.textContent = t.toFixed(1)+" s / "+TOTAL+" s"; const s = ACTIVE.find(s=>t>=s.start && t<s.start+s.dur) || ACTIVE[ACTIVE.length-1]; scn.textContent = `Cena ${s.id} — ${s.name}`; play.textContent = playing ? "❚❚" : "▶︎"; };
+  play.onclick = () => { playing = !playing; if (t>=TOTAL) t=0; syncAudio(); show(); };
+  scrub.oninput = () => { t = +scrub.value; syncAudio(); show(); };
+  addEventListener("keydown", e => { if (e.code==="Space"){ e.preventDefault(); play.click(); } });
+  const loop = now => { const dt = (now-last)/1000; last = now; if (playing){ t += dt; if (t>=TOTAL){ t=TOTAL; playing=false; audio.pause(); } } show(); requestAnimationFrame(loop); };
+  if (playing) syncAudio();
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

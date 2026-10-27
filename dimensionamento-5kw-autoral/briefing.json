@@ -1,0 +1,90 @@
+{
+  "project_title": "Dimensionamento Solar Autoral - Inversor 5 kW",
+  "objective": "Criar um vídeo vertical educativo sobre quantas placas solares podem ser conectadas a um inversor de 5 kW, usando linguagem visual original e autoral, sem copiar a aparência da referência.",
+  "language": "pt-BR",
+  "format": { "type": "short_vertical_video", "aspect_ratio": "9:16", "resolution": "1080x1920", "duration_seconds": 85, "fps": 30 },
+  "creative_direction": {
+    "core_goal": "Usar a referência apenas como inspiração no tema e no ritmo explicativo.",
+    "must_preserve": ["tema de dimensionamento fotovoltaico", "explicação didática com cálculos", "tom técnico acessível", "estrutura de ensino em etapas"],
+    "must_change": ["design do inversor", "layout visual", "composição das cenas", "estilo gráfico", "hierarquia de texto", "transições", "desenho dos painéis solares", "apresentação da ficha técnica"],
+    "do_not_copy_reference": true
+  },
+  "visual_identity": {
+    "style": "infográfico técnico isométrico com interface de dashboard de engenharia",
+    "look_and_feel": "autoral, limpo, moderno, técnico, profissional, didático",
+    "background_color": "#0F172A", "primary_text_color": "#F8FAFC", "accent_color": "#F59E0B",
+    "secondary_color": "#38BDF8", "success_color": "#22C55E", "warning_color": "#EF4444",
+    "grid_lines": true, "texture": "leve textura de blueprint digital",
+    "typography": { "family": "sans-serif geométrica moderna", "title_weight": "800", "body_weight": "500" }
+  },
+  "anti_reference_rules": {
+    "avoid": ["inversor igual ao da referência", "módulo solar com desenho igual ao da referência", "equipamento centralizado do mesmo jeito", "cards com o mesmo layout", "datasheet visualmente parecido", "transições iguais", "mesma paleta predominante", "mesma estrutura de enquadramento", "ilustrações parecidas", "copiar qualquer marca, logotipo ou identidade do vídeo original"],
+    "instruction": "Toda a direção de arte deve ser nova e visualmente distinta."
+  },
+  "objects_design": {
+    "solar_inverter": { "description": "Inversor solar genérico e original, sem marca, em perspectiva isométrica 3/4. Corpo retangular vertical, acabamento fosco cinza-claro com detalhes em grafite, cantos suaves, pequena tela LCD no canto superior direito, dois LEDs discretos, entradas inferiores bem visíveis. Deve parecer técnico e moderno, mas diferente da referência.", "style": "vetorial isométrico detalhado", "framing": "nunca usar enquadramento igual ao da referência" },
+    "solar_modules": { "description": "Módulos fotovoltaicos em estilo vetorial isométrico, moldura preta fina, células azul-escuras, aparência limpa e técnica.", "style": "infográfico isométrico" },
+    "electrical_diagram": { "description": "Linhas elétricas animadas, setas, conexões e indicadores numéricos aparecendo como interface técnica.", "style": "dashboard de engenharia" },
+    "data_panels": { "description": "Blocos de informação com cantos arredondados, aparência de HUD técnico, sem copiar a estética da referência.", "style": "cards modernos de interface" }
+  },
+  "technical_example": {
+    "disclaimer": "Exemplo educativo hipotético. Sempre conferir o datasheet real do inversor e dos módulos antes de qualquer dimensionamento.",
+    "inverter": { "nominal_ac_power": "5 kW", "recommended_pv_power": "7.5 kWp", "max_dc_voltage": "600 V", "startup_voltage": "100 V", "mppt_count": 2, "max_current_per_mppt": "16 A" },
+    "module": { "power": "550 Wp", "voc": "49.9 V", "vmp": "41.8 V", "imp": "13.16 A", "isc": "13.9 A" },
+    "system_configuration": { "total_modules": 12, "strings": 2, "modules_per_string": 6, "total_power": "6.6 kWp" },
+    "calculations": { "string_operating_voltage": "6 x 41.8 V = 250.8 V", "string_current": "13.16 A", "total_pv_power": "12 x 550 Wp = 6600 Wp" }
+  },
+  "scene_structure": [
+    { "id": 1, "time": "00:00-00:08", "title": "Gancho inicial", "goal": "Apresentar a pergunta principal",
+      "visual_prompt": "Tela com fundo blueprint digital escuro, grade técnica sutil, ícones de energia surgindo, módulos solares flutuando em isometria e um inversor genérico original aparecendo em perspectiva. Nada semelhante ao enquadramento da referência.",
+      "on_screen_text": "QUANTAS PLACAS CABEM EM UM INVERSOR DE 5 kW?",
+      "narration": "Quantas placas solares você pode ligar em um inversor de cinco quilowatts sem errar no dimensionamento?",
+      "motion": "Zoom leve, elementos surgindo em camadas, animação limpa e moderna" },
+    { "id": 2, "time": "00:08-00:18", "title": "Regra principal", "goal": "Mostrar que não basta olhar apenas potência",
+      "visual_prompt": "Interface técnica em dashboard com quatro blocos: potência, tensão, corrente e quantidade de MPPTs. Cada item aparece em card separado. Visual autoral.",
+      "on_screen_text": "NÃO É SÓ POTÊNCIA", "support_text": ["Potência", "Tensão", "Corrente", "MPPT"],
+      "narration": "Pra descobrir isso, você precisa olhar quatro pontos principais: potência, tensão, corrente e o número de entradas MPPT.",
+      "motion": "Cards entrando lateralmente, números aparecendo com animação" },
+    { "id": 3, "time": "00:18-00:30", "title": "Dados do inversor", "goal": "Apresentar os parâmetros do inversor",
+      "visual_prompt": "Inversor original em vista isométrica à esquerda e cards técnicos à direita mostrando os dados do equipamento. Não usar o mesmo estilo de ficha técnica da referência.",
+      "on_screen_text": "DADOS DO INVERSOR", "support_text": ["Potência CA: 5 kW", "Potência FV recomendada: 7,5 kWp", "Tensão máxima: 600 V", "2 MPPTs", "Corrente máxima por MPPT: 16 A"],
+      "narration": "Neste exemplo, o inversor tem cinco quilowatts de potência nominal, potência fotovoltaica recomendada de sete vírgula cinco quilowatts-pico, tensão máxima de seiscentos volts, dois MPPTs e corrente máxima de dezesseis ampères por MPPT.",
+      "motion": "Realce sequencial de cada dado" },
+    { "id": 4, "time": "00:30-00:42", "title": "Dados do módulo", "goal": "Apresentar os parâmetros do painel",
+      "visual_prompt": "Módulo fotovoltaico original em estilo isométrico, com balões laterais indicando potência, Voc, Vmp, Imp e Isc. Visual limpo e diferente da referência.",
+      "on_screen_text": "DADOS DO MÓDULO", "support_text": ["550 Wp", "Voc: 49,9 V", "Vmp: 41,8 V", "Imp: 13,16 A", "Isc: 13,9 A"],
+      "narration": "Agora vamos usar um módulo de quinhentos e cinquenta watts-pico, com Voc de quarenta e nove vírgula nove volts, Vmp de quarenta e um vírgula oito volts e corrente de operação de treze vírgula dezesseis ampères.",
+      "motion": "Callouts técnicos aparecendo ao redor do módulo" },
+    { "id": 5, "time": "00:42-00:54", "title": "Ligação em série", "goal": "Explicar a tensão da string",
+      "visual_prompt": "Seis módulos se conectando em série em um diagrama isométrico. A cada conexão, a tensão vai sendo somada em contadores visuais.",
+      "on_screen_text": "TENSÃO DA STRING", "support_text": ["6 módulos em série", "6 x 41,8 V = 250,8 V"],
+      "narration": "Se colocarmos seis módulos em série, a tensão de operação da string fica em duzentos e cinquenta vírgula oito volts.",
+      "motion": "Cabos conectando os módulos com números surgindo" },
+    { "id": 6, "time": "00:54-01:03", "title": "Corrente da string", "goal": "Explicar que a corrente em série não se soma",
+      "visual_prompt": "Comparativo visual com uma string destacada, mostrando que a corrente permanece a mesma da placa. Indicador visual mostrando treze vírgula dezesseis ampères versus limite de dezesseis ampères.",
+      "on_screen_text": "CORRENTE DA STRING", "support_text": ["Imp da string = 13,16 A", "Limite do MPPT = 16 A"],
+      "narration": "Em série, a corrente não se soma. Então a string continua com treze vírgula dezesseis ampères, valor abaixo do limite de dezesseis ampères por MPPT.",
+      "motion": "Barra comparativa crescendo e validando o valor" },
+    { "id": 7, "time": "01:03-01:14", "title": "Configuração final", "goal": "Mostrar a solução completa",
+      "visual_prompt": "Dois MPPTs representados como duas entradas separadas do inversor, cada uma recebendo uma string de seis módulos. Diagrama organizado, autoral e fácil de entender.",
+      "on_screen_text": "CONFIGURAÇÃO FINAL", "support_text": ["2 strings", "6 módulos por string", "12 módulos no total", "6,6 kWp"],
+      "narration": "Com dois MPPTs, podemos usar duas strings de seis módulos. No total, teremos doze módulos e uma potência instalada de seis vírgula seis quilowatts-pico.",
+      "motion": "As duas strings conectando no inversor com destaque de fluxo" },
+    { "id": 8, "time": "01:14-01:25", "title": "Fechamento técnico", "goal": "Encerrar com a lição principal",
+      "visual_prompt": "Tela final com resumo visual em estilo dashboard, checklist técnico validado e frase de encerramento forte. Não copiar encerramento da referência.",
+      "on_screen_text": "DIMENSIONE PELO DATASHEET", "support_text": ["Verifique potência", "Verifique tensão", "Verifique corrente", "Considere os limites do inversor"],
+      "narration": "Ou seja: o número de placas não depende só da potência. O certo é dimensionar pelo datasheet, verificando tensão, corrente e os limites reais do inversor.",
+      "motion": "Checklist marcando cada item e encerramento com leve zoom" }
+  ],
+  "editing_guidelines": {
+    "transitions": "Transições suaves de interface, wipes técnicos, zooms leves, entrada de elementos por fade e slide",
+    "subtitle_style": "Legendas centralizadas ou inferiores, alto contraste, sem copiar o layout da referência",
+    "sound_design": "Trilha leve tecnológica, discreta e profissional, com pequenos sons de interface",
+    "camera_behavior": "Movimentos sutis, sem reproduzir o padrão do vídeo original"
+  },
+  "restrictions": ["Não copiar design do vídeo de referência", "Não usar marcas reais de inversores", "Não usar logotipos de fabricantes", "Não repetir layout visual da referência", "Não gerar cenas com composição praticamente idêntica", "Não usar o inversor frontal igual ao original", "Não transformar a peça em propaganda de marca", "Manter caráter educativo"],
+  "final_message": {
+    "on_screen_text": "EXEMPLO EDUCATIVO. SEMPRE CONFIRA O DATASHEET REAL.",
+    "narration": "Esse é um exemplo educativo. Antes de instalar, sempre confira o datasheet real dos equipamentos."
+  }
+}
