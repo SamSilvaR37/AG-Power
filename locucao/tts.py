@@ -3,6 +3,7 @@
 
 Uso:
   python3 tts.py google  [--voz pt-BR-Neural2-B] [--velocidade 1.08] [--projeto MEU_PROJETO] [--saida voz/]
+  python3 tts.py elevenlabs --voz-id ID_DA_VOZ [--roteiro ...] [--saida voz/]
   python3 tts.py piper   --modelo pt_BR-faber-medium.onnx [--saida voz/]
   python3 tts.py espeak  [--saida voz/]          # robótica, só para testar o encaixe
 
@@ -10,6 +11,8 @@ Motores:
   google  Google Cloud Text-to-Speech (vozes neurais pt-BR). Usa a chave de API da
           variável GOOGLE_TTS_API_KEY, ou, sem ela, `gcloud auth print-access-token`.
           A API "Cloud Text-to-Speech" precisa estar ativa no projeto.
+  elevenlabs  ElevenLabs (vozes naturais). Usa ELEVENLABS_API_KEY e --voz-id; para ver as vozes:
+          python3 tts.py vozes-elevenlabs
   piper   Piper, offline. O modelo pt-BR (.onnx + .onnx.json) vem de
           huggingface.co/rhasspy/piper-voices (ex.: pt/pt_BR/faber/medium).
   espeak  espeak-ng com voz MBROLA brasileira, se instalada.
@@ -66,6 +69,32 @@ def google(texto, destino, voz, projeto, velocidade):
         destino.write_bytes(base64.b64decode(json.load(r)["audioContent"]))
 
 
+def elevenlabs(texto, destino, voz_id, modelo):
+    """ElevenLabs: a chave vem de ELEVENLABS_API_KEY (começa com sk_; não é o ID da chave)."""
+    chave = os.environ.get("ELEVENLABS_API_KEY", "")
+    corpo = {"text": texto, "model_id": modelo, "language_code": "pt",
+             "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.0, "use_speaker_boost": True}}
+    req = urllib.request.Request(
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voz_id}?output_format=mp3_44100_128",
+        data=json.dumps(corpo).encode(),
+        headers={"xi-api-key": chave, "Content-Type": "application/json", "Accept": "audio/mpeg"})
+    mp3 = destino.with_suffix(".mp3")
+    with urllib.request.urlopen(req, timeout=120) as r:
+        mp3.write_bytes(r.read())
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp3), "-ar", "48000", "-ac", "1", str(destino)], check=True)
+    mp3.unlink()
+
+
+def vozes_elevenlabs():
+    """Lista as vozes da conta (id, nome, sexo, idioma) para escolher o --voz-id."""
+    req = urllib.request.Request("https://api.elevenlabs.io/v2/voices?page_size=100",
+                                 headers={"xi-api-key": os.environ.get("ELEVENLABS_API_KEY", "")})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        for v in json.load(r).get("voices", []):
+            lab = v.get("labels", {})
+            print(v["voice_id"], "|", v["name"], "|", lab.get("gender", "?"), "|", lab.get("language", "?"), "|", lab.get("accent", "?"))
+
+
 def piper(texto, destino, modelo):
     subprocess.run(["python3", "-m", "piper", "-m", modelo, "-f", str(destino)],
                    input=texto, text=True, check=True)
@@ -82,15 +111,19 @@ def espeak(texto, destino):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("motor", choices=["google", "piper", "espeak"])
+    ap.add_argument("motor", choices=["google", "elevenlabs", "vozes-elevenlabs", "piper", "espeak"])
     ap.add_argument("--voz", default="pt-BR-Neural2-B", help="voz do Google (ex.: pt-BR-Neural2-A, -B, -C)")
     ap.add_argument("--projeto", default="", help="projeto do Google Cloud (padrão: o do gcloud)")
     ap.add_argument("--velocidade", type=float, default=1.08, help="velocidade da voz do Google (1.0 = normal)")
     ap.add_argument("--modelo", help="modelo .onnx do Piper")
+    ap.add_argument("--voz-id", default="", help="ID da voz da ElevenLabs (veja: tts.py vozes-elevenlabs)")
+    ap.add_argument("--modelo-el", default="eleven_multilingual_v2", help="modelo da ElevenLabs")
     ap.add_argument("--saida", default=str(HERE / "voz"))
     ap.add_argument("--roteiro", default=str(HERE / "roteiro_b.json"))
     a = ap.parse_args()
 
+    if a.motor == "vozes-elevenlabs":
+        return vozes_elevenlabs()
     saida = Path(a.saida)
     saida.mkdir(parents=True, exist_ok=True)
     for cena in json.loads(Path(a.roteiro).read_text(encoding="utf-8")):
@@ -98,6 +131,8 @@ def main():
         destino = saida / f"cena-{cena['id']:02d}.wav"
         if a.motor == "google":
             google(texto, destino, a.voz, a.projeto, a.velocidade)
+        elif a.motor == "elevenlabs":
+            elevenlabs(texto, destino, a.voz_id, a.modelo_el)
         elif a.motor == "piper":
             piper(texto, destino, a.modelo)
         else:

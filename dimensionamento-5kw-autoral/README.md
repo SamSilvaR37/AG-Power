@@ -58,7 +58,7 @@ de `briefing.json`. Usa só o tema e a lógica didática em etapas; toda a dire�
 ```sh
 node render.mjs 9x16 --pagina dimensionamento-5kw-autoral/index.html --nome dimensionamento-5kw-autoral
 
-cd locucao   # precisa da chave GOOGLE_TTS_API_KEY no ambiente
-python3 tts.py google --voz pt-BR-Neural2-B --roteiro ../dimensionamento-5kw-autoral/roteiro.json --saida ../dimensionamento-5kw-autoral/voz
+cd locucao   # precisa de ELEVENLABS_API_KEY (a chave sk_..., não o ID); vozes: python3 tts.py vozes-elevenlabs
+python3 tts.py elevenlabs --voz-id ID_DA_VOZ --roteiro ../dimensionamento-5kw-autoral/roteiro.json --saida ../dimensionamento-5kw-autoral/voz
 python3 narracao.py --roteiro ../dimensionamento-5kw-autoral/roteiro.json --nome dimensionamento-5kw-autoral --versao 85s --voz ../dimensionamento-5kw-autoral/voz
 ```

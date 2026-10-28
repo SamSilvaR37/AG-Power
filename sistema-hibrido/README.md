@@ -56,7 +56,7 @@ só nos arquivos de referência.
 ```sh
 node render.mjs 9x16 --pagina sistema-hibrido/index.html --nome sistema-hibrido
 
-cd locucao   # precisa da chave GOOGLE_TTS_API_KEY no ambiente
-python3 tts.py google --voz pt-BR-Neural2-A --roteiro ../sistema-hibrido/roteiro.json --saida ../sistema-hibrido/voz
+cd locucao   # precisa de ELEVENLABS_API_KEY (a chave sk_..., não o ID); vozes: python3 tts.py vozes-elevenlabs
+python3 tts.py elevenlabs --voz-id ID_DA_VOZ --roteiro ../sistema-hibrido/roteiro.json --saida ../sistema-hibrido/voz
 python3 narracao.py --roteiro ../sistema-hibrido/roteiro.json --nome sistema-hibrido --versao 120s --voz ../sistema-hibrido/voz
 ```
