@@ -12,7 +12,8 @@ narração do roteiro sem cortes.
 | `legendas-120s.srt` | As mesmas legendas embutidas no vídeo |
 | `roteiro.json` | Narração por cena, usada pelo pipeline de voz |
 | `briefing.json`, `roteiro-original.md` | Briefing e roteiro originais (com a revisão técnica e as fontes) |
-| `../videos/sistema-hibrido-120s-9x16.mp4` | O vídeo pronto: legendas, trilha e efeitos, **ainda sem voz** |
+| `../videos/sistema-hibrido-120s-9x16.mp4` | O vídeo sem voz: legendas, trilha e efeitos |
+| `../videos/narrado/sistema-hibrido-120s-9x16-narrado.mp4` | **O vídeo com narração** (ElevenLabs, voz masculina "Brian") |
 | `../videos/audio/sistema-hibrido-{trilha,efeitos}-120s.flac` | Trilha e efeitos separados |
 
 ## Direção de arte
@@ -57,6 +58,6 @@ só nos arquivos de referência.
 node render.mjs 9x16 --pagina sistema-hibrido/index.html --nome sistema-hibrido
 
 cd locucao   # precisa de ELEVENLABS_API_KEY (a chave sk_..., não o ID); vozes: python3 tts.py vozes-elevenlabs
-python3 tts.py elevenlabs --voz-id ID_DA_VOZ --roteiro ../sistema-hibrido/roteiro.json --saida ../sistema-hibrido/voz
+python3 tts.py elevenlabs --voz-id nPczCjzI2devNBz1zQrb --roteiro ../sistema-hibrido/roteiro.json --saida ../sistema-hibrido/voz
 python3 narracao.py --roteiro ../sistema-hibrido/roteiro.json --nome sistema-hibrido --versao 120s --voz ../sistema-hibrido/voz
 ```

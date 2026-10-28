@@ -2,3 +2,5 @@ dist/
 __pycache__/
 # Local secrets written by `elevenlabs onboard`
 /.env.local
+# vozes geradas (a faixa final fica em videos/audio/*-narracao-*.flac)
+voz/

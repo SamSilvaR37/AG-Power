@@ -226,7 +226,7 @@ function isoInverter(P, x0, y0, o={}){
 const SCENES = []; const S = o => SCENES.push(o);
 
 /* ---------- 1. Gancho (7 s) ---------- */
-S({ id:1, name:"Gancho inicial", dur:7, step:"A pergunta",
+S({ id:1, name:"Gancho inicial", dur:6.5, step:"A pergunta",
   cap:["Quantas placas solares você pode ligar", "em um inversor de *cinco quilowatts*", "sem errar no *dimensionamento*?"],
   html(){
     const P = iso([U*44, U*49], U*6);
@@ -266,7 +266,7 @@ S({ id:2, name:"Regra principal", dur:8, step:"A regra",
 
 /* ---------- 3. Dados do inversor (12,5 s) ---------- */
 const INV_DATA = [["Potência CA","5 kW"],["Potência FV recomendada","7,5 kWp"],["Tensão máxima","600 V"],["MPPTs","2"],["Corrente máx. por MPPT","16 A"]];
-S({ id:3, name:"Dados do inversor", dur:12.5, step:"O inversor",
+S({ id:3, name:"Dados do inversor", dur:14, step:"O inversor",
   cap:["Neste exemplo, o inversor tem *5 kW* de potência nominal,", "potência fotovoltaica recomendada de *7,5 kWp*,", "tensão máxima de *600 V*, *dois MPPTs*", "e corrente máxima de *16 A* por MPPT."],
   html(){
     const P = iso([U*15, U*78], U*21);
@@ -298,7 +298,7 @@ S({ id:3, name:"Dados do inversor", dur:12.5, step:"O inversor",
 
 /* ---------- 4. Dados do módulo (13,5 s) ---------- */
 const CALL = [["Potência","550 Wp","amber",[.5,.15],[8,42]],["Voc","49,9 V","amber",[.95,.25],[62,40]],["Vmp","41,8 V","amber",[1,.75],[64,84]],["Imp","13,16 A","sky",[.6,1],[50,98]],["Isc","13,9 A","sky",[.05,.85],[6,92]]];
-S({ id:4, name:"Dados do módulo", dur:13.5, step:"O módulo",
+S({ id:4, name:"Dados do módulo", dur:13, step:"O módulo",
   cap:["Agora, um módulo de *550 Wp*,", "com *Voc de 49,9 V*,", "*Vmp de 41,8 V*", "e corrente de operação de *13,16 A*."],
   html(){
     const P = iso([U*40, U*50], U*25);
@@ -328,7 +328,7 @@ S({ id:4, name:"Dados do módulo", dur:13.5, step:"O módulo",
 });
 
 /* ---------- 5. Tensão da string (9 s) ---------- */
-S({ id:5, name:"Ligação em série", dur:9, step:"Tensão da string",
+S({ id:5, name:"Ligação em série", dur:8, step:"Tensão da string",
   cap:["Com *seis módulos em série*,", "a tensão de operação da string", "fica em *250,8 V*."],
   html(){
     const P = iso([U*18, U*46], U*8.6);
@@ -453,7 +453,7 @@ S({ id:7, name:"Configuração final", dur:10, step:"Configuração final",
 
 /* ---------- 8. Fechamento técnico (15,5 s) ---------- */
 const CHECK = ["Verifique potência","Verifique tensão","Verifique corrente","Considere os limites do inversor"];
-S({ id:8, name:"Fechamento técnico", dur:15.5, step:"Fechamento",
+S({ id:8, name:"Fechamento técnico", dur:16, step:"Fechamento",
   cap:["O número de placas *não depende só da potência*.", "O certo é *dimensionar pelo datasheet*,", "verificando *tensão*, *corrente* e os *limites reais do inversor*.", "Esse é um *exemplo educativo*.", "Antes de instalar, *confira o datasheet real* dos equipamentos."],
   html(){
     return `<div class="ttl"><small>Lição principal</small>DIMENSIONE PELO <span class="amber">DATASHEET</span></div>

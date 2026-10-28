@@ -12,7 +12,8 @@ de `briefing.json`. Usa só o tema e a lógica didática em etapas; toda a dire�
 | `legendas-85s.srt` | As mesmas legendas embutidas no vídeo, para subir separadas se preferir |
 | `roteiro.json` | Narração por cena (texto do briefing + mensagem final), usada pelo pipeline de voz |
 | `briefing.json` | Briefing original |
-| `../videos/dimensionamento-5kw-autoral-85s-9x16.mp4` | O vídeo pronto: legendas embutidas, trilha e efeitos, **ainda sem voz** |
+| `../videos/dimensionamento-5kw-autoral-85s-9x16.mp4` | O vídeo sem voz: legendas embutidas, trilha e efeitos |
+| `../videos/narrado/dimensionamento-5kw-autoral-85s-9x16-narrado.mp4` | **O vídeo com narração** (ElevenLabs, voz masculina "Brian", falando 10% mais rápido) |
 | `../videos/audio/dimensionamento-5kw-autoral-{trilha,efeitos}-85s.flac` | Trilha e efeitos separados |
 
 ## Direção de arte (o que é novo)
@@ -41,8 +42,8 @@ de `briefing.json`. Usa só o tema e a lógica didática em etapas; toda a dire�
 
 ## Decisões e pontos de atenção
 
-- **Tempo das cenas redistribuído (sem cortar texto):** 7 / 8 / 12,5 / 13,5 / 9 / 9,5 / 10 / 15,5 s,
-  total 85 s. No briefing, a cena 8 tem 11 s, mas a fala dela + a mensagem final precisam de ~16 s,
+- **Tempo das cenas redistribuído (sem cortar texto):** 6,5 / 8 / 14 / 13 / 8 / 9,5 / 10 / 16 s,
+  total 85 s (ajustado ao ritmo da voz narrada). No briefing, a cena 8 tem 11 s, mas a fala dela + a mensagem final precisam de ~16 s,
   e a cena 4 precisa de ~14 s; o tempo saiu das cenas com fala curta (1, 2, 5 e 7).
 - **Mensagem final** ("EXEMPLO EDUCATIVO. SEMPRE CONFIRA O DATASHEET REAL.") entra na cena 8, depois do
   checklist, na tela e na narração.
@@ -59,6 +60,6 @@ de `briefing.json`. Usa só o tema e a lógica didática em etapas; toda a dire�
 node render.mjs 9x16 --pagina dimensionamento-5kw-autoral/index.html --nome dimensionamento-5kw-autoral
 
 cd locucao   # precisa de ELEVENLABS_API_KEY (a chave sk_..., não o ID); vozes: python3 tts.py vozes-elevenlabs
-python3 tts.py elevenlabs --voz-id ID_DA_VOZ --roteiro ../dimensionamento-5kw-autoral/roteiro.json --saida ../dimensionamento-5kw-autoral/voz
+python3 tts.py elevenlabs --voz-id nPczCjzI2devNBz1zQrb --vel-el 1.1 --roteiro ../dimensionamento-5kw-autoral/roteiro.json --saida ../dimensionamento-5kw-autoral/voz
 python3 narracao.py --roteiro ../dimensionamento-5kw-autoral/roteiro.json --nome dimensionamento-5kw-autoral --versao 85s --voz ../dimensionamento-5kw-autoral/voz
 ```

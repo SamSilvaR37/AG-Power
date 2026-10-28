@@ -1,10 +1,10 @@
 [
-  {"id": 1, "dur": 7, "locucao": "Quantas placas solares você pode ligar em um inversor de cinco quilowatts sem errar no dimensionamento?"},
+  {"id": 1, "dur": 6.5, "locucao": "Quantas placas solares você pode ligar em um inversor de cinco quilowatts sem errar no dimensionamento?"},
   {"id": 2, "dur": 8, "locucao": "Pra descobrir isso, você precisa olhar quatro pontos principais: potência, tensão, corrente e o número de entradas MPPT."},
-  {"id": 3, "dur": 12.5, "locucao": "Neste exemplo, o inversor tem cinco quilowatts de potência nominal, potência fotovoltaica recomendada de sete vírgula cinco quilowatts-pico, tensão máxima de seiscentos volts, dois MPPTs e corrente máxima de dezesseis ampères por MPPT."},
-  {"id": 4, "dur": 13.5, "locucao": "Agora vamos usar um módulo de quinhentos e cinquenta watts-pico, com Voc de quarenta e nove vírgula nove volts, Vmp de quarenta e um vírgula oito volts e corrente de operação de treze vírgula dezesseis ampères."},
-  {"id": 5, "dur": 9, "locucao": "Se colocarmos seis módulos em série, a tensão de operação da string fica em duzentos e cinquenta vírgula oito volts."},
+  {"id": 3, "dur": 14, "locucao": "Neste exemplo, o inversor tem cinco quilowatts de potência nominal, potência fotovoltaica recomendada de sete vírgula cinco quilowatts-pico, tensão máxima de seiscentos volts, dois MPPTs e corrente máxima de dezesseis ampères por MPPT."},
+  {"id": 4, "dur": 13, "locucao": "Agora vamos usar um módulo de quinhentos e cinquenta watts-pico, com Voc de quarenta e nove vírgula nove volts, Vmp de quarenta e um vírgula oito volts e corrente de operação de treze vírgula dezesseis ampères."},
+  {"id": 5, "dur": 8, "locucao": "Se colocarmos seis módulos em série, a tensão de operação da string fica em duzentos e cinquenta vírgula oito volts."},
   {"id": 6, "dur": 9.5, "locucao": "Em série, a corrente não se soma. Então a string continua com treze vírgula dezesseis ampères, valor abaixo do limite de dezesseis ampères por MPPT."},
   {"id": 7, "dur": 10, "locucao": "Com dois MPPTs, podemos usar duas strings de seis módulos. No total, teremos doze módulos e uma potência instalada de seis vírgula seis quilowatts-pico."},
-  {"id": 8, "dur": 15.5, "locucao": "Ou seja: o número de placas não depende só da potência. O certo é dimensionar pelo datasheet, verificando tensão, corrente e os limites reais do inversor. Esse é um exemplo educativo. Antes de instalar, sempre confira o datasheet real dos equipamentos."}
+  {"id": 8, "dur": 16, "locucao": "Ou seja: o número de placas não depende só da potência. O certo é dimensionar pelo datasheet, verificando tensão, corrente e os limites reais do inversor. Esse é um exemplo educativo. Antes de instalar, sempre confira o datasheet real dos equipamentos."}
 ]

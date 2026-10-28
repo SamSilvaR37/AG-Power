@@ -69,11 +69,12 @@ def google(texto, destino, voz, projeto, velocidade):
         destino.write_bytes(base64.b64decode(json.load(r)["audioContent"]))
 
 
-def elevenlabs(texto, destino, voz_id, modelo):
+def elevenlabs(texto, destino, voz_id, modelo, velocidade=1.0):
     """ElevenLabs: a chave vem de ELEVENLABS_API_KEY (começa com sk_; não é o ID da chave)."""
     chave = os.environ.get("ELEVENLABS_API_KEY", "")
     corpo = {"text": texto, "model_id": modelo, "language_code": "pt",
-             "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.0, "use_speaker_boost": True}}
+             "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.0, "use_speaker_boost": True,
+                                "speed": max(0.7, min(1.2, velocidade))}}
     req = urllib.request.Request(
         f"https://api.elevenlabs.io/v1/text-to-speech/{voz_id}?output_format=mp3_44100_128",
         data=json.dumps(corpo).encode(),
@@ -117,6 +118,7 @@ def main():
     ap.add_argument("--velocidade", type=float, default=1.08, help="velocidade da voz do Google (1.0 = normal)")
     ap.add_argument("--modelo", help="modelo .onnx do Piper")
     ap.add_argument("--voz-id", default="", help="ID da voz da ElevenLabs (veja: tts.py vozes-elevenlabs)")
+    ap.add_argument("--vel-el", type=float, default=1.0, help="velocidade da voz da ElevenLabs (0,7 a 1,2)")
     ap.add_argument("--modelo-el", default="eleven_multilingual_v2", help="modelo da ElevenLabs")
     ap.add_argument("--saida", default=str(HERE / "voz"))
     ap.add_argument("--roteiro", default=str(HERE / "roteiro_b.json"))
@@ -132,7 +134,7 @@ def main():
         if a.motor == "google":
             google(texto, destino, a.voz, a.projeto, a.velocidade)
         elif a.motor == "elevenlabs":
-            elevenlabs(texto, destino, a.voz_id, a.modelo_el)
+            elevenlabs(texto, destino, a.voz_id, a.modelo_el, a.vel_el)
         elif a.motor == "piper":
             piper(texto, destino, a.modelo)
         else:
