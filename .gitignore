@@ -1,2 +1,4 @@
 dist/
 __pycache__/
+# Local secrets written by `elevenlabs onboard`
+/.env.local
