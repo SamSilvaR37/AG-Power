@@ -28,11 +28,11 @@ for c in roteiro:
         elif cur is None: cur = [ch, s, e]
         else: cur[0] += ch; cur[2] = e
     if cur: palavras.append(cur)
-    # "Á Gê" (pronúncia) volta a ser "AG" na legenda
+    # "Á... Gê..." (pronúncia) volta a ser "AG" na legenda
     out, k = [], 0
     while k < len(palavras):
-        if palavras[k][0] == "Á" and k + 1 < len(palavras) and palavras[k + 1][0].startswith("Gê"):
-            out.append(["AG" + palavras[k + 1][0][2:], palavras[k][1], palavras[k + 1][2]]); k += 2
+        if palavras[k][0].strip(".,") == "Á" and k + 1 < len(palavras) and palavras[k + 1][0].strip(".,") == "Gê":
+            out.append(["AG", palavras[k][1], palavras[k + 1][2]]); k += 2
         else: out.append(palavras[k]); k += 1
     fala = fim - ini
     dur = max(BRIEF[i], math.ceil((0.3 + fala + 0.6) * 2) / 2)

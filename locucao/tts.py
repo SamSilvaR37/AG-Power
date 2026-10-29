@@ -34,7 +34,7 @@ HERE = Path(__file__).parent
 # Confirme com a AG Power a pronúncia de HYXi e SolarMan antes da versão final.
 PRONUNCIA = [
     (r"\bOS\b", "ó-ésse"),
-    (r"\bAG Power\b", "Á Gê Power"),
+    (r"\bAG Power\b", "Á... Gê... Power"),  # letras separadas e com pausa (sem pausa, a voz lê "Agui")
     (r"\bPDF\b", "pê-dê-éfe"),
     (r"\b7h40\b", "sete e quarenta"),
     (r"\bdas 6h às 22h\b", "das seis às vinte e duas"),
