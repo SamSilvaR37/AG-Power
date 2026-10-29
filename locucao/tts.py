@@ -34,6 +34,7 @@ HERE = Path(__file__).parent
 # Confirme com a AG Power a pronúncia de HYXi e SolarMan antes da versão final.
 PRONUNCIA = [
     (r"\bOS\b", "ó-ésse"),
+    (r"\bAG Power\b", "Á Gê Power"),
     (r"\bPDF\b", "pê-dê-éfe"),
     (r"\b7h40\b", "sete e quarenta"),
     (r"\bdas 6h às 22h\b", "das seis às vinte e duas"),
@@ -69,19 +70,24 @@ def google(texto, destino, voz, projeto, velocidade):
         destino.write_bytes(base64.b64decode(json.load(r)["audioContent"]))
 
 
-def elevenlabs(texto, destino, voz_id, modelo, velocidade=1.0):
+def elevenlabs(texto, destino, voz_id, modelo, velocidade=1.0, tempos=False):
     """ElevenLabs: a chave vem de ELEVENLABS_API_KEY (começa com sk_; não é o ID da chave)."""
     chave = os.environ.get("ELEVENLABS_API_KEY", "")
     corpo = {"text": texto, "model_id": modelo, "language_code": "pt",
              "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.0, "use_speaker_boost": True,
                                 "speed": max(0.7, min(1.2, velocidade))}}
     req = urllib.request.Request(
-        f"https://api.elevenlabs.io/v1/text-to-speech/{voz_id}?output_format=mp3_44100_128",
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voz_id}{'/with-timestamps' if tempos else ''}?output_format=mp3_44100_128",
         data=json.dumps(corpo).encode(),
         headers={"xi-api-key": chave, "Content-Type": "application/json", "Accept": "audio/mpeg"})
     mp3 = destino.with_suffix(".mp3")
     with urllib.request.urlopen(req, timeout=120) as r:
-        mp3.write_bytes(r.read())
+        if tempos:  # resposta JSON: áudio em base64 + tempo de cada caractere (salvo em cena-XX.json)
+            d = json.load(r)
+            mp3.write_bytes(base64.b64decode(d["audio_base64"]))
+            destino.with_suffix(".json").write_text(json.dumps(d["alignment"]), encoding="utf-8")
+        else:
+            mp3.write_bytes(r.read())
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp3), "-ar", "48000", "-ac", "1", str(destino)], check=True)
     mp3.unlink()
 
@@ -119,6 +125,7 @@ def main():
     ap.add_argument("--modelo", help="modelo .onnx do Piper")
     ap.add_argument("--voz-id", default="", help="ID da voz da ElevenLabs (veja: tts.py vozes-elevenlabs)")
     ap.add_argument("--vel-el", type=float, default=1.0, help="velocidade da voz da ElevenLabs (0,7 a 1,2)")
+    ap.add_argument("--tempos", action="store_true", help="ElevenLabs: também salva o tempo de cada palavra (cena-XX.json)")
     ap.add_argument("--modelo-el", default="eleven_multilingual_v2", help="modelo da ElevenLabs")
     ap.add_argument("--saida", default=str(HERE / "voz"))
     ap.add_argument("--roteiro", default=str(HERE / "roteiro_b.json"))
@@ -134,7 +141,7 @@ def main():
         if a.motor == "google":
             google(texto, destino, a.voz, a.projeto, a.velocidade)
         elif a.motor == "elevenlabs":
-            elevenlabs(texto, destino, a.voz_id, a.modelo_el, a.vel_el)
+            elevenlabs(texto, destino, a.voz_id, a.modelo_el, a.vel_el, a.tempos)
         elif a.motor == "piper":
             piper(texto, destino, a.modelo)
         else:

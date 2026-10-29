@@ -1,0 +1,219 @@
+{
+  "projeto": "Demonstração real da plataforma AG Power — vídeo 1 de 3: a visão do gestor",
+  "como_usar_este_prompt": {
+    "para_quem_vai_montar_o_video": "Este vídeo mostra o app real da AG Power. As telas NÃO podem ser inventadas nem redesenhadas: cada cena usa o print indicado em 'print'. O trabalho é animar em cima do print (zoom, deslize, destaque), colocar os textos e a narração.",
+    "anexos": "Junto com este JSON vão os prints P01 a P09 (lista em 'prints_necessarios'). Se algum print faltar, pule a cena e avise; não crie uma tela parecida.",
+    "o_que_e_proibido": [
+      "Criar, redesenhar ou 'melhorar' telas do app.",
+      "Trocar textos de botões, títulos ou números que aparecem no print.",
+      "Inventar números, clientes, gráficos ou funções que não estão nos prints.",
+      "Mostrar valores em R$ como se fossem do app (o app não mostra dinheiro)."
+    ]
+  },
+  "formato": {
+    "proporcao": "16:9",
+    "resolucao": "1920x1080",
+    "fps": 30,
+    "duracao_total": "cerca de 110 segundos",
+    "origem_das_telas": "prints da versão de computador (navegador), em tela cheia, sem barra de favoritos"
+  },
+  "estilo_visual": {
+    "tom": "sóbrio, profissional, confiante. Nada de efeitos chamativos.",
+    "cores": "as do próprio app. Sobreposições em branco ou na cor de destaque do app, com fundo escuro semitransparente.",
+    "fonte_das_sobreposicoes": "sem serifa, a mesma família do app (ou Inter / Manrope)",
+    "movimento_de_camera": "zoom lento (Ken Burns) de no máximo 115%, deslize suave para o ponto citado na narração",
+    "destaques": "contorno arredondado na cor de destaque em volta do elemento citado, aparecendo em 0,3 s",
+    "transicoes": "corte seco ou fusão de 0,4 s. Sem giros, cubos ou deslizes laterais",
+    "fundo_das_cenas_fora_do_app": "preto ou grafite bem escuro, com o logo AG Power pequeno no canto inferior direito"
+  },
+  "narracao": {
+    "idioma": "português do Brasil",
+    "voz": "masculina ou feminina, adulta, calma, ritmo de conversa (cerca de 140 palavras por minuto)",
+    "regras": [
+      "Ler os números por extenso como estão no texto da narração.",
+      "Pausa curta (0,5 s) entre uma cena e outra.",
+      "Sem música alta por cima da voz."
+    ]
+  },
+  "legendas": {
+    "obrigatorias": true,
+    "posicao": "terço inferior, centralizada",
+    "estilo": "branca, fundo preto 60% de opacidade, no máximo 2 linhas",
+    "texto": "igual à narração, palavra por palavra"
+  },
+  "trilha": "instrumental leve e corporativa, volume baixo (-22 dB) sob a narração, sobe um pouco no encerramento",
+  "privacidade": "Nomes, telefones e endereços de clientes que aparecerem nos prints devem ser borrados (desfoque forte), exceto se o cliente autorizou.",
+  "prints_necessarios": [
+    { "arquivo": "P01-painel-topo.png", "tela": "Centro de Operações (primeira tela do gestor, endereço /admin)", "como_tirar": "Tela inteira, rolada até o topo. Precisa aparecer: 'Centro de Operações', a saudação com seu nome, a data, os botões 'Resumo da semana' e 'Agendar serviço' e os seis cartões de 'Situação agora'." },
+    { "arquivo": "P02-painel-decidir.png", "tela": "Centro de Operações, rolado um pouco para baixo", "como_tirar": "Mostrar a seção 'Precisa de alguém decidir' com os blocos 'Serviços sem técnico (7 dias)' e 'Serviços atrasados'." },
+    { "arquivo": "P03-painel-implantacoes.png", "tela": "Centro de Operações, mais abaixo", "como_tirar": "Mostrar 'Implantações por etapa' e 'Paradas há mais tempo'." },
+    { "arquivo": "P04-agenda-do-dia.png", "tela": "Agenda operacional (/admin/agenda)", "como_tirar": "O dia de hoje, com a barra de sincronização com a planilha visível e a lista de serviços do dia." },
+    { "arquivo": "P05-os-concluida.png", "tela": "Uma OS concluída aberta pela agenda (/admin/os/...)", "como_tirar": "De preferência uma OS que um técnico concluiu pelo app. Pode precisar de 2 ou 3 prints rolando: P05a (topo com cliente e tipo de serviço), P05b (Fotos e Ficha técnica), P05c (Materiais usados, Assinaturas e o cartão 'OS concluída' com 'Relatório PDF')." },
+    { "arquivo": "P06-monitoramento.png", "tela": "Monitoramento (/admin/monitoramento)", "como_tirar": "Os quatro cartões de situação no topo, o botão 'Plano Power (59)' e o começo da lista de usinas." },
+    { "arquivo": "P07-clientes-plano-power.png", "tela": "Clientes (/admin/clientes) com o botão 'Plano Power' ligado", "como_tirar": "Botão 'Plano Power (59)' marcado e a lista filtrada." },
+    { "arquivo": "P08-ativar-plano-power.png", "tela": "Monitoramento, janela 'Plano Power'", "como_tirar": "Tocar em 'Plano Power' no card de uma usina que ainda não tem o plano e tirar print da janela aberta com o botão 'Ativar Plano Power'. NÃO confirmar." },
+    { "arquivo": "P09-logo.png", "tela": "Logo da AG Power em fundo transparente", "como_tirar": "Arquivo do logo usado no app." }
+  ],
+  "numeros_reais": {
+    "data": "29/10/2026, tirados do banco da plataforma",
+    "usinas_cadastradas": 776,
+    "usinas_em_operacao": 646,
+    "clientes_no_plano_power": 59,
+    "percentual_power_sobre_operacao": "9,1% (59 de 646)",
+    "usinas_monitoradas": 583,
+    "usinas_sem_dado_ha_2_dias_ou_mais": 150,
+    "servicos_concluidos_em_outubro_ate_29_10": 104,
+    "servicos_agendados_de_29_10_a_30_11": 66,
+    "implantacoes_em_andamento": 130,
+    "implantacoes_fora_do_prazo": 112,
+    "regra": "Se no dia do print algum número estiver diferente, vale o número do print. Ajuste a narração para ele."
+  },
+  "plano_power_tabela_real": {
+    "fonte": "planilha AGENDA 2026, aba 'PRECIFICAÇÃO AVULSO E PLANO PÓS'",
+    "preco_tipico_mensal": "R$ 98,64 (11 a 20 placas, Campinas, cliente AG Power)",
+    "preco_piso_mensal": "R$ 89,77 (até 10 placas, Campinas)",
+    "atencao": "A planilha não diz se o valor é mensal. O cálculo trata como mensal. Confirmar antes de publicar."
+  },
+  "calculo_valor_perdido": {
+    "selo_obrigatorio_na_tela": "Simulação · preço típico R$ 98,64/mês · base: 646 usinas em operação",
+    "hoje": { "clientes": 59, "por_mes": "R$ 5.819,76", "por_ano": "R$ 69.837,12" },
+    "com_30_por_cento_da_base": { "clientes": 194, "por_mes": "R$ 19.136,16", "por_ano": "R$ 229.633,92" },
+    "dinheiro_na_mesa": { "clientes_a_mais": 135, "por_mes": "R$ 13.316,40", "por_ano": "R$ 159.796,80" },
+    "se_toda_a_base_assinasse": { "clientes": 646, "por_mes": "R$ 63.721,44", "por_ano": "R$ 764.657,28" },
+    "conta": "clientes × R$ 98,64 × 12 meses"
+  },
+  "cenas": [
+    {
+      "n": 1,
+      "nome": "Abertura",
+      "duracao_s": 5,
+      "print": "nenhum (fundo escuro)",
+      "visual": "Logo AG Power (P09) aparece no centro com fusão suave. Abaixo, o título.",
+      "texto_na_tela": "A operação inteira em um só lugar",
+      "narracao": "Essa é a plataforma da AG Power, vista pelo gestor."
+    },
+    {
+      "n": 2,
+      "nome": "Centro de Operações",
+      "duracao_s": 12,
+      "print": "P01-painel-topo.png",
+      "o_que_aparece_no_print": "No topo, à esquerda: 'Centro de Operações' em letras pequenas, a saudação ('Bom dia, ...') e a data por extenso. À direita: botões 'Resumo da semana' e 'Agendar serviço'. Abaixo, a seção 'Situação agora' com seis cartões: Usinas sem dado, Serviços hoje, Serviços atrasados, Sem técnico, Implantações fora do prazo e Chamados abertos. Cada cartão tem um número grande e uma linha de detalhe.",
+      "movimento": "Começa mostrando o print inteiro. Depois zoom lento até a fileira dos seis cartões.",
+      "destaque": "Contorno passando de cartão em cartão, acompanhando a narração.",
+      "texto_na_tela": "Situação agora",
+      "narracao": "Logo na primeira tela, o gestor vê como está a operação agora: os serviços do dia, o que atrasou, o que está sem técnico e as usinas que pararam de mandar dados."
+    },
+    {
+      "n": 3,
+      "nome": "Precisa de alguém decidir",
+      "duracao_s": 10,
+      "print": "P02-painel-decidir.png",
+      "o_que_aparece_no_print": "Seção 'Precisa de alguém decidir' com dois blocos lado a lado: 'Serviços sem técnico (7 dias)' e 'Serviços atrasados', cada um com uma lista de serviços.",
+      "movimento": "Deslize suave de cima para baixo.",
+      "destaque": "Contorno no título 'Precisa de alguém decidir'.",
+      "texto_na_tela": "O que precisa de decisão hoje",
+      "narracao": "Logo abaixo, o que precisa de alguém decidir hoje, com o nome do cliente e o caminho para resolver ali mesmo."
+    },
+    {
+      "n": 4,
+      "nome": "Implantações",
+      "duracao_s": 9,
+      "print": "P03-painel-implantacoes.png",
+      "o_que_aparece_no_print": "'Implantações por etapa' (contrato, agendamento, instalação, vistoria, troca de medidor) e 'Paradas há mais tempo'.",
+      "movimento": "Zoom lento em 'Implantações por etapa'.",
+      "texto_na_tela": "Onde cada implantação está",
+      "narracao": "E onde cada implantação está parada, etapa por etapa, do contrato até a troca do medidor."
+    },
+    {
+      "n": 5,
+      "nome": "Agenda sincronizada com a planilha",
+      "duracao_s": 11,
+      "print": "P04-agenda-do-dia.png",
+      "o_que_aparece_no_print": "Agenda operacional do dia, com a barra de sincronização com a planilha no topo e a lista de serviços (horário, tipo de serviço, cliente, técnico).",
+      "movimento": "Começa na barra de sincronização, desce para a lista.",
+      "destaque": "Contorno na barra de sincronização, depois em uma linha da lista.",
+      "texto_na_tela": "A mesma agenda da planilha, atualizada sozinha",
+      "narracao": "A agenda é a mesma planilha que a equipe já usa. A plataforma lê a planilha e se atualiza sozinha. E cada serviço da lista abre a ordem de serviço."
+    },
+    {
+      "n": 6,
+      "nome": "Ordem de serviço concluída",
+      "duracao_s": 15,
+      "print": "P05a, P05b e P05c (em sequência)",
+      "o_que_aparece_no_print": "P05a: tipo de serviço, cliente (borrado), endereço (borrado), equipe ou responsável. P05b: bloco 'Fotos' com as fotos do serviço e 'Ficha técnica da instalação'. P05c: 'Materiais usados', 'Assinaturas' (Cliente e Responsável pela instalação) e o cartão 'OS concluída' com o botão 'Relatório PDF'.",
+      "movimento": "Cada print entra com fusão de 0,4 s e desce devagar.",
+      "destaque": "No P05c, contorno no botão 'Relatório PDF'.",
+      "texto_na_tela": "Fotos, ficha técnica, materiais e assinaturas",
+      "narracao": "Quando o técnico termina, o gestor encontra tudo na ordem de serviço: as fotos, a ficha técnica, os materiais usados e as assinaturas do cliente e do responsável. O relatório em PDF já sai pronto para enviar ao cliente."
+    },
+    {
+      "n": 7,
+      "nome": "Monitoramento",
+      "duracao_s": 13,
+      "print": "P06-monitoramento.png",
+      "o_que_aparece_no_print": "Quatro cartões de situação das usinas no topo, campo 'Buscar por nome ou endereço', botão 'Plano Power (59)' e a lista de usinas. Cada usina mostra nome, endereço, kWp, quando reportou pela última vez e a situação.",
+      "movimento": "Zoom lento nos quatro cartões.",
+      "destaque": "Contorno nos cartões de usinas sem geração ou paradas.",
+      "sobreposicao": "583 usinas monitoradas · 150 sem dado há 2 dias ou mais",
+      "texto_na_tela": "Monitoramento das usinas",
+      "narracao": "A plataforma acompanha quinhentas e oitenta e três usinas. Hoje, cento e cinquenta estão há dois dias ou mais sem mandar dados. Cada uma é um cliente que pode estar perdendo geração sem saber."
+    },
+    {
+      "n": 8,
+      "nome": "Só 59 no Plano Power",
+      "duracao_s": 11,
+      "print": "P07-clientes-plano-power.png",
+      "o_que_aparece_no_print": "Lista de clientes com o botão 'Plano Power (59)' ligado.",
+      "movimento": "Zoom no botão 'Plano Power (59)'.",
+      "destaque": "Contorno no número 59.",
+      "sobreposicao": "59 de 646 usinas em operação · 9,1%",
+      "texto_na_tela": "Plano Power: menos de 1 em cada 10",
+      "narracao": "Temos seiscentas e quarenta e seis usinas em operação. Só cinquenta e nove estão no Plano Power. Menos de uma em cada dez."
+    },
+    {
+      "n": 9,
+      "nome": "Hoje x 30% da base",
+      "duracao_s": 14,
+      "print": "nenhum (gráfico sobre fundo escuro, fora do app)",
+      "visual": "Duas barras verticais lado a lado, crescendo de baixo para cima. Barra 1 'Hoje · 59 clientes' até R$ 69.837 por ano. Barra 2 'Com 30% da base · 194 clientes' até R$ 229.634 por ano. Os valores aparecem em cima de cada barra quando ela termina de subir.",
+      "selo": "Simulação · preço típico R$ 98,64/mês · base: 646 usinas em operação (canto inferior esquerdo, sempre visível)",
+      "narracao": "Com o preço típico do plano, as cinquenta e nove assinaturas somam cerca de setenta mil reais por ano. Se só trinta por cento da base assinasse, seriam quase duzentos e trinta mil."
+    },
+    {
+      "n": 10,
+      "nome": "Dinheiro na mesa",
+      "duracao_s": 10,
+      "print": "nenhum (fundo escuro, fora do app)",
+      "visual": "Contador no centro sobe de R$ 0 até R$ 159.796,80. Abaixo, em letra menor: 'por ano · 135 clientes a mais'.",
+      "selo": "Simulação · preço típico R$ 98,64/mês",
+      "texto_na_tela": "Dinheiro na mesa",
+      "narracao": "A diferença é de quase cento e sessenta mil reais por ano. É o que está ficando na mesa, com clientes que já são nossos."
+    },
+    {
+      "n": 11,
+      "nome": "Um toque para ativar",
+      "duracao_s": 9,
+      "print": "P08-ativar-plano-power.png",
+      "o_que_aparece_no_print": "Janela 'Plano Power' aberta sobre a tela de monitoramento, com o botão 'Ativar Plano Power'.",
+      "movimento": "Zoom no botão 'Ativar Plano Power'.",
+      "destaque": "Contorno no botão.",
+      "narracao": "E colocar um cliente no plano é um toque. A usina já está aqui. O cliente também."
+    },
+    {
+      "n": 12,
+      "nome": "Encerramento",
+      "duracao_s": 8,
+      "print": "P01-painel-topo.png desfocado ao fundo",
+      "visual": "Print do painel com desfoque forte e escurecido. No centro, o logo AG Power e a frase.",
+      "texto_na_tela": "A operação já está organizada. Agora é transformar em receita.",
+      "narracao": "A operação já está organizada. O próximo passo é transformar esse acompanhamento em receita."
+    }
+  ],
+  "checklist_antes_de_publicar": [
+    "Confirmar com a AG Power se o preço do Plano Power é mensal.",
+    "Conferir se os números dos prints batem com 'numeros_reais'. Se não baterem, usar os do print e corrigir a narração.",
+    "Borrar nome, telefone e endereço de todo cliente que não autorizou.",
+    "Selo 'Simulação' visível em toda cena com R$.",
+    "Assistir uma vez sem som para conferir se as legendas contam a história sozinhas."
+  ]
+}

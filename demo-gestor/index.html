@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo Gestor AG Power</title>
+<!--
+  Demonstração real da plataforma AG Power — vídeo 1 de 3: a visão do gestor (16:9).
+  As telas são os PRINTS REAIS do app (prints/*.png, com nomes de clientes borrados): só há zoom, deslize e contorno.
+  Cada quadro é função do tempo (window.renderAt(t)); a linha do tempo da fala vem de falas.js (tempos por palavra da voz).
+  Parâmetros: ?t=12.5  ?render=1
+  Render: node ../render.mjs 16x9 --pagina demo-gestor/index.html --nome demo-gestor
+-->
+<script src="falas.js"></script>
+<style>
+:root{
+  --bg:#0a0e14; --panel:#0b1220; --ink:#F4F6F9; --mute:#9AA6B5; --acc:#F6B93B; --line:#243040; --red:#F05A5A; --ok:#2CC48B;
+  --u:10.8px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+body{font-family:Inter,"Inter Display",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+#wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;overflow:hidden;background:var(--bg);flex:none;transform-origin:center center;width:1920px;height:1080px}
+.bgfx{position:absolute;inset:0;background:radial-gradient(1200px 700px at 78% 40%,rgba(246,185,59,.07),transparent 70%),radial-gradient(900px 600px at 10% 90%,rgba(60,110,200,.08),transparent 70%)}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+
+/* coluna de texto (esquerda) e painel do print (direita) */
+.col{position:absolute;left:120px;top:150px;width:800px;display:flex;flex-direction:column;gap:26px}
+.kick{font-weight:800;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+.title{font-weight:800;font-size:72px;line-height:1.06;letter-spacing:-.02em}
+.sub{font-size:30px;line-height:1.35;color:var(--mute);font-weight:500;max-width:720px}
+.chips{display:flex;flex-wrap:wrap;gap:14px;margin-top:6px}
+.chip{border:2px solid var(--line);border-radius:999px;padding:12px 24px;font-weight:700;font-size:26px;color:var(--mute);background:rgba(255,255,255,.03);white-space:nowrap}
+.chip.on{border-color:var(--acc);color:var(--ink);background:rgba(246,185,59,.14)}
+.over{display:block;align-self:flex-start;background:rgba(0,0,0,.55);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:10px;padding:16px 24px;font-weight:700;font-size:28px;line-height:1.3}
+.panel{position:absolute;left:1030px;top:60px;width:760px;height:790px;border-radius:30px;overflow:hidden;background:var(--panel);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 2px #1d2735}
+.cam{position:absolute;left:0;top:0;width:720px;height:1640px;transform-origin:0 0}
+.cam img{display:block;width:720px;height:1640px}
+.hl{position:absolute;border:6px solid var(--acc);border-radius:22px;box-shadow:0 0 0 3px rgba(0,0,0,.35),0 0 34px rgba(246,185,59,.55);opacity:0;pointer-events:none}
+
+/* legendas (terço inferior, centralizadas) */
+.cap{position:absolute;left:0;right:0;top:896px;z-index:50;display:flex;justify-content:center}
+.cap span{display:inline-block;max-width:1500px;text-align:center;background:rgba(0,0,0,.6);color:#fff;font-weight:600;font-size:42px;line-height:1.28;padding:14px 30px;border-radius:12px}
+.logoc{position:absolute;right:56px;bottom:40px;width:74px;height:74px;object-fit:contain;z-index:40;opacity:.95}
+.selo{position:absolute;left:60px;bottom:36px;z-index:45;font-size:23px;font-weight:700;color:#cfd6df;background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:8px;padding:10px 18px}
+.center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:30px}
+
+/* cena 8: cartão de números */
+.big{font-weight:900;letter-spacing:-.04em;line-height:1}
+.barr{position:relative;height:34px;border-radius:999px;background:#1a2331;overflow:hidden;width:1200px}
+.barr i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);border-radius:999px}
+/* cena 9: barras */
+.bar{position:absolute;bottom:0;width:320px;border-radius:18px 18px 4px 4px;transform-origin:bottom}
+.val{position:absolute;text-align:center;width:420px;font-weight:900;font-size:56px;letter-spacing:-.02em}
+.val small{display:block;font-size:26px;font-weight:600;color:var(--mute);letter-spacing:0}
+.lbl{position:absolute;text-align:center;width:420px;font-weight:800;font-size:30px;line-height:1.25}
+.lbl small{display:block;font-size:26px;color:var(--mute);font-weight:600}
+
+#ctl[hidden]{display:none}
+#ctl{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;padding:10px 14px;background:rgba(0,0,0,.92);font:13px Inter,system-ui,sans-serif;color:#cfd6e4;z-index:100}
+#ctl button{background:#1d2735;color:#fff;border:1px solid #2c3d63;border-radius:6px;padding:6px 10px;font:inherit;cursor:pointer}
+#ctl input[type=range]{flex:1}
+#ctl .tc{font-variant-numeric:tabular-nums;min-width:120px}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage"></div></div>
+<div id="ctl" hidden>
+  <button id="play">▶︎</button>
+  <span class="tc" id="tc">0.0 s</span>
+  <input id="scrub" type="range" min="0" max="93" step="0.01" value="0">
+  <span id="scn"></span>
+</div>
+<script>
+"use strict";
+/* ================= utilidades ================= */
+const Q = new URLSearchParams(location.search);
+const [W,H] = [1920,1080];
+const clamp = (x,a=0,b=1) => Math.min(b,Math.max(a,x));
+const eo = x => 1-Math.pow(1-x,3);
+const eio = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const lerp = (a,b,k) => a+(b-a)*k;
+const p = (t,a,d=.4,fn=eo) => fn(clamp((t-a)/d));
+const $ = (root,s) => root.querySelector(s);
+const $$ = (root,s) => [...root.querySelectorAll(s)];
+function css(el,o){ if(!el) return; for(const k in o) el.style[k]=o[k]; }
+function setText(el,txt){ if(el && el.textContent!==txt) el.textContent=txt; }
+function rise(el,t,a,d=.5,dy=24){ if(!el) return; const k=p(t,a,d); el.style.opacity=k; el.style.transform=`translateY(${(1-k)*dy}px)`; }
+const brl = (n,d=0) => "R$ " + n.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const FAL = window.FALAS;
+const norm = s => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu,"");
+const LEAD = .3;   // a voz começa 0,3 s depois do início da cena (igual ao narracao.py)
+/** tempo (relativo à cena) em que a palavra `w` (n-ésima ocorrência) começa a ser falada */
+function cue(id, w, n=0){
+  const ws = FAL[id].palavras.filter(x => norm(x[0]) === norm(w));
+  if (!ws[n]) throw new Error(`palavra "${w}" (${n}) não está na cena ${id}`);
+  return LEAD + ws[n][1];
+}
+/** câmera: keys = [[t, cx, cy, zoom], ...] em coordenadas do print (720×1640); PW×PH = janela do painel */
+const PW = 760, PH = 790;
+function cam(el, keys, t){
+  let i = 0; while (i < keys.length-2 && t >= keys[i+1][0]) i++;
+  const a = keys[i], b = keys[Math.min(i+1, keys.length-1)];
+  const k = b[0] > a[0] ? eio(clamp((t-a[0])/(b[0]-a[0]))) : 1;
+  const z = lerp(a[3],b[3],k); let cx = lerp(a[1],b[1],k), cy = lerp(a[2],b[2],k);
+  const s = PW/720*z, hw = PW/2/s, hh = PH/2/s;
+  cx = clamp(cx, hw, 720-hw); cy = clamp(cy, hh, 1640-hh);
+  el.style.transform = `translate(${PW/2-cx*s}px,${PH/2-cy*s}px) scale(${s})`;
+}
+/** contorno: aparece em 0,3 s em [a,b] */
+function hl(el, t, a, b){ const k = p(t,a,.3)*(1-p(t,b,.3)); el.style.opacity = k; el.style.transform = `scale(${lerp(1.03,1,k)})`; }
+const rectHL = ([x0,y0,x1,y1]) => `<div class="hl" style="left:${x0}px;top:${y0}px;width:${x1-x0}px;height:${y1-y0}px"></div>`;
+const printCam = (src, rects) => `<div class="cam"><img src="prints/${src}.png">${rects.map(rectHL).join("")}</div>`;
+const logoImg = (cls="logoc") => `<img class="${cls}" src="../assets/logo-ag-power.png">`;
+
+/* ================= cenas (só as que têm print; ver README) ================= */
+const SCENES = []; const S = o => SCENES.push(o);
+const ticks = (a,d,step=.09) => Array.from({length:Math.floor(d/step)},(_,i)=>[+(a+i*step).toFixed(3),"tick"]);
+
+/* 1. Abertura */
+S({ id:1, name:"Abertura",
+  html: () => `<div class="center"><img class="lg" src="../assets/logo-ag-power.png" style="width:240px;height:240px;object-fit:contain"><div class="kick">AG Power · visão do gestor</div><div class="title" style="font-size:84px">A operação inteira<br>em um só lugar</div></div>`,
+  update(root,t){ const k=p(t,.1,.9); css($(root,".lg"),{opacity:k,transform:`scale(${lerp(.92,1,k)})`}); rise($(root,".kick"),t,.6); rise($(root,".title"),t,.8,.7); },
+  sfx: [[.1,"soft"]],
+});
+
+/* 2. Centro de Operações */
+const R_TOPO = { hoje:[368,849,688,1173], atras:[32,1190,352,1482], semtec:[368,1190,688,1482], semdado:[32,849,352,1173], tit:[28,395,520,565] };
+S({ id:2, name:"Centro de Operações",
+  html: () => `<div class="col"><div class="kick">Centro de Operações</div><div class="title">Situação agora</div>
+      <div class="chips"><span class="chip c1">Serviços do dia</span><span class="chip c2">Atrasados</span><span class="chip c3">Sem técnico</span><span class="chip c4">Usinas sem dado</span></div></div>
+    <div class="panel">${printCam("p-topo",[R_TOPO.tit,R_TOPO.hoje,R_TOPO.atras,R_TOPO.semtec,R_TOPO.semdado])}</div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(2,"serviços"), b:cue(2,"atrasou"), c:cue(2,"sem"), d:cue(2,"usinas"), e:cue(2,"dados")+.9 };
+    const c = this.c;
+    cam($(root,".cam"), [[0,360,520,1.0],[c.a-1.1,360,520,1.0],[c.a-.2,360,1130,1.04],[dur,360,1170,1.1]], t);
+    const h = $$(root,".hl");
+    hl(h[0],t,.9,c.a-.3);
+    hl(h[1],t,c.a,c.b-.15); hl(h[2],t,c.b,c.c-.15); hl(h[3],t,c.c,c.d-.15); hl(h[4],t,c.d,c.e);
+    [c.a,c.b,c.c,c.d].forEach((x,i)=>$(root,".c"+(i+1)).classList.toggle("on", t>=x));
+    rise($(root,".title"),t,.2);
+  },
+  sfx: [],
+});
+
+/* 3. Precisa de alguém decidir */
+const R_DEC = { head:[28,424,470,464], card:[32,474,720,566], nomes:[56,584,534,1092], quem:[534,590,720,1110] };
+S({ id:3, name:"Precisa de alguém decidir",
+  html: () => `<div class="col"><div class="kick">Gestão</div><div class="title">O que precisa<br>de decisão hoje</div>
+      <div class="over">Serviços sem técnico · Serviços atrasados</div></div>
+    <div class="panel">${printCam("p-decidir",[R_DEC.head,R_DEC.nomes,R_DEC.quem])}</div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(3,"precisa"), b:cue(3,"nome"), c:cue(3,"caminho") };
+    const c = this.c;
+    cam($(root,".cam"), [[0,360,300,1.0],[c.a+1.2,360,520,1.0],[c.b-.3,360,780,1.06],[dur,400,860,1.12]], t);
+    const h = $$(root,".hl");
+    hl(h[0],t,c.a,c.b-.3); hl(h[1],t,c.b,c.c-.2); hl(h[2],t,c.c,c.c+3.0);
+    rise($(root,".title"),t,.2); rise($(root,".over"),t,1.2);
+  },
+  sfx: [],
+});
+
+/* 4. Implantações */
+const R_ETA = { head:[24,893,688,937], todas:[28,945,692,1445], contrato:[32,949,352,1101], troca:[32,1289,352,1441] };
+S({ id:4, name:"Implantações",
+  html: () => `<div class="col"><div class="kick">Implantações por etapa</div><div class="title">Onde cada<br>implantação está</div>
+      <div class="over">130 em implantação · 112 fora do prazo</div></div>
+    <div class="panel">${printCam("p-etapas",[R_ETA.head,R_ETA.todas,R_ETA.contrato,R_ETA.troca])}</div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(4,"implantação"), b:cue(4,"etapa"), c:cue(4,"contrato"), d:cue(4,"troca") };
+    const c = this.c;
+    cam($(root,".cam"), [[0,360,640,1.0],[c.a,360,1000,1.04],[dur,360,1150,1.1]], t);
+    const h = $$(root,".hl");
+    hl(h[0],t,c.a,c.b-.1); hl(h[1],t,c.b,c.c-.1); hl(h[2],t,c.c,c.d-.15); hl(h[3],t,c.d,c.d+2.4);
+    rise($(root,".title"),t,.2); rise($(root,".over"),t,1.0);
+  },
+  sfx: [],
+});
+
+/* 7. Monitoramento (print do painel + print do monitoramento) */
+const R_MON = { sg:[32,985,352,1131], sc:[32,1149,352,1295], nc:[368,1149,688,1295], ph:[32,330,420,385] };
+S({ id:7, name:"Monitoramento",
+  html: () => `<div class="col"><div class="kick">Monitoramento das usinas</div><div class="title">Monitoramento<br>das usinas</div>
+      <div class="over">583 usinas monitoradas<br>150 sem dado há 2 dias ou mais</div></div>
+    <div class="panel">${printCam("p-topo",[R_TOPO.semdado])}${printCam("p-monitoramento",[R_MON.sg,R_MON.sc,R_MON.nc])}</div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(7,"hoje"), sw:cue(7,"cada")-.1 };
+    const c = this.c, cams = $$(root,".cam");
+    const m = p(t,c.sw,.4);
+    cams[0].style.opacity = 1-m; cams[1].style.opacity = m;
+    cam(cams[0], [[0,360,1000,1.0],[c.a-.6,360,1010,1.0],[c.a,360,1010,1.14],[dur,360,1010,1.14]], t);
+    cam(cams[1], [[0,360,520,1.0],[c.sw,360,520,1.0],[dur,360,1050,1.12]], t);
+    hl($$(cams[0],".hl")[0],t,c.a,c.sw);
+    const h = $$(cams[1],".hl");
+    hl(h[0],t,c.sw+.5,dur); hl(h[1],t,c.sw+1.1,dur); hl(h[2],t,c.sw+1.7,dur);
+    rise($(root,".title"),t,.2); rise($(root,".over"),t,1.0);
+  },
+  sfx: [],
+});
+
+/* 8. Só 59 no Plano Power — CARTÃO DE NÚMEROS no lugar do print P07 (não enviado) */
+S({ id:8, name:"Só 59 no Plano Power",
+  html: () => `<div class="center" style="gap:22px"><div class="kick">Plano Power</div>
+      <div class="rowA" style="display:flex;align-items:baseline;gap:34px"><span class="big n646" style="font-size:170px">0</span><span style="font-size:46px;font-weight:600;color:var(--mute)">usinas em operação</span></div>
+      <div class="rowB" style="display:flex;align-items:baseline;gap:34px"><span class="big n59" style="font-size:170px;color:var(--acc)">0</span><span style="font-size:46px;font-weight:700">estão no Plano Power</span></div>
+      <div class="barr" style="margin-top:14px"><i></i></div>
+      <div class="over" style="font-size:34px;align-self:center">Plano Power: menos de 1 em cada 10 · 9,1%</div></div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(8,"seiscentas"), b:cue(8,"cinquenta"), c:cue(8,"menos") };
+    const c = this.c;
+    rise($(root,".kick"),t,.2);
+    css($(root,".rowA"),{opacity:p(t,c.a-.3,.4)}); setText($(root,".n646"), Math.round(646*p(t,c.a-.1,1.8)).toString());
+    css($(root,".rowB"),{opacity:p(t,c.b-.3,.4)}); setText($(root,".n59"), Math.round(59*p(t,c.b-.1,1.4)).toString());
+    css($(root,".barr"),{opacity:p(t,c.a,.5)});
+    $(root,".barr i").style.width = (59/646*100*p(t,c.b,1.4))+"%";
+    rise($(root,".over"),t,c.c-.2);
+  },
+  sfx: [],
+});
+
+/* 9. Hoje × 30% da base (gráfico fora do app) */
+S({ id:9, name:"Hoje x 30% da base",
+  html: () => `<div style="position:absolute;left:420px;top:90px;width:1080px;height:700px">
+      <div class="bar b1" style="left:100px;height:170px;background:#5E7089"></div>
+      <div class="bar b2" style="left:660px;height:560px;background:var(--acc)"></div>
+      <div class="val v1" style="left:50px;bottom:200px;opacity:0"><span>R$ 69.837</span><small>por ano</small></div>
+      <div class="val v2" style="left:610px;bottom:590px;opacity:0;color:var(--acc)"><span>R$ 229.634</span><small>por ano</small></div>
+      <div class="lbl l1" style="left:50px;top:716px">Hoje<small>59 clientes</small></div>
+      <div class="lbl l2" style="left:610px;top:716px">Com 30% da base<small>194 clientes</small></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:3px;background:#2a3544"></div></div>
+    <div class="selo">Simulação · preço típico R$ 98,64/mês · base: 646 usinas em operação</div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(9,"cinquenta"), b:cue(9,"trinta") };
+    const c = this.c;
+    const k1 = p(t,c.a-.1,1.4,eio), k2 = p(t,c.b-.1,1.8,eio);
+    $(root,".b1").style.transform = `scaleY(${k1})`; $(root,".b2").style.transform = `scaleY(${k2})`;
+    css($(root,".l1"),{opacity:p(t,c.a-.4,.5)}); css($(root,".l2"),{opacity:p(t,c.b-.4,.5)});
+    css($(root,".v1"),{opacity:p(t,c.a+1.3,.5)}); css($(root,".v2"),{opacity:p(t,c.b+1.7,.5)});
+    css($(root,".selo"),{opacity:p(t,.2,.5)});
+  },
+  sfx: [],
+});
+
+/* 10. Dinheiro na mesa */
+const DIF = 159796.80;
+S({ id:10, name:"Dinheiro na mesa",
+  html: () => `<div class="center" style="gap:26px"><div class="kick" style="font-size:30px">Dinheiro na mesa</div>
+      <div class="big cnt" style="font-size:220px;color:var(--acc)">R$ 0,00</div>
+      <div class="sub sb" style="font-size:44px;color:var(--ink);font-weight:600">por ano · 135 clientes a mais</div></div>
+    <div class="selo">Simulação · preço típico R$ 98,64/mês</div>`,
+  update(root,t,dur){
+    this.c = this.c || { a:cue(10,"diferença"), b:cue(10,"quase") };
+    const c = this.c;
+    rise($(root,".kick"),t,.2);
+    css($(root,".cnt"),{opacity:p(t,c.a-.3,.4)});
+    setText($(root,".cnt"), brl(DIF*p(t,c.a,3.6,x=>1-Math.pow(1-x,2.4)),2));
+    css($(root,".sb"),{opacity:p(t,c.b+1.2,.6)});
+    css($(root,".selo"),{opacity:p(t,.2,.5)});
+  },
+  sfx: [],
+});
+
+/* 12. Encerramento (print do painel desfocado ao fundo) */
+S({ id:12, name:"Encerramento",
+  html: () => `<img src="prints/p-topo.png" style="position:absolute;left:560px;top:-300px;width:800px;filter:blur(22px) brightness(.35);transform:scale(1.4)">
+    <div class="center"><img class="lg" src="../assets/logo-ag-power.png" style="width:200px;height:200px;object-fit:contain"><div class="title" style="font-size:66px;max-width:1300px">A operação já está organizada.<br><span style="color:var(--acc)">Agora é transformar em receita.</span></div></div>`,
+  update(root,t){ const k=p(t,.1,.8); css($(root,".lg"),{opacity:k,transform:`scale(${lerp(.94,1,k)})`}); rise($(root,".title"),t,.5,.8); },
+  sfx: [[.1,"chime"]],
+});
+
+/* ================= linha do tempo ================= */
+const ACTIVE = SCENES;
+let acc = 0; for (const s of ACTIVE){ s.dur = FAL[s.id].dur; s.start = acc; acc += s.dur; }
+const TOTAL = acc, XF = .4;
+const stage = document.getElementById("stage");
+stage.innerHTML = `<div class="bgfx"></div>`;
+let VIEW_SCALE = 1;
+for (const s of ACTIVE){ const el = document.createElement("section"); el.className = "scene"; el.id = "s"+s.id; el.innerHTML = s.html(); stage.appendChild(el); s.el = el; }
+const corner = document.createElement("div"); corner.innerHTML = logoImg(); stage.appendChild(corner.firstChild);
+
+/* legendas: texto idêntico à narração, em trechos de até 2 linhas, no tempo da fala */
+const CAPS = [];
+for (const s of ACTIVE){
+  const ws = FAL[s.id].palavras; let chunk = [];
+  const flush = () => { if (!chunk.length) return;
+    CAPS.push({ a: s.start+LEAD+chunk[0][1], b: s.start+LEAD+chunk[chunk.length-1][2], txt: chunk.map(x=>x[0]).join(" ") }); chunk = []; };
+  ws.forEach((w,i)=>{ chunk.push(w); const fim = /[.:;!?]$/.test(w[0]), pausa = /,$/.test(w[0]) && chunk.length >= 6;
+    if (fim || pausa || chunk.length >= 12) flush(); });
+  flush();
+}
+CAPS.forEach((c,i)=>{ const n = CAPS[i+1]; if (n && n.a - c.b < .5) c.b = Math.max(c.b, n.a - .02); else c.b += .25; });
+const capEl = document.createElement("div"); capEl.className = "cap"; capEl.innerHTML = "<span></span>"; stage.appendChild(capEl);
+
+function renderAt(T){
+  T = clamp(T,0,TOTAL);
+  ACTIVE.forEach((s,i)=>{
+    const local = T - s.start, next = ACTIVE[i+1];
+    const vis = local >= 0 && (local < s.dur || (next && local < s.dur + XF) || (!next && local <= s.dur));
+    if (!vis){ s.el.style.visibility="hidden"; s.el.style.opacity=0; return; }
+    s.el.style.visibility = "visible";
+    const kin = i===0 ? 1 : eio(clamp(local/XF)), kout = next && local > s.dur ? eio(clamp((local-s.dur)/XF)) : 0;
+    s.el.style.opacity = kin*(1-kout);
+    s.update(s.el, Math.min(local, s.dur + XF), s.dur);
+  });
+  const c = CAPS.find(c => T >= c.a && T < c.b), span = capEl.firstChild;
+  if (c){ if (span.textContent !== c.txt) span.textContent = c.txt; capEl.style.opacity = clamp((T-c.a)/.1); } else capEl.style.opacity = 0;
+  stage.style.filter = T > TOTAL-.6 ? `brightness(${clamp((TOTAL-T)/.6)*.6+.4})` : "none";
+  return T;
+}
+const SFX = ACTIVE.flatMap(s => (s.sfx||[]).map(([t,k]) => ({ t: +(s.start+t).toFixed(3), k })));
+// instrumental leve e corporativa: sem bateria, só fundo e arpejo
+const MUSIC = { bpm: 88, arp: 1, kick: 9999, hat: 9999, clap: 9999, prog: "I-V-vi-IV" };
+window.COMMERCIAL = { W, H, FMT:"16x9", CUT:false, TOTAL, SFX, MUSIC,
+  CAPS: CAPS.map(c => ({ a:+c.a.toFixed(3), b:+c.b.toFixed(3), txt:c.txt })),
+  scenes: ACTIVE.map(s=>({id:s.id,name:s.name,start:s.start,dur:s.dur})) };
+window.renderAt = renderAt;
+
+function fit(){
+  const ctlH = Q.get("render") ? 0 : 56;
+  VIEW_SCALE = Math.min(innerWidth/W, (innerHeight-ctlH)/H);
+  stage.style.transform = `scale(${VIEW_SCALE})`;
+  document.getElementById("wrap").style.bottom = ctlH+"px";
+}
+if (Q.get("render")){
+  document.getElementById("wrap").style.cssText = "position:absolute;left:0;top:0;display:block";
+  VIEW_SCALE = 1; renderAt(+Q.get("t")||0);
+} else {
+  addEventListener("resize",fit); fit();
+  const ctl = document.getElementById("ctl"); ctl.hidden = false;
+  const scrub = document.getElementById("scrub"), tc = document.getElementById("tc"), scn = document.getElementById("scn"), play = document.getElementById("play");
+  scrub.max = TOTAL;
+  let t = +Q.get("t")||0, playing = !Q.get("t"), last = performance.now();
+  const audio = new Audio("../videos/narrado/demo-gestor-" + Math.round(TOTAL) + "s-16x9-narrado.mp4"); audio.preload = "auto";
+  const syncAudio = () => { if (!audio.error){ audio.currentTime = t; playing ? audio.play().catch(()=>{}) : audio.pause(); } };
+  const show = () => { renderAt(t); scrub.value = t; tc.textContent = t.toFixed(1)+" s / "+TOTAL+" s"; const s = ACTIVE.find(s=>t>=s.start && t<s.start+s.dur) || ACTIVE[ACTIVE.length-1]; scn.textContent = `Cena ${s.id} — ${s.name}`; play.textContent = playing ? "❚❚" : "▶︎"; };
+  play.onclick = () => { playing = !playing; if (t>=TOTAL) t=0; syncAudio(); show(); };
+  scrub.oninput = () => { t = +scrub.value; syncAudio(); show(); };
+  addEventListener("keydown", e => { if (e.code==="Space"){ e.preventDefault(); play.click(); } });
+  const loop = now => { const dt = (now-last)/1000; last = now; if (playing){ t += dt; if (t>=TOTAL){ t=TOTAL; playing=false; audio.pause(); } } show(); requestAnimationFrame(loop); };
+  if (playing) syncAudio();
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+1
+00:00:00,300 --> 00:00:02,343
+Essa é a plataforma da AG Power,
+
+2
+00:00:02,363 --> 00:00:03,867
+vista pelo gestor.
+
+3
+00:00:05,300 --> 00:00:09,409
+Logo na primeira tela, o gestor vê como está a operação agora:
+
+4
+00:00:09,429 --> 00:00:12,172
+os serviços do dia, o que atrasou,
+
+5
+00:00:12,192 --> 00:00:15,632
+o que está sem técnico e as usinas que pararam de mandar
+
+6
+00:00:15,652 --> 00:00:16,587
+dados.
+
+7
+00:00:17,300 --> 00:00:20,225
+Logo abaixo, o que precisa de alguém decidir hoje,
+
+8
+00:00:20,245 --> 00:00:23,665
+com o nome do cliente e o caminho para resolver ali mesmo.
+
+9
+00:00:27,300 --> 00:00:29,364
+E onde cada implantação está parada,
+
+10
+00:00:29,384 --> 00:00:33,407
+etapa por etapa, do contrato até a troca do medidor.
+
+11
+00:00:36,300 --> 00:00:40,234
+A plataforma acompanha quinhentas e oitenta e três usinas.
+
+12
+00:00:40,254 --> 00:00:44,158
+Hoje, cento e cinquenta estão há dois dias ou mais sem mandar
+
+13
+00:00:44,178 --> 00:00:45,133
+dados.
+
+14
+00:00:45,153 --> 00:00:49,513
+Cada uma é um cliente que pode estar perdendo geração sem saber.
+
+15
+00:00:50,300 --> 00:00:54,072
+Temos seiscentas e quarenta e seis usinas em operação.
+
+16
+00:00:54,092 --> 00:00:56,661
+Só cinquenta e nove estão no Plano Power.
+
+17
+00:00:56,681 --> 00:00:58,591
+Menos de uma em cada dez.
+
+18
+00:01:01,300 --> 00:01:03,199
+Com o preço típico do plano,
+
+19
+00:01:03,219 --> 00:01:06,902
+as cinquenta e nove assinaturas somam cerca de setenta mil reais por
+
+20
+00:01:06,922 --> 00:01:07,622
+ano.
+
+21
+00:01:07,642 --> 00:01:10,374
+Se só trinta por cento da base assinasse,
+
+22
+00:01:10,394 --> 00:01:13,221
+seriam quase duzentos e trinta mil.
+
+23
+00:01:15,300 --> 00:01:18,933
+A diferença é de quase cento e sessenta mil reais por ano.
+
+24
+00:01:18,953 --> 00:01:20,395
+É o que está ficando na mesa,
+
+25
+00:01:20,415 --> 00:01:22,510
+com clientes que já são nossos.
+
+26
+00:01:25,300 --> 00:01:27,364
+A operação já está organizada.
+
+27
+00:01:27,384 --> 00:01:32,023
+O próximo passo é transformar esse acompanhamento em receita.
