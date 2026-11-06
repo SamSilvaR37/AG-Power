@@ -3,6 +3,23 @@
 Solução SUNA para uma locadora de equipamentos para construção civil. **ObraLoc** é marca provisória.
 Todos os dados deste projeto são **fictícios** e nenhum WhatsApp real está conectado.
 
+## Abrir o app de demonstração
+
+```sh
+cd obraloc
+npm install
+npm run dev          # http://localhost:5173  (ou: npm run build && npm run preview)
+```
+
+Entre como **Rafaela Admin** ou **Carlos Atendente** (login de demonstração, sem senha).
+O banco Postgres roda **dentro do navegador** (PGlite) com as mesmas migrações do Supabase e
+os dados fictícios; fica salvo só naquele navegador. Ajustes → "Reiniciar dados da demonstração"
+volta ao estado inicial.
+
+Telas desta etapa: painel, disponibilidade por período, catálogo (preços, unidades, condição,
+linha do tempo de ocupação), clientes e contatos, lista de locações e ajustes (regra de cobrança,
+prazos, permissões, histórico).
+
 > Este é um projeto independente. Ele fica dentro do repositório `AG-Power` só porque é onde a
 > sessão tinha acesso; não usa nada do CRM solar AG Power nem do banco dele. Pode ser movido
 > para um repositório próprio sem mudar nada.
@@ -25,7 +42,7 @@ pagamento e nunca confirma devolução.
 | **Funções da equipe** | `aprovar_pre_reserva`, `registrar_retirada`, `registrar_devolucao`, `registrar_recebimento`… cada uma confere a permissão do usuário. |
 | **Ferramentas do assistente** (`bot_*`) | Única porta da IA para o sistema. Papel `obraloc_bot` sem acesso a tabelas. |
 | **Integração WhatsApp** | Papel `obraloc_integracao`: registra mensagens recebidas (com deduplicação) e despacha a fila de saída. Os adaptadores de provedor ficam fora do banco. |
-| **App (próximas etapas)** | React + TypeScript. Painel, cadastros, caixa de atendimento. |
+| **App** (`src/`) | React + TypeScript (Vite). As telas só falam com a interface `Backend` (`src/backend/backend.ts`). Hoje a implementação é `PgliteBackend` (banco no navegador); o `SupabaseBackend` usará as mesmas funções SQL. Cada chamada roda como o usuário logado (papel `authenticated`), então o RLS vale também na demonstração. |
 
 ### Decisões importantes
 
@@ -98,14 +115,13 @@ obraloc/
 
 ## Como testar
 
-Requer PostgreSQL 16 instalado localmente (não usa nenhum projeto Supabase):
-
 ```sh
 cd obraloc
-scripts/db-test.sh            # VERBOSE=1 mostra cada verificação; KEEP=1 mantém o banco no ar
+npm test                      # camada de dados do app + suíte SQL rodando no PGlite (o banco do navegador)
+scripts/db-test.sh            # suíte SQL no PostgreSQL 16 local + concorrência real (VERBOSE=1, KEEP=1)
 ```
 
-O que é verificado (153 verificações SQL + 5 cenários de concorrência):
+O que é verificado (168 verificações SQL, 5 cenários de concorrência, 16 testes do app):
 
 - dois clientes (e doze) tentando a última unidade no mesmo período: só um consegue;
 - webhook duplicado, inclusive em entregas simultâneas;
@@ -121,9 +137,9 @@ O que é verificado (153 verificações SQL + 5 cenários de concorrência):
 
 ## Plano de etapas
 
-1. **Banco, regras e dados fictícios** ✅ (esta entrega)
-2. App React + TypeScript com o mesmo banco rodando no navegador (PGlite, mesmas migrações),
-   login de demonstração admin/atendente: painel, catálogo, clientes, disponibilidade por período.
+1. **Banco, regras e dados fictícios** ✅
+2. **App React + TypeScript** com o mesmo banco no navegador (PGlite), login de demonstração
+   admin/atendente: painel, catálogo, clientes, disponibilidade por período ✅
 3. Camada de provedores WhatsApp (interface única + provedor simulado) e caixa de atendimento
    com simulador de mensagens recebidas.
 4. Assistente de demonstração **determinístico** (identificado como tal) usando só as ferramentas
@@ -135,7 +151,9 @@ O que é verificado (153 verificações SQL + 5 cenários de concorrência):
 
 ## O que ainda é simulado ou está pendente
 
-- Nenhum app de interface ainda (etapa 2).
+- Login sem senha e banco local no navegador (simulados). Fotos de equipamento por endereço de
+  imagem; envio de arquivo entra com o Supabase Storage.
+- Aprovação, retirada, devolução e recebimentos ainda não têm tela (etapa 5); as regras já existem no banco.
 - Nenhum provedor de WhatsApp: existe só o provedor `simulado`. A validação de assinatura do
   webhook depende do provedor escolhido. **Antes de integrar, é preciso definir qual será usado.**
 - Nenhuma IA: as ferramentas existem, o assistente ainda não.
