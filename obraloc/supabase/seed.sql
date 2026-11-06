@@ -225,7 +225,7 @@ begin
           'aguardando_equipe', 'Reclamação sobre equipamento', now() - interval '5 minutes', 2, 1)
   returning id into v_conv;
   insert into public.mensagens (conversa_id, direcao, autor, provedor, id_externo, corpo, estado, criado_em, epoca_bot) values
-    (v_conv, 'entrada', 'cliente', 'simulado', 'seed-m7', 'A placa vibratória da última locação veio com o motor falhando.', 'recebida', now() - interval '6 minutes', null),
+    (v_conv, 'entrada', 'cliente', 'simulado', 'seed-m7', 'A placa vibratória da última locação veio com o motor falhando.', 'recebida', now() - interval '6 minutes 30 seconds', null),
     (v_conv, 'saida', 'sistema', 'simulado', 'seed-m8', 'Sinto muito pelo problema. Vou chamar alguém da equipe para te atender.', 'entregue', now() - interval '6 minutes', null),
     (v_conv, 'entrada', 'cliente', 'simulado', 'seed-m9', 'Ok, aguardo.', 'recebida', now() - interval '5 minutes', null);
 

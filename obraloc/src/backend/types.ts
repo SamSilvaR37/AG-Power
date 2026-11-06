@@ -224,3 +224,70 @@ export class ErroNegocio extends Error {
     this.name = 'ErroNegocio';
   }
 }
+
+// ------------------------------------------------------------ atendimento
+export type ModoConversa = 'bot' | 'aguardando_equipe' | 'humano';
+export type EstadoMensagem = 'recebida' | 'pendente' | 'enviando' | 'enviada' | 'entregue' | 'lida' | 'falhou' | 'cancelada';
+
+export interface ConversaResumo {
+  id: string;
+  provedor: string;
+  telefone: string;
+  nomeContato: string | null;
+  clienteId: string | null;
+  cliente: string | null;
+  cadastroIncompleto: boolean;
+  modo: ModoConversa;
+  atendente: string | null;
+  atendenteId: string | null;
+  epocaBot: number;
+  motivoEscalonamento: string | null;
+  naoLidas: number;
+  ultimaMensagemEm: string | null;
+  ultimaMensagem: string | null;
+  ultimaTipo: string | null;
+  ultimoAutor: string | null;
+  pendentes: number;
+  falhas: number;
+  audiosSemTexto: number;
+}
+
+export interface Mensagem {
+  id: string;
+  direcao: 'entrada' | 'saida';
+  autor: 'cliente' | 'bot' | 'equipe' | 'sistema';
+  autorNome: string | null;
+  tipo: 'texto' | 'audio' | 'imagem' | 'documento' | 'outro';
+  corpo: string | null;
+  transcricaoEstado: 'nao_aplica' | 'pendente' | 'indisponivel' | 'concluida' | 'falhou';
+  transcricao: string | null;
+  estado: EstadoMensagem;
+  erro: string | null;
+  criadoEm: string;
+}
+
+export interface OrcamentoResumo {
+  id: string;
+  numero: number;
+  status: 'enviado' | 'aceito' | 'recusado' | 'expirado' | 'convertido';
+  inicio: string;
+  fim: string;
+  valorTotal: number;
+  validadeAte: string;
+  regra: string;
+  itens: string | null;
+}
+
+export interface ConversaDetalhe {
+  conversa: ConversaResumo;
+  mensagens: Mensagem[];
+  orcamentos: OrcamentoResumo[];
+  locacoes: LocacaoResumo[];
+}
+
+export interface ConexaoWhatsApp {
+  provedor: string;
+  estado: 'simulado' | 'conectado' | 'desconectado' | 'erro';
+  ultimoErro: string | null;
+  atualizadoEm: string;
+}

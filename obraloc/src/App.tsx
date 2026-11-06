@@ -3,7 +3,10 @@ import type { Backend } from './backend/backend';
 import type { Sessao } from './backend/types';
 import { abrirBanco } from './backend/pglite/db';
 import { PgliteBackend } from './backend/pglite/backend';
-import { Ctx, type Contexto } from './lib/contexto';
+import { PgliteFerramentasBot, PgliteIntegracao } from './backend/pglite/servidor';
+import { Ctx, type Atendimento, type Contexto } from './lib/contexto';
+import { ProvedorSimulado } from './whatsapp/simulado';
+import { ServicoAtendimento } from './whatsapp/servico';
 import { navegar, useRota } from './lib/router';
 import { Carregando, ErroCaixa, Icone, Selo } from './ui/componentes';
 import { Login } from './pages/Login';
@@ -15,11 +18,14 @@ import { ClientesPagina } from './pages/Clientes';
 import { ClientePagina } from './pages/Cliente';
 import { LocacoesPagina } from './pages/Locacoes';
 import { ConfiguracoesPagina } from './pages/Configuracoes';
+import { AtendimentoPagina } from './pages/Atendimento';
+import { MaisPagina } from './pages/Mais';
 
 const CHAVE_SESSAO = 'obraloc.sessao';
 
 const NAV = [
   { rota: 'painel', rotulo: 'Painel', icone: 'painel' },
+  { rota: 'atendimento', rotulo: 'Atendimento', icone: 'whatsapp' },
   { rota: 'disponibilidade', rotulo: 'Disponibilidade', icone: 'calendario' },
   { rota: 'catalogo', rotulo: 'Catálogo', icone: 'catalogo' },
   { rota: 'clientes', rotulo: 'Clientes', icone: 'clientes' },
@@ -27,9 +33,32 @@ const NAV = [
   { rota: 'configuracoes', rotulo: 'Ajustes', icone: 'ajustes' },
 ] as const;
 
+const NAV_MOVEL = [
+  { rota: 'painel', rotulo: 'Painel', icone: 'painel' },
+  { rota: 'atendimento', rotulo: 'Atendimento', icone: 'whatsapp' },
+  { rota: 'disponibilidade', rotulo: 'Agenda', icone: 'calendario' },
+  { rota: 'clientes', rotulo: 'Clientes', icone: 'clientes' },
+  { rota: 'mais', rotulo: 'Mais', icone: 'catalogo' },
+] as const;
+
 // Uma única instância do banco, mesmo com o StrictMode montando o app duas vezes.
 let bancoAberto: ReturnType<typeof abrirBanco> | null = null;
 const obterBanco = () => (bancoAberto ??= abrirBanco({ persistir: true }));
+
+// "Lado servidor" da demonstração: provedor simulado + serviço de webhook/despachante.
+let atendimentoUnico: Atendimento | null = null;
+function obterAtendimento(db: Awaited<ReturnType<typeof abrirBanco>>): Atendimento {
+  if (atendimentoUnico) return atendimentoUnico;
+  const integracao = new PgliteIntegracao(db);
+  const provedor = new ProvedorSimulado();
+  const servico = new ServicoAtendimento(integracao, provedor);
+  provedor.entregar = (req) => servico.receberWebhook(req);
+  servico.iniciar();
+  // rotina que, em produção, seria agendada no servidor
+  setInterval(() => { void integracao.expirarPreReservas().catch(() => undefined); }, 60_000);
+  atendimentoUnico = { servico, provedor, bot: new PgliteFerramentasBot(db) };
+  return atendimentoUnico;
+}
 
 function lerSessaoSalva(): string | null {
   try { return localStorage.getItem(CHAVE_SESSAO); } catch { return null; }
@@ -40,6 +69,7 @@ function salvarSessao(id: string | null) {
 
 export function App() {
   const [backend, setBackend] = useState<Backend | null>(null);
+  const [atendimento, setAtendimento] = useState<Atendimento | null>(null);
   const [erroInicio, setErroInicio] = useState<Error | null>(null);
   const [sessao, setSessao] = useState<Sessao | null>(null);
   const [restaurando, setRestaurando] = useState(true);
@@ -52,6 +82,7 @@ export function App() {
       .then(async (db) => {
         const b = new PgliteBackend(db);
         if (!vivo) return;
+        setAtendimento(obterAtendimento(db));
         setBackend(b);
         const salvo = lerSessaoSalva();
         if (salvo) {
@@ -72,9 +103,9 @@ export function App() {
   const avisar = useCallback((msg: string, tipo: 'ok' | 'erro' = 'ok') => setToast({ msg, tipo }), []);
   const sair = useCallback(() => { salvarSessao(null); setSessao(null); navegar('/'); }, []);
 
-  const ctx = useMemo<Contexto | null>(() => (backend && sessao ? {
-    backend, sessao, sair, avisar, pode: (p) => sessao.permissoes.includes(p),
-  } : null), [backend, sessao, sair, avisar]);
+  const ctx = useMemo<Contexto | null>(() => (backend && sessao && atendimento ? {
+    backend, sessao, sair, avisar, atendimento, pode: (p) => sessao.permissoes.includes(p),
+  } : null), [backend, sessao, sair, avisar, atendimento]);
 
   if (erroInicio) {
     return (
@@ -104,6 +135,8 @@ export function App() {
     case 'clientes': pagina = rota[1] ? <ClientePagina id={rota[1]} /> : <ClientesPagina />; break;
     case 'locacoes': pagina = <LocacoesPagina filtroInicial={rota[1]} />; break;
     case 'configuracoes': pagina = <ConfiguracoesPagina />; break;
+    case 'atendimento': pagina = <AtendimentoPagina conversaId={rota[1]} />; break;
+    case 'mais': pagina = <MaisPagina />; break;
     default: pagina = <PainelPagina />;
   }
 
@@ -111,7 +144,7 @@ export function App() {
     <Ctx.Provider value={ctx}>
       <div className="app">
         <div className="faixa-demo" role="note">
-          <Selo tipo="ficticio" /> <span>Demonstração com dados fictícios, salva só neste navegador. Sem WhatsApp real.</span>
+          <Selo tipo="ficticio" /> <span>Demonstração com dados fictícios, salva só neste navegador. WhatsApp simulado.</span>
         </div>
         <div className="layout">
           <aside className="lateral">
@@ -146,11 +179,14 @@ export function App() {
         </div>
 
         <nav className="nav-inferior" aria-label="Principal">
-          {NAV.slice(0, 5).map((n) => (
-            <a key={n.rota} href={`#/${n.rota}`} className={secao === n.rota ? 'ativo' : ''} aria-current={secao === n.rota ? 'page' : undefined}>
-              <Icone nome={n.icone} />{n.rotulo === 'Disponibilidade' ? 'Agenda' : n.rotulo}
-            </a>
-          ))}
+          {NAV_MOVEL.map((n) => {
+            const ativo = n.rota === 'mais' ? ['mais', 'catalogo', 'locacoes', 'configuracoes'].includes(secao) : secao === n.rota;
+            return (
+              <a key={n.rota} href={`#/${n.rota}`} className={ativo ? 'ativo' : ''} aria-current={ativo ? 'page' : undefined}>
+                <Icone nome={n.icone} />{n.rotulo}
+              </a>
+            );
+          })}
         </nav>
         {toast && <div className={`toast ${toast.tipo === 'erro' ? 'toast-erro' : ''}`} role="status">{toast.msg}</div>}
       </div>

@@ -9,6 +9,7 @@ import {
   type Configuracoes, type DisponibilidadeLinha, type EntradaHistorico, type EquipamentoDetalhe,
   type EquipamentoInput, type EquipamentoResumo, type LocacaoResumo, type Ocupacao, type Painel,
   type Permissao, type Preco, type RegraCobranca, type Sessao, type StatusLocacao, type UsuarioDemo,
+  type ConversaResumo, type ConversaDetalhe, type ConexaoWhatsApp, type Mensagem, type OrcamentoResumo,
 } from '../types';
 import { reiniciarBanco } from './db';
 
@@ -360,6 +361,73 @@ export class PgliteBackend implements Backend {
         entidade: String(x.entidade), dados: (x.dados as Record<string, unknown>) ?? {},
       }));
     });
+  }
+
+  // ------------------------------------------------------------ caixa de atendimento
+  private mapConversa(x: Linha): ConversaResumo {
+    return {
+      id: String(x.id), provedor: String(x.provedor), telefone: String(x.telefone), nomeContato: txt(x.nome_contato),
+      clienteId: txt(x.cliente_id), cliente: txt(x.cliente), cadastroIncompleto: Boolean(x.cadastro_incompleto),
+      modo: x.modo as ConversaResumo['modo'], atendente: txt(x.atendente), atendenteId: txt(x.atendente_id),
+      epocaBot: num(x.epoca_bot), motivoEscalonamento: txt(x.motivo_escalonamento), naoLidas: num(x.nao_lidas),
+      ultimaMensagemEm: isoOuNull(x.ultima_mensagem_em), ultimaMensagem: txt(x.ultima_mensagem), ultimaTipo: txt(x.ultima_tipo),
+      ultimoAutor: txt(x.ultimo_autor), pendentes: num(x.pendentes), falhas: num(x.falhas), audiosSemTexto: num(x.audios_sem_texto),
+    };
+  }
+
+  conversas(): Promise<ConversaResumo[]> {
+    return this.comoUsuario(async (tx) => {
+      const r = await tx.query<Linha>(`select * from public.v_conversas_caixa
+        order by case modo when 'aguardando_equipe' then 0 else 1 end, ultima_mensagem_em desc nulls last`);
+      return r.rows.map((x) => this.mapConversa(x));
+    });
+  }
+
+  conversa(id: string): Promise<ConversaDetalhe> {
+    return this.comoUsuario(async (tx) => {
+      const c = await tx.query<Linha>('select * from public.v_conversas_caixa where id = $1', [id]);
+      if (!c.rows[0]) throw new ErroNegocio('nao_encontrado', 'Conversa não encontrada.');
+      const conversa = this.mapConversa(c.rows[0]);
+      const m = await tx.query<Linha>(`select m.*, p.nome as autor_nome from public.mensagens m
+        left join public.perfis p on p.user_id = m.autor_id where m.conversa_id = $1 order by m.criado_em, m.id`, [id]);
+      const o = await tx.query<Linha>(`select o.*, o.regra->>'nome' as regra_nome,
+          (select string_agg(i.quantidade || '× ' || e.nome, ', ') from public.orcamento_itens i
+            join public.equipamentos e on e.id = i.equipamento_id where i.orcamento_id = o.id) as itens
+        from public.orcamentos o where o.conversa_id = $1 or ($2::uuid is not null and o.cliente_id = $2)
+        order by o.criado_em desc limit 10`, [id, conversa.clienteId]);
+      const l = conversa.clienteId
+        ? await tx.query<Linha>('select * from public.v_locacoes_resumo where cliente_id = $1 order by inicio desc limit 10', [conversa.clienteId])
+        : { rows: [] as Linha[] };
+      return {
+        conversa,
+        mensagens: m.rows.map((x): Mensagem => ({
+          id: String(x.id), direcao: x.direcao as Mensagem['direcao'], autor: x.autor as Mensagem['autor'], autorNome: txt(x.autor_nome),
+          tipo: x.tipo as Mensagem['tipo'], corpo: txt(x.corpo), transcricaoEstado: x.transcricao_estado as Mensagem['transcricaoEstado'],
+          transcricao: txt(x.transcricao), estado: x.estado as Mensagem['estado'], erro: txt(x.erro), criadoEm: iso(x.criado_em),
+        })),
+        orcamentos: o.rows.map((x): OrcamentoResumo => ({
+          id: String(x.id), numero: num(x.numero), status: x.status as OrcamentoResumo['status'], inicio: iso(x.inicio), fim: iso(x.fim),
+          valorTotal: num(x.valor_total), validadeAte: iso(x.validade_ate), regra: String(x.regra_nome ?? ''), itens: txt(x.itens),
+        })),
+        locacoes: l.rows.map(mapLocacao),
+      };
+    });
+  }
+
+  async assumirAtendimento(conversaId: string) {
+    const r = await this.rpc<{ respostas_canceladas: number }>('select public.assumir_atendimento($1) as r', [conversaId]);
+    return { respostasCanceladas: num(r.respostas_canceladas) };
+  }
+  async devolverAoAssistente(conversaId: string) { await this.rpc('select public.devolver_ao_assistente($1) as r', [conversaId]); }
+  async enviarMensagem(conversaId: string, texto: string) { await this.rpc('select public.equipe_enviar_mensagem($1, $2) as r', [conversaId, texto]); }
+  async reenviarMensagem(mensagemId: string) { await this.rpc('select public.reenviar_mensagem($1) as r', [mensagemId]); }
+  async marcarLida(conversaId: string) { await this.rpc('select public.marcar_conversa_lida($1) as r', [conversaId]); }
+  async vincularCliente(conversaId: string, clienteId: string) { await this.rpc('select public.vincular_cliente_conversa($1, $2) as r', [conversaId, clienteId]); }
+
+  conexoes(): Promise<ConexaoWhatsApp[]> {
+    return this.comoUsuario(async (tx) => (await tx.query<Linha>('select * from public.conexoes_whatsapp order by provedor')).rows.map((x) => ({
+      provedor: String(x.provedor), estado: x.estado as ConexaoWhatsApp['estado'], ultimoErro: txt(x.ultimo_erro), atualizadoEm: iso(x.atualizado_em),
+    })));
   }
 
   async reiniciarDemo(): Promise<void> {

@@ -28,7 +28,7 @@ function Conteudo({ p }: { p: Painel }) {
         <Numero valor={p.devolucoes_proximas.length} rotulo="Devoluções em 48 h" href="#/locacoes/em_andamento" />
         <Numero valor={p.pre_reservas.length} rotulo="Aguardando aprovação" tom={p.pre_reservas.length ? 'atencao' : undefined} href="#/locacoes/pre_reserva" />
         <Numero valor={brl(p.a_receber.total)} rotulo={`A receber (${p.a_receber.locacoes})`} />
-        <Numero valor={p.conversas_aguardando} rotulo="Conversas p/ equipe" tom={p.conversas_aguardando ? 'atencao' : undefined} />
+        <Numero valor={p.conversas_aguardando} rotulo="Conversas p/ equipe" tom={p.conversas_aguardando ? 'atencao' : undefined} href="#/atendimento" />
       </div>
 
       <div className="grade-2">

@@ -317,3 +317,105 @@ th:last-child, td:last-child { padding-right: 0; }
 .chave-valor { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 0.9rem; }
 .chave-valor dt { color: var(--suave); }
 .chave-valor dd { margin: 0; overflow-wrap: anywhere; }
+
+/* ------------------------------------------------ caixa de atendimento */
+.link { background: none; border: 0; padding: 0; color: var(--verde-2); text-decoration: underline; cursor: pointer; font: inherit; }
+.tag-modo-bot { background: var(--info-fundo); color: var(--info); }
+.tag-modo-aguardando_equipe { background: var(--alerta-fundo); color: var(--alerta); }
+.tag-modo-humano { background: var(--ok-fundo); color: var(--ok); }
+.nao-lidas { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--verde); color: #fff; font-size: 0.72rem; font-weight: 700; display: inline-grid; place-items: center; }
+.conexao { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--suave); }
+.conexao .ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.conexao-erro { color: var(--alerta); }
+.conexao-erro .ponto { background: var(--alerta); }
+
+.caixa { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: -16px -16px -96px; min-height: calc(100dvh - 120px); }
+.caixa-lista { background: var(--superficie); min-width: 0; padding-bottom: 80px; }
+.caixa-lista-topo { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-bottom: 1px solid var(--borda); }
+.caixa-conversa { display: none; min-width: 0; background: var(--superficie-2); }
+.caixa-com-conversa .caixa-lista { display: none; }
+.caixa-com-conversa .caixa-conversa { display: block; }
+.conversas > li + li { border-top: 1px solid var(--borda); }
+.conversa-item { display: flex; gap: 12px; padding: 12px 16px; text-decoration: none; color: inherit; }
+.conversa-item:hover { background: var(--superficie-2); }
+.conversa-item.ativa { background: var(--verde-claro); }
+.conversa-linha1 { display: flex; justify-content: space-between; gap: 8px; }
+.conversa-previa { font-size: 0.86rem; color: var(--suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 1px 0 5px; }
+.conversa-linha3 { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.caixa-vazia { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--suave); padding: 32px; text-align: center; }
+
+.conversa { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr auto; height: calc(100dvh - 92px); }
+.conversa-topo { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--superficie); border-bottom: 1px solid var(--borda); }
+.faixa-modo { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 14px; font-size: 0.86rem; border-bottom: 1px solid var(--borda); }
+.faixa-bot { background: var(--info-fundo); color: #1d4166; }
+.faixa-aguardando_equipe { background: var(--alerta-fundo); color: #6e231d; }
+.faixa-humano { background: var(--ok-fundo); color: #14523a; }
+.mensagens { overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 6px; }
+.dia-separador { text-align: center; margin: 8px 0; }
+.dia-separador span { font-size: 0.72rem; background: var(--neutro-fundo); color: var(--suave); padding: 2px 10px; border-radius: 999px; }
+.balao-linha { display: flex; }
+.balao-linha.saida { justify-content: flex-end; }
+.balao { max-width: min(78%, 520px); padding: 7px 10px 5px; border-radius: 12px; background: var(--superficie); border: 1px solid var(--borda); font-size: 0.92rem; overflow-wrap: anywhere; }
+.balao p { white-space: pre-wrap; }
+.saida .balao { background: #e3efe7; border-color: #cfe1d5; }
+.saida .balao-bot { background: #e6eef8; border-color: #d2def0; }
+.saida .balao-sistema { background: #f1efe6; border-color: #e3dfcf; }
+.balao-autor { font-size: 0.72rem; font-weight: 700; color: var(--suave); margin-bottom: 2px; }
+.balao-rodape { display: flex; justify-content: flex-end; gap: 8px; font-size: 0.68rem; color: var(--suave); margin-top: 2px; }
+.estado-txt-lida { color: var(--info); font-weight: 600; }
+.estado-txt-falhou { color: var(--alerta); font-weight: 700; }
+.estado-txt-pendente, .estado-txt-enviando { color: var(--atencao); font-weight: 600; }
+.balao.estado-falhou { border-color: #e6b3ad; }
+.balao.estado-cancelada { opacity: 0.7; border-style: dashed; }
+.balao.estado-cancelada p { text-decoration: line-through; }
+.balao-erro { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 5px; padding-top: 5px; border-top: 1px solid #efc9c4; font-size: 0.78rem; color: var(--alerta); }
+.balao-cancelada { margin-top: 4px; font-size: 0.75rem; color: var(--suave); }
+.balao-audio p { font-size: 0.84rem; margin-top: 2px; }
+.aviso-audio { color: var(--atencao); }
+.compositor { display: flex; gap: 8px; align-items: flex-end; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--superficie); border-top: 1px solid var(--borda); }
+.compositor textarea { min-height: 44px; max-height: 140px; resize: none; }
+.conversa-info { display: none; }
+.so-largo { display: none; }
+
+/* celular: a conversa aberta ocupa a tela inteira (acima da barra de navegação) */
+@media (max-width: 899px) {
+  .caixa-com-conversa .caixa-conversa { position: fixed; inset: 0; z-index: 35; }
+  .caixa-com-conversa .conversa { height: 100dvh; }
+}
+@media (min-width: 900px) {
+  .so-movel { display: none; }
+  .caixa { grid-template-columns: 330px minmax(0, 1fr); margin: -24px -28px -48px; height: calc(100dvh - 33px); min-height: 0; }
+  .caixa-lista { border-right: 1px solid var(--borda); overflow-y: auto; padding-bottom: 0; }
+  .caixa-conversa, .caixa-com-conversa .caixa-conversa { display: block; }
+  .caixa-com-conversa .caixa-lista { display: block; }
+  .conversa { height: calc(100dvh - 33px); }
+}
+@media (min-width: 1280px) {
+  .so-movel-e-medio { display: none; }
+  .conversa { grid-template-columns: minmax(0, 1fr) 300px; }
+  .conversa > :not(.conversa-info):not(.folha-fundo) { grid-column: 1; }
+  .conversa-info.so-largo { display: block; grid-column: 2; grid-row: 1 / span 4; overflow-y: auto; padding: 16px; background: var(--superficie); border-left: 1px solid var(--borda); }
+}
+
+/* ------------------------------------------------ simulador */
+.simulador {
+  position: fixed; z-index: 45; inset: 0; display: flex; flex-direction: column; background: var(--superficie);
+}
+.simulador-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; padding: 12px 14px; background: #2f4a6b; color: #fff; }
+.simulador-topo .selo-simulado { background: #e5edf7; }
+.simulador-corpo { flex: 1; overflow-y: auto; padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.aparelho { min-height: 200px; max-height: 42dvh; overflow-y: auto; padding: 10px; border-radius: 12px; background: #ece5dd; display: flex; flex-direction: column; gap: 5px; }
+.balao-aparelho-eu { background: #d9fdd3 !important; border-color: #c4ecbd !important; }
+.balao-aparelho-loja { background: #fff !important; }
+.simulador-testes { border: 1px solid var(--borda); border-radius: 10px; padding: 8px 10px; }
+.simulador-testes summary { cursor: pointer; font-weight: 600; font-size: 0.88rem; }
+.simulador-registro { list-style: none; margin: 0; padding: 8px 10px; border-radius: 10px; background: var(--neutro-fundo); font-size: 0.78rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.simulador-registro li + li { margin-top: 3px; }
+/* no computador o simulador vira uma coluna ao lado da conversa (não cobre nada) */
+@media (min-width: 900px) {
+  .caixa-com-simulador { grid-template-columns: 300px minmax(0, 1fr) 360px; }
+  .caixa-com-simulador .simulador { position: static; height: calc(100dvh - 33px); border-left: 1px solid var(--borda); }
+  .caixa-com-simulador .conversa-info.so-largo { display: none !important; }
+  .caixa-com-simulador .conversa { grid-template-columns: minmax(0, 1fr) !important; }
+  .caixa-com-simulador .so-movel-e-medio { display: inline-flex !important; }
+}

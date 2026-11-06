@@ -6,6 +6,7 @@ import type {
   Categoria, ClienteDetalhe, ClienteInput, ClienteResumo, Configuracoes, DisponibilidadeLinha,
   EntradaHistorico, EquipamentoDetalhe, EquipamentoInput, EquipamentoResumo, LocacaoResumo, Ocupacao,
   Painel, Preco, RegraCobranca, Sessao, StatusLocacao, UsuarioDemo, CondicaoUnidade,
+  ConversaResumo, ConversaDetalhe, ConexaoWhatsApp,
 } from './types';
 
 export interface Backend {
@@ -46,6 +47,17 @@ export interface Backend {
   salvarConfiguracoes(c: Configuracoes): Promise<void>;
 
   historico(limite: number): Promise<EntradaHistorico[]>;
+
+  // caixa de atendimento
+  conversas(): Promise<ConversaResumo[]>;
+  conversa(id: string): Promise<ConversaDetalhe>;
+  assumirAtendimento(conversaId: string): Promise<{ respostasCanceladas: number }>;
+  devolverAoAssistente(conversaId: string): Promise<void>;
+  enviarMensagem(conversaId: string, texto: string): Promise<void>;
+  reenviarMensagem(mensagemId: string): Promise<void>;
+  marcarLida(conversaId: string): Promise<void>;
+  vincularCliente(conversaId: string, clienteId: string): Promise<void>;
+  conexoes(): Promise<ConexaoWhatsApp[]>;
 
   /** Só na demonstração: apaga o banco local e recria com os dados fictícios. */
   reiniciarDemo?(): Promise<void>;
