@@ -10,6 +10,7 @@ import {
   type EquipamentoInput, type EquipamentoResumo, type LocacaoResumo, type Ocupacao, type Painel,
   type Permissao, type Preco, type RegraCobranca, type Sessao, type StatusLocacao, type UsuarioDemo,
   type ConversaResumo, type ConversaDetalhe, type ConexaoWhatsApp, type Mensagem, type OrcamentoResumo,
+  type LocacaoDetalhe, type ItemChecklist, type FormaPagamento,
 } from '../types';
 import { reiniciarBanco } from './db';
 
@@ -317,6 +318,72 @@ export class PgliteBackend implements Backend {
         [status]);
       return r.rows.map(mapLocacao);
     });
+  }
+
+  locacao(id: string): Promise<LocacaoDetalhe> {
+    return this.comoUsuario(async (tx) => {
+      const r = await tx.query<Linha>('select * from public.v_locacoes_resumo where id = $1', [id]);
+      if (!r.rows[0]) throw new ErroNegocio('nao_encontrado', 'Locação não encontrada.');
+      const l = (await tx.query<Linha>(`select l.*, o.numero as orcamento_numero, p.nome as aprovado_por_nome
+        from public.locacoes l left join public.orcamentos o on o.id = l.orcamento_id
+        left join public.perfis p on p.user_id = l.aprovado_por where l.id = $1`, [id])).rows[0];
+      const itens = await tx.query<Linha>(`select i.*, e.nome from public.locacao_itens i join public.equipamentos e on e.id = i.equipamento_id
+        where i.locacao_id = $1 order by e.nome`, [id]);
+      const unid = await tx.query<Linha>(`select a.unidade_id, a.ativo, u.codigo, u.condicao, e.nome from public.alocacoes a
+        join public.unidades u on u.id = a.unidade_id join public.equipamentos e on e.id = u.equipamento_id
+        where a.locacao_id = $1 order by a.ativo desc, u.codigo`, [id]);
+      const riscos = await tx.query<Linha>('select * from public.v_reservas_em_risco where locacao_id = $1', [id]);
+      const vist = await tx.query<Linha>(`select v.*, p.nome as por from public.vistorias v left join public.perfis p on p.user_id = v.realizado_por
+        where v.locacao_id = $1 order by v.realizado_em`, [id]);
+      const rec = await tx.query<Linha>(`select r.*, p.nome as por from public.recebimentos r left join public.perfis p on p.user_id = r.registrado_por
+        where r.locacao_id = $1 order by r.recebido_em`, [id]);
+      const hist = await tx.query<Linha>(`select h.*, p.nome as ator from public.historico h left join public.perfis p on p.user_id = h.ator_id
+        where h.entidade = 'locacao' and h.entidade_id = $1 order by h.em desc`, [id]);
+      const regra = l.regra as { nome?: string; descricao?: string; demonstrativa?: boolean } | null;
+      return {
+        resumo: mapLocacao(r.rows[0]),
+        enderecoEntrega: txt(l.endereco_entrega), conversaId: txt(l.conversa_id), orcamentoNumero: numOuNull(l.orcamento_numero),
+        regra: regra?.nome ? { nome: regra.nome, descricao: regra.descricao ?? '', demonstrativa: Boolean(regra.demonstrativa) } : null,
+        aprovadoPor: txt(l.aprovado_por_nome), aprovadoEm: isoOuNull(l.aprovado_em), retiradoEm: isoOuNull(l.retirado_em),
+        devolvidoEm: isoOuNull(l.devolvido_em), motivoCancelamento: txt(l.motivo_cancelamento),
+        itens: itens.rows.map((x) => ({ equipamentoId: String(x.equipamento_id), equipamento: String(x.nome), quantidade: num(x.quantidade),
+          valorUnitario: num(x.valor_unitario), valorTotal: num(x.valor_total), explicacao: String(x.explicacao) })),
+        unidades: unid.rows.map((x) => ({ unidadeId: String(x.unidade_id), codigo: String(x.codigo), equipamento: String(x.nome),
+          ativo: Boolean(x.ativo), condicao: x.condicao as CondicaoUnidade })),
+        riscos: riscos.rows.map((x) => ({ unidadeId: String(x.unidade_id), unidade: String(x.unidade), motivo: String(x.motivo),
+          locacaoBloqueadora: numOuNull(x.locacao_bloqueadora) })),
+        vistorias: vist.rows.map((x) => ({ tipo: x.tipo as 'retirada' | 'devolucao', checklist: x.checklist as ItemChecklist[],
+          observacoes: txt(x.observacoes), realizadoPor: txt(x.por), realizadoEm: iso(x.realizado_em) })),
+        recebimentos: rec.rows.map((x) => ({ id: String(x.id), valor: num(x.valor), forma: String(x.forma), observacao: txt(x.observacao),
+          recebidoEm: iso(x.recebido_em), registradoPor: txt(x.por) })),
+        historico: hist.rows.map((x) => ({ id: num(x.id), em: iso(x.em), atorTipo: String(x.ator_tipo), ator: txt(x.ator), acao: String(x.acao),
+          entidade: String(x.entidade), dados: (x.dados as Record<string, unknown>) ?? {} })),
+      };
+    });
+  }
+
+  async aprovarPreReserva(id: string) {
+    const r = await this.rpc<{ ok: boolean; mensagem?: string }>('select public.aprovar_pre_reserva($1) as r', [id]);
+    return { ok: Boolean(r.ok), mensagem: r.mensagem };
+  }
+  async cancelarLocacao(id: string, motivo: string) { await this.rpc('select public.cancelar_locacao($1, $2) as r', [id, motivo]); }
+  async definirFrete(id: string, valor: number) { await this.rpc('select public.definir_frete($1, $2) as r', [id, valor]); }
+  async realocarUnidade(id: string, unidadeId: string) { await this.rpc('select public.realocar_unidade($1, $2) as r', [id, unidadeId]); }
+  async registrarRetirada(id: string, checklist: ItemChecklist[], observacoes: string) {
+    await this.rpc('select public.registrar_retirada($1, $2::jsonb, $3) as r', [id, JSON.stringify(checklist), observacoes.trim() || null]);
+  }
+  async registrarDevolucao(id: string, checklist: ItemChecklist[], observacoes: string, unidadesManutencao: string[]) {
+    const r = await this.rpc<{ atrasada?: boolean; atraso_horas?: number }>('select public.registrar_devolucao($1, $2::jsonb, $3, $4::uuid[]) as r',
+      [id, JSON.stringify(checklist), observacoes.trim() || null, unidadesManutencao]);
+    return { atrasada: Boolean(r.atrasada), atrasoHoras: num(r.atraso_horas) };
+  }
+  async registrarRecebimento(id: string, valor: number, forma: FormaPagamento, observacao: string) {
+    const r = await this.rpc<{ saldo: number }>('select public.registrar_recebimento($1, $2, $3, $4) as r', [id, valor, forma, observacao.trim() || null]);
+    return { saldo: num(r.saldo) };
+  }
+  async notificarCliente(id: string, texto: string) {
+    const r = await this.rpc<{ ok: boolean; mensagem?: string }>('select public.notificar_cliente_locacao($1, $2) as r', [id, texto]);
+    return { ok: Boolean(r.ok), mensagem: r.mensagem };
   }
 
   // ------------------------------------------------------------ configurações

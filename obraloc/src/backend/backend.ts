@@ -6,7 +6,7 @@ import type {
   Categoria, ClienteDetalhe, ClienteInput, ClienteResumo, Configuracoes, DisponibilidadeLinha,
   EntradaHistorico, EquipamentoDetalhe, EquipamentoInput, EquipamentoResumo, LocacaoResumo, Ocupacao,
   Painel, Preco, RegraCobranca, Sessao, StatusLocacao, UsuarioDemo, CondicaoUnidade,
-  ConversaResumo, ConversaDetalhe, ConexaoWhatsApp,
+  ConversaResumo, ConversaDetalhe, ConexaoWhatsApp, LocacaoDetalhe, ItemChecklist, FormaPagamento,
 } from './types';
 
 export interface Backend {
@@ -40,6 +40,18 @@ export interface Backend {
 
   // locações
   locacoes(status: StatusLocacao[] | null): Promise<LocacaoResumo[]>;
+
+  locacao(id: string): Promise<LocacaoDetalhe>;
+  /** ok=false quando a pré-reserva expirou antes da aprovação (unidades liberadas). */
+  aprovarPreReserva(id: string): Promise<{ ok: boolean; mensagem?: string }>;
+  cancelarLocacao(id: string, motivo: string): Promise<void>;
+  definirFrete(id: string, valor: number): Promise<void>;
+  realocarUnidade(id: string, unidadeId: string): Promise<void>;
+  registrarRetirada(id: string, checklist: ItemChecklist[], observacoes: string): Promise<void>;
+  registrarDevolucao(id: string, checklist: ItemChecklist[], observacoes: string, unidadesManutencao: string[]): Promise<{ atrasada: boolean; atrasoHoras: number }>;
+  registrarRecebimento(id: string, valor: number, forma: FormaPagamento, observacao: string): Promise<{ saldo: number }>;
+  /** Mensagem ao cliente pelo WhatsApp da locação, sem pausar o assistente. */
+  notificarCliente(id: string, texto: string): Promise<{ ok: boolean; mensagem?: string }>;
 
   // configurações
   regrasCobranca(): Promise<RegraCobranca[]>;

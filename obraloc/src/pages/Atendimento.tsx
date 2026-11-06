@@ -181,7 +181,7 @@ function ConversaAberta({ id, aoMudar }: { id: string; aoMudar: () => void }) {
         {c.modo === 'bot' && (
           <>
             <span><strong>Assistente virtual ativo.</strong> Ao assumir, ele pausa e as respostas dele que ainda não saíram são canceladas.
-              <span className="suave"> (O assistente de demonstração entra na etapa 4; por enquanto ele não responde sozinho.)</span></span>
+              <span className="suave"> Assistente de demonstração: regras fixas, sem IA.</span></span>
             {podeAtender && <button className="botao botao-pequeno" disabled={ocupado} onClick={() => acao(async () => {
               const x = await backend.assumirAtendimento(c.id);
               avisar(x.respostasCanceladas ? `Atendimento assumido. ${x.respostasCanceladas} resposta(s) do assistente cancelada(s).` : 'Atendimento assumido. O assistente está pausado.');
@@ -340,14 +340,14 @@ function InfoCliente({ d, aoMudar }: { d: ConversaDetalhe; aoMudar: () => void }
         {d.locacoes.length === 0 ? <Vazio>Nenhuma locação.</Vazio> : (
           <ul className="lista">
             {d.locacoes.map((l) => (
-              <li key={l.id} className="item">
+              <li key={l.id}><a className="item" href={`#/locacao/${l.id}`}>
                 <div className="item-corpo">
                   <div className="item-titulo" style={{ fontSize: '0.9rem' }}>#{l.numero} <StatusLocacaoTag status={l.status} atrasada={l.atrasada} /></div>
                   <div className="item-sub">{l.itens} · {data(l.inicio)} → {data(l.fim)}</div>
                   {l.status === 'pre_reserva' && l.expiraEm && <div className="item-sub">Expira {relativo(l.expiraEm)}</div>}
                 </div>
                 <strong className="num pequeno">{brl(l.valorTotal)}</strong>
-              </li>
+              </a></li>
             ))}
           </ul>
         )}

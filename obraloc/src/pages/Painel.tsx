@@ -38,17 +38,17 @@ function Conteudo({ p }: { p: Painel }) {
               <ul className="lista">
                 {p.atrasadas.map((a) => (
                   <li key={a.locacao_id}>
-                    <div className="item">
+                    <a className="item" href={`#/locacao/${a.locacao_id}`}>
                       <div className="item-corpo">
                         <div className="item-titulo">#{a.numero} · {a.cliente} <span className="tag tag-atrasada">Atrasada</span></div>
                         <div className="item-sub">{a.itens} — devolução era {dataHora(a.fim!)} ({a.horas_atraso} h de atraso)</div>
                       </div>
-                    </div>
+                    </a>
                   </li>
                 ))}
                 {p.em_risco.map((r) => (
                   <li key={r.locacao_id + r.unidade}>
-                    <div className="item">
+                    <a className="item" href={`#/locacao/${r.locacao_id}`}>
                       <div className="item-corpo">
                         <div className="item-titulo">#{r.numero} em risco <span className="tag tag-pre_reserva">Reserva</span></div>
                         <div className="item-sub">
@@ -58,7 +58,7 @@ function Conteudo({ p }: { p: Painel }) {
                             : `ainda está com o cliente da locação #${r.locacao_bloqueadora}.`}
                         </div>
                       </div>
-                    </div>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -70,7 +70,7 @@ function Conteudo({ p }: { p: Painel }) {
               <ul className="lista">
                 {p.pre_reservas.map((r) => (
                   <li key={r.locacao_id}>
-                    <div className="item">
+                    <a className="item" href={`#/locacao/${r.locacao_id}`}>
                       <div className="item-corpo">
                         <div className="item-titulo">
                           #{r.numero} · {r.cliente}
@@ -82,12 +82,12 @@ function Conteudo({ p }: { p: Painel }) {
                         <strong className="num">{brl(r.valor_total)}</strong>
                         <span className="suave">expira {relativo(r.expira_em!)}</span>
                       </div>
-                    </div>
+                    </a>
                   </li>
                 ))}
               </ul>
             )}
-            <p className="suave pequeno" style={{ marginTop: 8 }}>A aprovação pela equipe entra na etapa 5.</p>
+            
           </Cartao>
 
           <Cartao titulo="Próximas 48 horas">
@@ -95,24 +95,24 @@ function Conteudo({ p }: { p: Painel }) {
               <ul className="lista">
                 {p.retiradas_proximas.map((r) => (
                   <li key={'r' + r.locacao_id}>
-                    <div className="item">
+                    <a className="item" href={`#/locacao/${r.locacao_id}`}>
                       <div className="item-corpo">
                         <div className="item-titulo">{r.modalidade === 'entrega' ? 'Entrega' : 'Retirada'} · #{r.numero} · {r.cliente}</div>
                         <div className="item-sub">{r.itens}</div>
                       </div>
                       <div className="item-lado"><strong>{dataHora(r.inicio!)}</strong><span className="suave">{relativo(r.inicio!)}</span></div>
-                    </div>
+                    </a>
                   </li>
                 ))}
                 {p.devolucoes_proximas.map((r) => (
                   <li key={'d' + r.locacao_id}>
-                    <div className="item">
+                    <a className="item" href={`#/locacao/${r.locacao_id}`}>
                       <div className="item-corpo">
                         <div className="item-titulo">Devolução · #{r.numero} · {r.cliente}</div>
                         <div className="item-sub">{r.itens}</div>
                       </div>
                       <div className="item-lado"><strong>{dataHora(r.fim!)}</strong><span className="suave">{relativo(r.fim!)}</span></div>
-                    </div>
+                    </a>
                   </li>
                 ))}
               </ul>

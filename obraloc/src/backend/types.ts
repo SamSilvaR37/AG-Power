@@ -291,3 +291,27 @@ export interface ConexaoWhatsApp {
   ultimoErro: string | null;
   atualizadoEm: string;
 }
+
+// ------------------------------------------------------------ detalhe da locação
+export interface ItemChecklist { item: string; ok: boolean; obs?: string }
+
+export interface LocacaoDetalhe {
+  resumo: LocacaoResumo;
+  enderecoEntrega: string | null;
+  conversaId: string | null;
+  orcamentoNumero: number | null;
+  regra: { nome: string; descricao: string; demonstrativa: boolean } | null;
+  aprovadoPor: string | null;
+  aprovadoEm: string | null;
+  retiradoEm: string | null;
+  devolvidoEm: string | null;
+  motivoCancelamento: string | null;
+  itens: { equipamentoId: string; equipamento: string; quantidade: number; valorUnitario: number; valorTotal: number; explicacao: string }[];
+  unidades: { unidadeId: string; codigo: string; equipamento: string; ativo: boolean; condicao: CondicaoUnidade }[];
+  riscos: { unidadeId: string; unidade: string; motivo: string; locacaoBloqueadora: number | null }[];
+  vistorias: { tipo: 'retirada' | 'devolucao'; checklist: ItemChecklist[]; observacoes: string | null; realizadoPor: string | null; realizadoEm: string }[];
+  recebimentos: { id: string; valor: number; forma: string; observacao: string | null; recebidoEm: string; registradoPor: string | null }[];
+  historico: EntradaHistorico[];
+}
+
+export type FormaPagamento = 'dinheiro' | 'pix' | 'cartao' | 'boleto' | 'transferencia' | 'outro';

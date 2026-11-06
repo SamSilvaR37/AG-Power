@@ -9,6 +9,7 @@ const FILTROS: { id: string; rotulo: string; status: StatusLocacao[] | null }[] 
   { id: 'pre_reserva', rotulo: 'Pré-reservas', status: ['pre_reserva'] },
   { id: 'confirmada', rotulo: 'Confirmadas', status: ['confirmada'] },
   { id: 'em_andamento', rotulo: 'Em andamento', status: ['em_andamento'] },
+  { id: 'a_receber', rotulo: 'A receber', status: ['confirmada', 'em_andamento', 'devolvida'] },
   { id: 'encerradas', rotulo: 'Encerradas', status: ['devolvida', 'expirada', 'cancelada'] },
   { id: 'todas', rotulo: 'Todas', status: null },
 ];
@@ -18,6 +19,8 @@ export function LocacoesPagina({ filtroInicial }: { filtroInicial?: string }) {
   const [filtro, setFiltro] = useState(FILTROS.find((f) => f.id === filtroInicial)?.id ?? 'ativas');
   const status = FILTROS.find((f) => f.id === filtro)!.status;
   const r = useCarregar<LocacaoResumo[]>(() => backend.locacoes(status), [backend, filtro]);
+  const lista = filtro === 'a_receber' ? r.dados?.filter((l) => l.saldo > 0) : r.dados;
+  const totalAReceber = filtro === 'a_receber' ? (lista ?? []).reduce((s, l) => s + l.saldo, 0) : null;
 
   return (
     <>
@@ -30,15 +33,15 @@ export function LocacoesPagina({ filtroInicial }: { filtroInicial?: string }) {
       <Cartao>
         {r.carregando && !r.dados && <Carregando />}
         {r.erro && <ErroCaixa erro={r.erro} tentar={r.recarregar} />}
-        {r.dados && r.dados.length === 0 && <Vazio>Nenhuma locação neste filtro.</Vazio>}
-        {r.dados && r.dados.length > 0 && (
+        {lista && lista.length === 0 && <Vazio>Nenhuma locação neste filtro.</Vazio>}
+        {lista && lista.length > 0 && (
           <ul className="lista">
-            {r.dados.map((l) => (
+            {lista.map((l) => (
               <li key={l.id}>
-                <div className="item">
+                <a className="item" href={`#/locacao/${l.id}`}>
                   <div className="item-corpo">
                     <div className="item-titulo">
-                      #{l.numero} · <a href={`#/clientes/${l.clienteId}`}>{l.cliente}</a>
+                      #{l.numero} · {l.cliente}
                       <StatusLocacaoTag status={l.status} atrasada={l.atrasada} />
                       {l.origem === 'bot' && <span className="tag"><Icone nome="whatsapp" tamanho={12} />&nbsp;{rotuloOrigem.bot}</span>}
                     </div>
@@ -52,16 +55,15 @@ export function LocacoesPagina({ filtroInicial }: { filtroInicial?: string }) {
                     <strong className="num">{brl(l.valorTotal)}</strong>
                     {l.modalidade === 'entrega' && l.valorFrete === null && <span className="suave">+ frete a definir</span>}
                     {l.recebido > 0 && <span className="suave num">recebido {brl(l.recebido)}</span>}
+                    {l.saldo > 0 && ['confirmada', 'em_andamento', 'devolvida'].includes(l.status) && <span className="num" style={{ color: 'var(--alerta)' }}>falta {brl(l.saldo)}</span>}
                   </div>
-                </div>
+                </a>
               </li>
             ))}
           </ul>
         )}
       </Cartao>
-      <p className="suave pequeno" style={{ marginTop: 12 }}>
-        Aprovação, retirada, devolução com checklist e recebimentos entram na etapa 5.
-      </p>
+      {totalAReceber !== null && <p style={{ marginTop: 12 }}>Total a receber: <strong className="num">{brl(totalAReceber)}</strong> <span className="suave pequeno">(registro manual, sem integração bancária)</span></p>}
     </>
   );
 }

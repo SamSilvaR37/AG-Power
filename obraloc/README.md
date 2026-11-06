@@ -36,7 +36,31 @@ caixa e o telefone é reconhecido quando já é de um cliente. Em "Testes de fal
 | Mandar um áudio | "Sem serviço de transcrição configurado": o sistema não finge que entendeu |
 
 Responder manualmente assume a conversa (pausa o assistente). O assistente só volta com
-"Devolver ao assistente". O assistente de demonstração, que responde sozinho, é a etapa 4.
+"Devolver ao assistente".
+
+### Testar o fluxo completo (MVP)
+
+1. **Simulador**, como cliente novo: "Oi, preciso de uma betoneira" → "sábado" → "por 2 dias" →
+   "vou retirar na loja". O assistente monta o orçamento com os valores do sistema e a regra usada.
+2. Responda "sim": vira **pré-reserva** (a unidade fica segura pelo prazo configurado).
+3. **Painel → Pré-reservas** → abra a locação → **Aprovar locação** (com aviso ao cliente pelo
+   WhatsApp). É o mesmo registro: a pré-reserva vira locação confirmada.
+4. **Registrar retirada** (checklist) → **Registrar devolução** (checklist; unidade com avaria vai
+   para manutenção; as demais ficam livres na hora).
+5. Entre como **Rafaela Admin** → **Registrar recebimento** (manual, sem integração bancária).
+
+Outras frases para testar o assistente: "quero um compactador" (pede para escolher), "a betoneira
+veio quebrada" (vai para a equipe), "faz um desconto?" (vai para a equipe), "minha reserva já foi
+confirmada?" (consulta a locação), "vocês alugam helicóptero?" (não encontra e diz isso).
+
+### Assistente de demonstração
+
+Regras fixas, sem IA (`src/assistente/`). Pergunta uma coisa por vez e guarda o que já foi dito
+(`conversas.contexto_bot`). Preço, disponibilidade, orçamento e pré-reserva vêm só das ferramentas
+`bot_*`. Se uma ferramenta falha, ele avisa e chama a equipe, sem inventar valores. Reclamação,
+negociação e pedido de pessoa vão para a equipe. Áudio sem transcrição: pede texto. A interpretação
+da mensagem fica atrás da interface `Interpretador`: uma IA pode substituí-la no servidor, com a
+chave só em variável de ambiente, sem mudar as regras nem as ferramentas.
 
 > Este é um projeto independente. Ele fica dentro do repositório `AG-Power` só porque é onde a
 > sessão tinha acesso; não usa nada do CRM solar AG Power nem do banco dele. Pode ser movido
@@ -139,7 +163,7 @@ npm test                      # camada de dados do app + suíte SQL rodando no P
 scripts/db-test.sh            # suíte SQL no PostgreSQL 16 local + concorrência real (VERBOSE=1, KEEP=1)
 ```
 
-O que é verificado (176 verificações SQL, 5 cenários de concorrência, 31 testes do app):
+O que é verificado (185 verificações SQL, 5 cenários de concorrência, 61 testes do app):
 
 - dois clientes (e doze) tentando a última unidade no mesmo período: só um consegue;
 - webhook duplicado, inclusive em entregas simultâneas;
@@ -160,10 +184,10 @@ O que é verificado (176 verificações SQL, 5 cenários de concorrência, 31 te
    admin/atendente: painel, catálogo, clientes, disponibilidade por período ✅
 3. **Camada de provedores WhatsApp** (interface única + provedor simulado) e **caixa de atendimento**
    com simulador de mensagens recebidas ✅
-4. Assistente de demonstração **determinístico** (identificado como tal) usando só as ferramentas
-   `bot_*`, com a interface pronta para conectar uma IA depois. Áudio: sem serviço de transcrição,
-   pede texto.
-5. Telas de pré-reserva e aprovação, retirada e devolução com checklist, recebimentos e histórico.
+4. **Assistente de demonstração** com regras fixas, usando só as ferramentas `bot_*`; interface
+   pronta para conectar uma IA depois ✅
+5. **Telas da equipe**: aprovação com aviso ao cliente, cancelamento, frete, troca de unidade,
+   retirada e devolução com checklist, recebimentos manuais e histórico ✅
 6. Ligação a um Supabase real e a um provedor de WhatsApp, **somente com autorização**: funções
    de servidor para webhook, despachante e assistente, com segredos em variáveis de ambiente.
 
@@ -171,15 +195,16 @@ O que é verificado (176 verificações SQL, 5 cenários de concorrência, 31 te
 
 - Login sem senha e banco local no navegador (simulados). Fotos de equipamento por endereço de
   imagem; envio de arquivo entra com o Supabase Storage.
-- Aprovação, retirada, devolução e recebimentos ainda não têm tela (etapa 5); as regras já existem no banco.
 - Nenhum provedor de WhatsApp real: existe só o `simulado` (webhook assinado com um segredo fictício,
   falhas e queda de conexão sob comando). A validação do webhook real depende do provedor escolhido.
   **Antes de integrar, é preciso definir qual será usado e consultar a documentação atual dele.**
 - O "lado servidor" do atendimento (webhook, despachante, expiração de pré-reservas) roda no próprio
   navegador na demonstração. Em produção vai para funções de servidor.
 - A caixa atualiza por consulta periódica (2–3 s). Com Supabase, passa a usar Realtime.
-- Nenhuma IA: as ferramentas existem, o assistente ainda não.
-- Sem transcrição de áudio: a mensagem fica marcada como `pendente`/`indisponivel`.
+- Nenhuma IA: o assistente usa regras fixas e entende frases comuns, não qualquer texto. Fora do
+  que reconhece, ele pergunta de novo ou chama a equipe.
+- Sem transcrição de áudio: a mensagem fica marcada como `indisponivel` e o assistente pede texto.
+- Multa por atraso e frete não têm regra: a devolução só sinaliza o atraso; o frete é definido pela equipe.
 - Os papéis `obraloc_bot` e `obraloc_integracao` estão prontos no banco. No Supabase real, o
   servidor vai assumi-los por um JWT com a claim `role`; essa ligação será feita na etapa 6.
 - Usuários da equipe de teste existem só nos testes (`tests/01_fixtures.sql`).

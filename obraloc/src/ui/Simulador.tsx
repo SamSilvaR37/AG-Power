@@ -14,7 +14,7 @@ const NOVOS: Contato[] = [
 
 export function Simulador({ fechar }: { fechar: () => void }) {
   const { backend, atendimento } = useApp();
-  const { provedor, servico, bot } = atendimento;
+  const { provedor, servico } = atendimento;
   const [, atualizar] = useReducer((x: number) => x + 1, 0);
   useEffect(() => provedor.aoMudar(atualizar), [provedor]);
 
@@ -48,13 +48,6 @@ export function Simulador({ fechar }: { fechar: () => void }) {
     const r = await provedor.mensagemDoCliente({ telefone: tel, nome, texto: formato === 'texto' ? t : null, formato });
     setTexto('');
     log(`${formato === 'audio' ? 'Áudio' : 'Mensagem'} enviada: ${descrever(r)}`);
-  };
-
-  const respostaDoAssistente = async () => {
-    const conv = (await backend.conversas()).find((c) => c.telefone === tel);
-    if (!conv) { log('Mande uma mensagem primeiro: ainda não há conversa.'); return; }
-    const r = await bot.enfileirarResposta(conv.id, conv.epocaBot, 'Claro! Para quais datas você precisa? (resposta de teste)', `simulador:${Date.now()}`);
-    log(r.ok ? 'Resposta de teste do assistente na fila' : `Assistente recusado: ${r.codigo === 'bot_pausado' ? 'conversa está com a equipe' : r.codigo}`);
   };
 
   return (
@@ -114,10 +107,7 @@ export function Simulador({ fechar }: { fechar: () => void }) {
             <label className="check"><input type="checkbox" checked={filaPausada}
               onChange={(e) => { servico.filaPausada = e.target.checked; setFilaPausada(e.target.checked); log(e.target.checked ? 'Fila de envio pausada' : 'Fila de envio retomada'); }} />
               Pausar a fila de envio (mensagens ficam “na fila”)</label>
-            <button className="botao botao-secundario botao-pequeno" onClick={respostaDoAssistente}>
-              Gerar resposta de teste do assistente
-            </button>
-            <p className="suave pequeno">Para ver a pausa do bot: pause a fila, gere a resposta de teste e clique em “Assumir atendimento”. A resposta é cancelada e não chega ao cliente.</p>
+            <p className="suave pequeno">Para ver a pausa do bot: pause a fila e mande uma mensagem como cliente. A resposta do assistente fica “na fila”. Clique em “Assumir atendimento”: ela é cancelada e não chega ao cliente.</p>
           </div>
         </details>
 

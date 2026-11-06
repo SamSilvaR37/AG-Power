@@ -149,3 +149,94 @@ describe('PgliteBackend', () => {
     expect(h.some((x) => x.acao === 'condicao_unidade_alterada')).toBe(true);
   });
 });
+
+describe('etapa 5: ciclo da locação pela equipe', () => {
+  let admin: PgliteBackend;
+  let atendente: PgliteBackend;
+  let db: Awaited<ReturnType<typeof abrirBanco>>;
+  const idDe = async (n: number) => (await atendente.locacoes(null)).find((l) => l.numero === n)!.id;
+
+  beforeAll(async () => {
+    db = await abrirBanco({ persistir: false });
+    admin = new PgliteBackend(db);
+    atendente = new PgliteBackend(db);
+    await admin.entrar(ADMIN);
+    await atendente.entrar(ATENDENTE);
+  });
+
+  it('detalhe da pré-reserva vinda do WhatsApp', async () => {
+    const d = await atendente.locacao(await idDe(504));
+    expect(d.resumo.status).toBe('pre_reserva');
+    expect(d.resumo.origem).toBe('bot');
+    expect(d.conversaId).not.toBeNull();
+    expect(d.regra?.demonstrativa).toBe(true);
+    expect(d.itens[0]).toMatchObject({ equipamento: 'Martelete rompedor 10 kg', quantidade: 1 });
+    expect(d.unidades.filter((u) => u.ativo)).toHaveLength(1);
+  });
+
+  it('aprovar → avisar cliente → retirada → devolução com avaria → recebimento', async () => {
+    const id = await idDe(504);
+    expect((await atendente.aprovarPreReserva(id)).ok).toBe(true);
+    let d = await atendente.locacao(id);
+    expect(d.resumo.status).toBe('confirmada');
+    expect(d.aprovadoPor).toBe('Carlos Atendente');
+    expect(d.resumo.id).toBe(id); // mesmo registro
+
+    const aviso = await atendente.notificarCliente(id, 'Sua locação foi confirmada!');
+    expect(aviso.ok).toBe(true);
+    const conv = await atendente.conversa(d.conversaId!);
+    expect(conv.mensagens.at(-1)).toMatchObject({ autor: 'sistema', estado: 'pendente' });
+    expect(conv.conversa.modo).toBe('bot');
+
+    await expect(atendente.registrarRetirada(id, [], '')).rejects.toMatchObject({ codigo: 'checklist_obrigatorio' });
+    await atendente.registrarRetirada(id, [{ item: 'Testado', ok: true }], 'Retirou na loja');
+    d = await atendente.locacao(id);
+    expect(d.resumo.status).toBe('em_andamento');
+    expect(d.retiradoEm).not.toBeNull();
+
+    const unidade = d.unidades.find((u) => u.ativo)!;
+    const dev = await atendente.registrarDevolucao(id, [{ item: 'Sem danos', ok: false, obs: 'ponteira trincada' }], 'Avaria', [unidade.unidadeId]);
+    expect(dev.atrasada).toBe(false);
+    d = await atendente.locacao(id);
+    expect(d.resumo.status).toBe('devolvida');
+    expect(d.unidades.every((u) => !u.ativo)).toBe(true);
+    expect(d.unidades[0].condicao).toBe('manutencao');
+    expect(d.vistorias.map((v) => v.tipo)).toEqual(['retirada', 'devolucao']);
+    expect(d.vistorias[1].checklist[0]).toMatchObject({ item: 'Sem danos', ok: false, obs: 'ponteira trincada' });
+
+    await expect(atendente.registrarRecebimento(id, 50, 'pix', '')).rejects.toMatchObject({ codigo: 'sem_permissao' });
+    const rec = await admin.registrarRecebimento(id, d.resumo.valorTotal, 'pix', 'Quitado');
+    expect(rec.saldo).toBe(0);
+    d = await admin.locacao(id);
+    expect(d.recebimentos[0]).toMatchObject({ forma: 'pix', registradoPor: 'Rafaela Admin' });
+    expect(d.historico.map((h) => h.acao)).toEqual(expect.arrayContaining(['locacao_aprovada', 'cliente_notificado', 'retirada_registrada', 'devolucao_registrada', 'recebimento_registrado']));
+  });
+
+  it('retirada bloqueada quando a unidade ainda está com o cliente atrasado', async () => {
+    const d = await atendente.locacao(await idDe(503));
+    expect(d.riscos).toHaveLength(1);
+    await expect(atendente.registrarRetirada(d.resumo.id, [{ item: 'Testado', ok: true }], '')).rejects.toMatchObject({ codigo: 'unidade_ocupada' });
+    await expect(atendente.realocarUnidade(d.resumo.id, d.riscos[0].unidadeId)).rejects.toMatchObject({ codigo: 'indisponivel' });
+  });
+
+  it('frete e cancelamento', async () => {
+    const id = await idDe(501);
+    await atendente.definirFrete(id, 45);
+    const d = await atendente.locacao(id);
+    expect(d.resumo.valorFrete).toBe(45);
+    expect(d.resumo.valorTotal).toBe(d.resumo.valorItens + 45);
+    await expect(atendente.cancelarLocacao(id, 'teste')).rejects.toMatchObject({ codigo: 'status_invalido' }); // em andamento não cancela
+    const id506 = await idDe(506);
+    await expect(atendente.cancelarLocacao(id506, '')).rejects.toMatchObject({ codigo: 'motivo_obrigatorio' });
+    await atendente.cancelarLocacao(id506, 'Cliente desistiu');
+    expect((await atendente.locacao(id506)).resumo.status).toBe('cancelada');
+  });
+
+  it('pré-reserva vencida não é aprovada', async () => {
+    await db.exec(`update public.locacoes set status = 'pre_reserva', expira_em = now() - interval '1 minute', aprovado_em = null where numero = 503`);
+    const r = await atendente.aprovarPreReserva(await idDe(503));
+    expect(r.ok).toBe(false);
+    expect(r.mensagem).toContain('expirou');
+    expect((await atendente.locacao(await idDe(503))).resumo.status).toBe('expirada');
+  });
+});

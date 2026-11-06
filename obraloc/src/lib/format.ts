@@ -108,4 +108,5 @@ export const rotuloAcao: Record<string, string> = {
   cliente_criado_pelo_whatsapp: 'Cliente criado pelo WhatsApp',
   cliente_vinculado: 'Cliente vinculado à conversa',
   falha_ferramenta: 'Falha numa consulta do assistente',
+  cliente_notificado: 'Cliente avisado pelo WhatsApp',
 };

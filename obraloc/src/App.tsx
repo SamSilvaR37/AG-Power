@@ -7,6 +7,7 @@ import { PgliteFerramentasBot, PgliteIntegracao } from './backend/pglite/servido
 import { Ctx, type Atendimento, type Contexto } from './lib/contexto';
 import { ProvedorSimulado } from './whatsapp/simulado';
 import { ServicoAtendimento } from './whatsapp/servico';
+import { AssistenteDemonstracao } from './assistente/assistente';
 import { navegar, useRota } from './lib/router';
 import { Carregando, ErroCaixa, Icone, Selo } from './ui/componentes';
 import { Login } from './pages/Login';
@@ -20,6 +21,7 @@ import { LocacoesPagina } from './pages/Locacoes';
 import { ConfiguracoesPagina } from './pages/Configuracoes';
 import { AtendimentoPagina } from './pages/Atendimento';
 import { MaisPagina } from './pages/Mais';
+import { LocacaoPagina } from './pages/Locacao';
 
 const CHAVE_SESSAO = 'obraloc.sessao';
 
@@ -56,7 +58,11 @@ function obterAtendimento(db: Awaited<ReturnType<typeof abrirBanco>>): Atendimen
   servico.iniciar();
   // rotina que, em produção, seria agendada no servidor
   setInterval(() => { void integracao.expirarPreReservas().catch(() => undefined); }, 60_000);
-  atendimentoUnico = { servico, provedor, bot: new PgliteFerramentasBot(db) };
+  const bot = new PgliteFerramentasBot(db);
+  // assistente de demonstração (regras fixas). ~1 s de "processamento" para dar tempo de testar a tomada de atendimento.
+  const assistente = new AssistenteDemonstracao(bot, { atrasoMs: 1000 });
+  servico.aoAcionarBot = (p) => { void assistente.responder(p).then(() => servico.despachar()); };
+  atendimentoUnico = { servico, provedor, bot };
   return atendimentoUnico;
 }
 
@@ -137,6 +143,7 @@ export function App() {
     case 'configuracoes': pagina = <ConfiguracoesPagina />; break;
     case 'atendimento': pagina = <AtendimentoPagina conversaId={rota[1]} />; break;
     case 'mais': pagina = <MaisPagina />; break;
+    case 'locacao': pagina = rota[1] ? <LocacaoPagina id={rota[1]} /> : <LocacoesPagina />; break;
     default: pagina = <PainelPagina />;
   }
 
@@ -154,7 +161,7 @@ export function App() {
             </a>
             <nav aria-label="Principal">
               {NAV.map((n) => (
-                <a key={n.rota} href={`#/${n.rota}`} className={secao === n.rota ? 'ativo' : ''} aria-current={secao === n.rota ? 'page' : undefined}>
+                <a key={n.rota} href={`#/${n.rota}`} className={secao === n.rota || (n.rota === 'locacoes' && secao === 'locacao') ? 'ativo' : ''} aria-current={secao === n.rota ? 'page' : undefined}>
                   <Icone nome={n.icone} />{n.rotulo}
                 </a>
               ))}
@@ -180,7 +187,7 @@ export function App() {
 
         <nav className="nav-inferior" aria-label="Principal">
           {NAV_MOVEL.map((n) => {
-            const ativo = n.rota === 'mais' ? ['mais', 'catalogo', 'locacoes', 'configuracoes'].includes(secao) : secao === n.rota;
+            const ativo = n.rota === 'mais' ? ['mais', 'catalogo', 'locacoes', 'locacao', 'configuracoes'].includes(secao) : secao === n.rota;
             return (
               <a key={n.rota} href={`#/${n.rota}`} className={ativo ? 'ativo' : ''} aria-current={ativo ? 'page' : undefined}>
                 <Icone nome={n.icone} />{n.rotulo}

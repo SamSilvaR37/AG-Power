@@ -65,7 +65,7 @@ export function ClientePagina({ id }: { id: string }) {
             <ul className="lista">
               {c.locacoes.map((l) => (
                 <li key={l.id}>
-                  <div className="item">
+                  <a className="item" href={`#/locacao/${l.id}`}>
                     <div className="item-corpo">
                       <div className="item-titulo">#{l.numero} <StatusLocacaoTag status={l.status} atrasada={l.atrasada} /></div>
                       <div className="item-sub">{l.itens} · {data(l.inicio)} → {data(l.fim)}</div>
@@ -74,7 +74,7 @@ export function ClientePagina({ id }: { id: string }) {
                       <strong className="num">{brl(l.valorTotal)}</strong>
                       {l.saldo > 0 && !['pre_reserva', 'expirada', 'cancelada'].includes(l.status) && <span className="suave num">falta {brl(l.saldo)}</span>}
                     </div>
-                  </div>
+                  </a>
                 </li>
               ))}
             </ul>

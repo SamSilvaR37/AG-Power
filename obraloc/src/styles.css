@@ -419,3 +419,19 @@ th:last-child, td:last-child { padding-right: 0; }
   .caixa-com-simulador .conversa { grid-template-columns: minmax(0, 1fr) !important; }
   .caixa-com-simulador .so-movel-e-medio { display: inline-flex !important; }
 }
+
+/* ------------------------------------------------ detalhe da locação */
+.barra-acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.checklist-lista { list-style: none; margin: 6px 0; padding: 0; font-size: 0.88rem; }
+.checklist-lista li { padding: 3px 0; }
+.checklist-lista li.ok { color: var(--ok); }
+.checklist-lista li.nao { color: var(--alerta); font-weight: 600; }
+.checklist-form { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.checklist-form li { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 10px; }
+.checklist-linha { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.92rem; }
+.sim-nao { display: inline-flex; border: 1px solid var(--borda); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+.sim-nao button { border: 0; background: var(--superficie); padding: 7px 12px; font-size: 0.82rem; cursor: pointer; color: var(--suave); }
+.sim-nao button + button { border-left: 1px solid var(--borda); }
+.sim-nao button.ativo { background: var(--ok-fundo); color: var(--ok); font-weight: 700; }
+.sim-nao button.ativo.nao { background: var(--alerta-fundo); color: var(--alerta); }
+.destaque-avaria { padding: 10px 12px; border-radius: 10px; background: var(--atencao-fundo); }
