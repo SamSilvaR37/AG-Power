@@ -10,6 +10,8 @@
 > 120 s): veja [`sistema-hibrido/README.md`](sistema-hibrido/README.md).
 > E a **demonstração real da plataforma, vídeo 1 (visão do gestor)**, com prints reais do app:
 > veja [`demo-gestor/README.md`](demo-gestor/README.md).
+> E o projeto **ObraLoc** (locação de equipamentos + WhatsApp, independente da AG Power): veja
+> [`obraloc/README.md`](obraloc/README.md).
 
 Comercial institucional de 90 s (pt-BR) feito a partir do briefing em `briefing.json`.
 O vídeo é **animado em HTML**: cada quadro é calculado a partir do tempo, então o mesmo
